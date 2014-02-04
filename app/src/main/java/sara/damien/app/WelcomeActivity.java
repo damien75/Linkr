@@ -1,13 +1,18 @@
 package sara.damien.app;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.os.Build;
+import android.widget.Toast;
 
 public class WelcomeActivity extends ActionBarActivity {
 
@@ -26,24 +31,40 @@ public class WelcomeActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.welcome, menu);
-        return true;
+
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.welcome, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                openSearch();
+                return true;
+            case R.id.action_settings:
+                openSettings();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
+    public void openSearch(){
+        Toast.makeText(this,"Search Selected",Toast.LENGTH_LONG).show();
+    }
+
+    public void openSettings(){
+        Toast.makeText(this,"Settings Selected",Toast.LENGTH_LONG).show();
+    }
+
+    public void openTopic (View view){
+        Intent intent=new Intent(this,TopicActivity.class);
+        startActivity(intent);
+    }
 
     /**
      * A placeholder fragment containing a simple view.
@@ -55,7 +76,7 @@ public class WelcomeActivity extends ActionBarActivity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
+                                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_welcome, container, false);
             return rootView;
         }

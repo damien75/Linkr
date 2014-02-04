@@ -4,5 +4,9 @@
     <string name="app_name">Linkr</string>
     <string name="hello_world">Hello world! Damien</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_topic">TopicActivity</string>
+    <string name="setUpButton">Set up a Meeting!</string>
+    <string name="subjectHint">What do you want to talk about?</string>
+    <string name="action_search">Search</string>
 
 </resources>

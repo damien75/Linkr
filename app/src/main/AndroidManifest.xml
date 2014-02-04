@@ -16,6 +16,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="sara.damien.app.TopicActivity"
+            android:label="@string/title_activity_topic"
+            android:parentActivityName="sara.damien.app.WelcomeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="WelcomeActivity" />
+        </activity>
     </application>
 
 </manifest>
