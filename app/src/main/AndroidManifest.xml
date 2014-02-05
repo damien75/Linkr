@@ -24,6 +24,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="WelcomeActivity" />
         </activity>
+        <activity
+            android:name="sara.damien.app.suggestionsActivity"
+            android:label="@string/title_activity_suggestions"
+            android:parentActivityName="sara.damien.app.TopicActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="TopicActivity" />
+        </activity>
     </application>
 
 </manifest>
