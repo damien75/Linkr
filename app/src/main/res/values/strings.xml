@@ -7,5 +7,7 @@
     <string name="setUpButton">Set up a Meeting!</string>
     <string name="subjectHint">What do you want to talk about?</string>
     <string name="action_search">Search</string>
+    <string name="title_activity_topic">Topic</string>
+    <string name="title_activity_suggestions">Suggestions</string>
 
 </resources>
