@@ -12,9 +12,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
+import android.widget.Button;
 import android.widget.Toast;
 
 public class WelcomeActivity extends ActionBarActivity {
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +66,11 @@ public class WelcomeActivity extends ActionBarActivity {
 
     public void openTopic (View view){
         Intent intent=new Intent(this,TopicActivity.class);
+        startActivity(intent);
+    }
+
+    public void openSuggestions (View view){
+        Intent intent=new Intent(this,suggestionsActivity.class);
         startActivity(intent);
     }
 

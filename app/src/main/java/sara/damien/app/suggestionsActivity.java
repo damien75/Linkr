@@ -1,5 +1,6 @@
 package sara.damien.app;
 
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -10,13 +11,28 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
+import org.json.JSONObject;
 
 public class suggestionsActivity extends ActionBarActivity {
 
+    JSONParser jsonParser = new JSONParser();
+
+
+    class PrintAll extends AsyncTask<String,String,String>{
+
+        protected String doInBackground(String... args){
+            JSONObject json = jsonParser.makeHttpRequest(url,null,null);
+            return null;
+        }
+    }
+
+    private static final String url = "http://localhost/linkr/";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suggestions);
+
+        new PrintAll().execute();
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -24,7 +40,6 @@ public class suggestionsActivity extends ActionBarActivity {
                     .commit();
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
