@@ -5,6 +5,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,7 +23,7 @@ public class suggestionsActivity extends ActionBarActivity {
 
         protected String doInBackground(String... args){
             JSONObject json = jsonParser.makeHttpRequest(url,null,null);
-            return null;
+            return json.toString();
         }
     }
 
