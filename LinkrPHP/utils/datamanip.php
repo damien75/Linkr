@@ -20,17 +20,6 @@ class Database {
 }
 
 
-function getUsers() {
-    $dbh = Database::connect();
-    $query = "SELECT * FROM User";
-    $sth = $dbh->prepare($query);
-    $sth->setFetchMode(PDO::FETCH_ASSOC);
-    $sth->execute(array());
-    $result = $sth->fetchAll(PDO::FETCH_ASSOC);
-    echo json_encode($result);
-}
-
-
                                     /*Gestion des utilisateurs dans la table: utilisateurs*/
 
 class User {
@@ -46,10 +35,25 @@ class User {
     public $Exp_Years;
     public $Sum_Grade;
     public $Number_Grade;
-
-
-
-    /*Imprimer les informations d'un utilisateur*/
 }
 
+    /*Imprimer les informations de tous les utilisateur*/
+function getUsers() {
+    $dbh = Database::connect();
+    $query = "SELECT * FROM User";
+    $sth = $dbh->prepare($query);
+    $sth->setFetchMode(PDO::FETCH_ASSOC);
+    $sth->execute(array());
+    $result = $sth->fetchAll(PDO::FETCH_ASSOC);
+    echo json_encode($result);
+}
+function getRequests($ID){
+   $dbh = Database::connect();
+   $query = "SELECT Last_Name, First_Name, ID1, ID2, Status, Date_Request, Date_Accept, Date_Meeting, Subject FROM USER, (SELECT * FROM Meeting WHERE ID1=?) WHERE ID=ID1";
+   $sth = $dbh->prepare($query);
+   $sth->setFetchMode(PDO::FETCH_ASSOC);
+   $sth->execute(array($ID));
+   $result = $sth->fetchAll(PDO::FETCH_ASSOC);
+   echo json_encode($result);
+}
 ?>
