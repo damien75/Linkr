@@ -48,12 +48,56 @@ function getUsers() {
     echo json_encode($result);
 }
 function getRequests($ID){
+   $response = array();
    $dbh = Database::connect();
-   $query = "SELECT Last_Name, First_Name, ID1, ID2, State, Date_Request, Date_Accept, Date_Meeting, Subject FROM USER, (SELECT * FROM Meeting WHERE ID1=?) as c WHERE ID=ID1";
+   $query = "SELECT Last_Name, First_Name, State, Date_Request, Date_Accept, Date_Meeting, Subject FROM USER, (SELECT * FROM Meeting WHERE ID1=?) as c WHERE ID=ID1";
    $sth = $dbh->prepare($query);
    $sth->setFetchMode(PDO::FETCH_ASSOC);
    $sth->execute(array($ID));
    $result = $sth->fetchAll(PDO::FETCH_ASSOC);
+   
+   
+   if (!empty($result)) {
+        // check for empty result
+        if (mysql_num_rows($result) > 0) {
+ 
+            $result = mysql_fetch_array($result);
+ 
+            $meeting = array();
+            $meeting["Last_Name"] = $result["Last_Name"];
+            $meeting["First_Name"] = $result["First_Name"];
+            $meeting["State"] = $result["State"];
+            $meeting["Date_Request"] = $result["Date_Request"];
+            $meeting["Date_Accept"] = $result["Date_Accept"];
+            $meeting["Date_Meeting"] = $result["Date_Meeting"];
+            $meeting["Subject"] = $result["Subject"];
+            // success
+            $response["success"] = 1;
+ 
+            // user node
+            $response["meeting"] = array();
+ 
+            array_push($response["meeting"], $meeting);
+ 
+            // echoing JSON response
+            echo json_encode($response);
+        } else {
+            // no product found
+            $response["success"] = 0;
+            $response["message"] = "No Meeting found";
+ 
+            // echo no users JSON
+            echo json_encode($response);
+        }
+    } else {
+        // no product found
+        $response["success"] = 0;
+        $response["message"] = "No Meeting found";
+ 
+        // echo no users JSON
+        echo json_encode($response);
+    }
+   
    echo json_encode($result);
 }
 ?>
