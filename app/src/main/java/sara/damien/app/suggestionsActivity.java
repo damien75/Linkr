@@ -23,7 +23,7 @@ public class suggestionsActivity extends ActionBarActivity {
 
         protected String doInBackground(String... args){
             JSONObject json = jsonParser.makeHttpRequest(url,null,null);
-            return json.toString();
+            return null;
         }
     }
 
