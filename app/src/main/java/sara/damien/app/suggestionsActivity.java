@@ -39,6 +39,7 @@ public class suggestionsActivity extends ListActivity {
     private static final String TAG_MEETING = "meeting";
     private static final String TAG_LAST_NAME = "Last_Name";
     private static final String TAG_FIRST_NAME = "First_Name";
+    private static final String TAG_NAME = "name";
     private static final String TAG_STATE = "State";
     private static final String TAG_SUBJECT = "Subject";
     private static final String TAG_MESSAGE = "message";
@@ -120,8 +121,7 @@ public class suggestionsActivity extends ListActivity {
                         meetings=json.getJSONArray(TAG_MEETING);
                         for (int i = 0; i<meetings.length();i++){
                             JSONObject c = meetings.getJSONObject(i);
-                            String last_name = c.getString(TAG_LAST_NAME);
-                            String first_name = c.getString(TAG_FIRST_NAME);
+                            String name = c.getString(TAG_FIRST_NAME)+ " " + c.getString(TAG_LAST_NAME);
                             String date_request = c.getString(TAG_DATE_REQUEST);
                             String date_accept = c.getString(TAG_DATE_ACCEPT);
                             String date_meeting = c.getString(TAG_DATE_MEETING);
@@ -129,8 +129,7 @@ public class suggestionsActivity extends ListActivity {
                             String state = c.getString(TAG_STATE);
 
                             HashMap<String,String> map = new HashMap<String, String>();
-                            map.put(TAG_LAST_NAME,last_name);
-                            map.put(TAG_FIRST_NAME,first_name);
+                            map.put(TAG_NAME,name);
                             map.put(TAG_DATE_REQUEST,date_request);
                             map.put(TAG_DATE_ACCEPT,date_accept);
                             map.put(TAG_DATE_MEETING,date_meeting);
@@ -159,7 +158,7 @@ public class suggestionsActivity extends ListActivity {
                     ListAdapter adapter = new SimpleAdapter(
                             suggestionsActivity.this,MeetingList,
                             R.layout.list_item,
-                            new String[]{TAG_FIRST_NAME,TAG_LAST_NAME,TAG_DATE_REQUEST},
+                            new String[]{TAG_NAME,TAG_LAST_NAME,TAG_DATE_REQUEST},
                             new int[]{R.id.name,R.id.state,R.id.meeting_date});
                     setListAdapter(adapter);
                 }
