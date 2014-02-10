@@ -3,9 +3,9 @@
 
 class Database {
     public static function connect() {
-        $dsn = 'mysql:dbname=1613646_linkr;host=127.0.0.1';
-        $user = 'root';
-        $password = '';
+        $dsn = 'mysql:dbname=golinkrvv1;host=mysql51-113.perso';
+        $user = 'golinkrvv1';
+        $password = 's3y4ruZDxugK';
         $dbh = null;
         try {
             $dbh = new PDO($dsn, $user, $password,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
@@ -50,7 +50,7 @@ function getUsers() {
 function getRequests($ID){
    $response = array();
    $dbh = Database::connect();
-   $query = "SELECT Last_Name, First_Name, State, Date_Request, Date_Accept, Date_Meeting, Subject FROM USER, (SELECT * FROM Meeting WHERE ID1=?) as c WHERE ID=ID1";
+   $query = "SELECT Last_Name, First_Name, State, Date_Request, Date_Accept, Date_Meeting, Subject FROM user, (SELECT * FROM meeting WHERE ID1=?) as c WHERE ID=ID1";
    $sth = $dbh->prepare($query);
    $sth->setFetchMode(PDO::FETCH_ASSOC);
    $sth->execute(array($ID));
@@ -58,38 +58,24 @@ function getRequests($ID){
    
    
    if (!empty($result)) {
-        // check for empty result
-        if (mysql_num_rows($result) > 0) {
  
-            $result = mysql_fetch_array($result);
- 
-            $meeting = array();
-            $meeting["Last_Name"] = $result["Last_Name"];
-            $meeting["First_Name"] = $result["First_Name"];
-            $meeting["State"] = $result["State"];
-            $meeting["Date_Request"] = $result["Date_Request"];
-            $meeting["Date_Accept"] = $result["Date_Accept"];
-            $meeting["Date_Meeting"] = $result["Date_Meeting"];
-            $meeting["Subject"] = $result["Subject"];
-            // success
-            $response["success"] = 1;
- 
-            // user node
+       $response["success"] = 1;
             $response["meeting"] = array();
- 
+            while($row = next($result)){
+            $meeting = array();
+            $meeting["Last_Name"] = $row["Last_Name"];
+            $meeting["First_Name"] = $row["First_Name"];
+            $meeting["State"] = $row["State"];
+            $meeting["Date_Request"] = $row["Date_Request"];
+            $meeting["Date_Accept"] = $row["Date_Accept"];
+            $meeting["Date_Meeting"] = $row["Date_Meeting"];
+            $meeting["Subject"] = $row["Subject"];
             array_push($response["meeting"], $meeting);
- 
+            }
             // echoing JSON response
             echo json_encode($response);
-        } else {
-            // no product found
-            $response["success"] = 0;
-            $response["message"] = "No Meeting found";
- 
-            // echo no users JSON
-            echo json_encode($response);
         }
-    } else {
+     else {
         // no product found
         $response["success"] = 0;
         $response["message"] = "No Meeting found";
@@ -97,6 +83,5 @@ function getRequests($ID){
         // echo no users JSON
         echo json_encode($response);
     }
-   
 }
 ?>
