@@ -46,6 +46,7 @@ public class suggestionsActivity extends ListActivity {
     private static final String TAG_DATE_ACCEPT = "Date_Accept";
     private static final String TAG_DATE_MEETING = "Date_Meeting";
 
+    private static final String SELECT_FUNCTION = "getRequest";
     private static final String ID1 = "1";
 
 
@@ -104,7 +105,8 @@ public class suggestionsActivity extends ListActivity {
         protected Void doInBackground(Void... args) {
             // Creating service handler class instance
             List<NameValuePair> params = new ArrayList<NameValuePair>();
-            //params.add(new BasicNameValuePair("ID1", ID1));
+            params.add(new BasicNameValuePair("SELECT_FUNCTION",SELECT_FUNCTION));
+            params.add(new BasicNameValuePair("ID1", ID1));
             JSONObject json = jsonParser.makeHttpRequest(url,"POST",params);
 
             // Making a request to url and getting response
@@ -152,7 +154,6 @@ public class suggestionsActivity extends ListActivity {
         @Override
         protected void onPostExecute(Void result) {
             pDialog.dismiss();
-            Log.e("suggestions","onpostexecute");
             runOnUiThread(new Runnable() {
                 public void run() {
                     ListAdapter adapter = new SimpleAdapter(
