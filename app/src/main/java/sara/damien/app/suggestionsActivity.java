@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class suggestionsActivity extends ListActivity {
-    private static String url ="http://localhost/Linkr/Print_Request.php";
+    private static String url ="http://www.golinkr.net";
     private ProgressDialog pDialog;
     JSONParser jsonParser = new JSONParser();
 
