@@ -87,7 +87,7 @@ public class suggestionsActivity extends ListActivity {
                     .commit();
         }*/
     }
-    private class GetMeetings extends AsyncTask<Void, Void, Void> {
+    private class GetMeetings extends AsyncTask<Void, Void, Void> implements sara.damien.app.GetMeetings {
 
 
         @Override
@@ -104,7 +104,7 @@ public class suggestionsActivity extends ListActivity {
         protected Void doInBackground(Void... args) {
             // Creating service handler class instance
             List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("ID1", ID1));
+            //params.add(new BasicNameValuePair("ID1", ID1));
             JSONObject json = jsonParser.makeHttpRequest(url,"POST",params);
 
             // Making a request to url and getting response
@@ -133,7 +133,7 @@ public class suggestionsActivity extends ListActivity {
                             map.put(TAG_DATE_ACCEPT,date_accept);
                             map.put(TAG_DATE_MEETING,date_meeting);
                             map.put(TAG_SUBJECT,subject);
-                            map.put(TAG_STATE,state);
+                            map.put(TAG_STATE, state);
                             MeetingList.add(map);
                         }
                     }
@@ -149,11 +149,11 @@ public class suggestionsActivity extends ListActivity {
             return null;
 
 }
-
-        protected void onPostExecute(String file_url) {
+        @Override
+        protected void onPostExecute(Void result) {
             pDialog.dismiss();
+            Log.e("suggestions","onpostexecute");
             runOnUiThread(new Runnable() {
-                @Override
                 public void run() {
                     ListAdapter adapter = new SimpleAdapter(
                             suggestionsActivity.this,MeetingList,
