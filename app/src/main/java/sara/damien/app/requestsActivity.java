@@ -171,7 +171,11 @@ public class RequestsActivity extends ListActivity {
             runOnUiThread(new Runnable() {
                 public void run() {
                     ListAdapter adapter = new SimpleAdapter(
+<<<<<<< Updated upstream
                             RequestsActivity.this, MeetingList,
+=======
+                            RequestsActivity.this,MeetingList,
+>>>>>>> Stashed changes
                             R.layout.list_item,
                             new String[]{TAG_NAME, TAG_SUBJECT, TAG_STATE, TAG_DATE},
                             new int[]{R.id.name, R.id.subject, R.id.state, R.id.meeting_date});

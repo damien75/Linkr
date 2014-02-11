@@ -65,26 +65,24 @@ public class ProfileActivity extends ListActivity {
         setContentView(R.layout.activity_requests);
 
         profile = new ArrayList<HashMap<String, String>>();
-        /*ListView lv = getListView();
+        ListView lv = getListView();
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String name = ((TextView) view.findViewById(R.id.name))
+                String name = ((TextView) view.findViewById(R.id.textView))
                         .getText().toString();
-                String cost = ((TextView) view.findViewById(R.id.state))
+                String cost = ((TextView) view.findViewById(R.id.textView2))
                         .getText().toString();
-                String description = ((TextView) view.findViewById(R.id.meeting_date))
-                        .getText().toString();
-
+/*
                 // Starting single contact activity
                 Intent in = new Intent(getApplicationContext(),
                         SingleContactActivity.class);
                 in.putExtra(TAG_NAME, name);
                 in.putExtra(TAG_EMAIL, cost);
                 in.putExtra(TAG_PHONE_MOBILE, description);
-                startActivity(in);
+                startActivity(in);*/
             }
-        });*/
+        });
         // Calling async task to get json
         new GetProfile().execute();
 
@@ -168,8 +166,8 @@ public class ProfileActivity extends ListActivity {
                     ListAdapter adapter = new SimpleAdapter(
                             ProfileActivity.this,profile,
                             R.layout.activity_profile,
-                            new String[]{TAG_NAME,TAG_AVG_GRADE},
-                            new int[]{R.id.textView,R.id.textView2});
+                            new String[]{TAG_NAME,TAG_AVG_GRADE,TAG_COMPANY},
+                            new int[]{R.id.textView,R.id.textView2,R.id.textView3});
                     setListAdapter(adapter);
                 }
             });
