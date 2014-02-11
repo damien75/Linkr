@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class requestsActivity extends ListActivity {
+public class RequestsActivity extends ListActivity {
     private static String url ="http://www.golinkr.net";
     private ProgressDialog pDialog;
     JSONParser jsonParser = new JSONParser();
@@ -96,7 +96,7 @@ public class requestsActivity extends ListActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             // Showing progress dialog
-            pDialog = new ProgressDialog(requestsActivity.this);
+            pDialog = new ProgressDialog(RequestsActivity.this);
             pDialog.setMessage("Please wait...");
             pDialog.setCancelable(false);
             pDialog.show();
@@ -156,7 +156,7 @@ public class requestsActivity extends ListActivity {
             runOnUiThread(new Runnable() {
                 public void run() {
                     ListAdapter adapter = new SimpleAdapter(
-                            requestsActivity.this,MeetingList,
+                            RequestsActivity.this,MeetingList,
                             R.layout.list_item,
                             new String[]{TAG_NAME,TAG_LAST_NAME,TAG_DATE_REQUEST},
                             new int[]{R.id.name,R.id.state,R.id.meeting_date});
