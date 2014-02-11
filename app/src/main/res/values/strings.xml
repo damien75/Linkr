@@ -9,15 +9,13 @@
     <string name="action_search">Search</string>
     <string name="title_activity_topic">Topic</string>
     <string name="title_activity_suggestions">Suggestions</string>
-    // Request activity
-    <string name="meeting_date">Meeting Date: </string>
+    // Request activity    <string name="meeting_date">Meeting Date: </string>
     <string name="request_sent_date">Request: </string>
     <string name="accepted_date">Accepted: </string>
     <string name="accepted_status">Accepted </string>
     <string name="request_status">Processing</string>
     <string name="meeting_status">Meeting scheduled </string>
-
-    //ProfileActivity
-    <string name="title_activity_profile">Profile</string>
+    //ProfileActivity    <string name="title_activity_profile">Profile</string>
+    <string name="title_activity_requests">RequestsActivity</string>
 
 </resources>
