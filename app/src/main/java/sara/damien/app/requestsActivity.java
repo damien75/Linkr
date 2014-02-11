@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class requestsActivity extends ListActivity {
+public class RequestsActivity extends ListActivity {
     private static String url ="http://www.golinkr.net";
     private ProgressDialog pDialog;
     JSONParser jsonParser = new JSONParser();
@@ -46,6 +46,8 @@ public class requestsActivity extends ListActivity {
     private static final String TAG_DATE_REQUEST = "Date_Request";
     private static final String TAG_DATE_ACCEPT = "Date_Accept";
     private static final String TAG_DATE_MEETING = "Date_Meeting";
+    private static final String TAG_DATE= "Date";
+    private static final String TAG_STATUS= "Status";
 
     private static final String SELECT_FUNCTION = "getRequest";
     private static final String ID1 = "1";
@@ -96,7 +98,7 @@ public class requestsActivity extends ListActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             // Showing progress dialog
-            pDialog = new ProgressDialog(requestsActivity.this);
+            pDialog = new ProgressDialog(RequestsActivity.this);
             pDialog.setMessage("Please wait...");
             pDialog.setCancelable(false);
             pDialog.show();
@@ -127,14 +129,27 @@ public class requestsActivity extends ListActivity {
                             String date_meeting = c.getString(TAG_DATE_MEETING);
                             String subject = c.getString(TAG_SUBJECT);
                             String state = c.getString(TAG_STATE);
+                            String status=null;
+                            String date=null;
+
+                            if (state.contains("0")){
+                                date=getString(R.string.request_send_date)+date_request;
+                                status=getString(R.string.request_status);
+                            }
+                            if (state.contains("1")){
+                                date=getString(R.string.accepted_date)+date_accept;
+                                status=getString(R.string.accepted_status);
+                            }
+                            if (state.contains("2")){
+                                date=getString(R.string.meeting_date)+date_meeting;
+                                status=getString(R.string.meeting_status);
+                            }
 
                             HashMap<String,String> map = new HashMap<String, String>();
                             map.put(TAG_NAME,name);
-                            map.put(TAG_DATE_REQUEST,date_request);
-                            map.put(TAG_DATE_ACCEPT,date_accept);
-                            map.put(TAG_DATE_MEETING,date_meeting);
+                            map.put(TAG_DATE,date);
                             map.put(TAG_SUBJECT,subject);
-                            map.put(TAG_STATE, state);
+                            map.put(TAG_STATUS, status);
                             MeetingList.add(map);
                         }
                     }
@@ -156,10 +171,10 @@ public class requestsActivity extends ListActivity {
             runOnUiThread(new Runnable() {
                 public void run() {
                     ListAdapter adapter = new SimpleAdapter(
-                            requestsActivity.this,MeetingList,
+                            RequestsActivity.this, MeetingList,
                             R.layout.list_item,
-                            new String[]{TAG_NAME,TAG_LAST_NAME,TAG_DATE_REQUEST},
-                            new int[]{R.id.name,R.id.state,R.id.meeting_date});
+                            new String[]{TAG_NAME, TAG_SUBJECT, TAG_STATE, TAG_DATE},
+                            new int[]{R.id.name, R.id.subject, R.id.state, R.id.meeting_date});
                     setListAdapter(adapter);
                 }
             });
