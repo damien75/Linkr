@@ -5,11 +5,13 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-//import android.support.v4.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -31,8 +33,6 @@ public class RequestsActivity extends ListActivity {
     private ProgressDialog pDialog;
     JSONParser jsonParser = new JSONParser();
 
-    private static final String TAG_ID1 = "ID1";
-    private static final String TAG_ID2 = "ID2";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MEETING = "meeting";
     private static final String TAG_LAST_NAME = "Last_Name";
@@ -40,7 +40,6 @@ public class RequestsActivity extends ListActivity {
     private static final String TAG_NAME = "name";
     private static final String TAG_STATE = "State";
     private static final String TAG_SUBJECT = "Subject";
-    private static final String TAG_MESSAGE = "message";
     private static final String TAG_DATE_REQUEST = "Date_Request";
     private static final String TAG_DATE_ACCEPT = "Date_Accept";
     private static final String TAG_DATE_MEETING = "Date_Meeting";
@@ -198,16 +197,13 @@ public class RequestsActivity extends ListActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
     /**
      * A placeholder fragment containing a simple view.
      */
-    /*public static class PlaceholderFragment extends Fragment {
+    public static class PlaceholderFragment extends Fragment {
 
         public PlaceholderFragment() {
         }
@@ -215,9 +211,8 @@ public class RequestsActivity extends ListActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_requests, container, false);
-            return rootView;
+            return inflater.inflate(R.layout.fragment_requests, container, false);
         }
-    }*/
+    }
 
 }

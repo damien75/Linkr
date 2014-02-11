@@ -34,7 +34,6 @@ public class ProfileActivity extends ListActivity {
     private ProgressDialog pDialog;
     JSONParser jsonParser = new JSONParser();
 
-    private static final String TAG_ID = "ID";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_PROFILE_INFO = "Profile_Info";
     private static final String TAG_LAST_NAME = "Last_Name";
@@ -48,7 +47,6 @@ public class ProfileActivity extends ListActivity {
     private static final String TAG_SUM_GRADE = "Sum_Grade";
     private static final String TAG_NUMBER_GRADE = "Number_Grade";
     private static final String TAG_AVG_GRADE = "Average Grade";
-    private static final String TAG_PICTURE = "Picture";
     private static final String SELECT_FUNCTION = "getProfile";
     private static final String ID = "1";
 
@@ -191,10 +189,7 @@ public class ProfileActivity extends ListActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
     /**
@@ -208,8 +203,7 @@ public class ProfileActivity extends ListActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_requests, container, false);
-            return rootView;
+            return inflater.inflate(R.layout.fragment_requests, container, false);
         }
     }
 
