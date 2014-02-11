@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class suggestionsActivity extends ListActivity {
+public class requestsActivity extends ListActivity {
     private static String url ="http://www.golinkr.net";
     private ProgressDialog pDialog;
     JSONParser jsonParser = new JSONParser();
@@ -57,7 +57,7 @@ public class suggestionsActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_suggestions);
+        setContentView(R.layout.activity_requests);
 
         MeetingList = new ArrayList<HashMap<String, String>>();
         ListView lv = getListView();
@@ -96,7 +96,7 @@ public class suggestionsActivity extends ListActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             // Showing progress dialog
-            pDialog = new ProgressDialog(suggestionsActivity.this);
+            pDialog = new ProgressDialog(requestsActivity.this);
             pDialog.setMessage("Please wait...");
             pDialog.setCancelable(false);
             pDialog.show();
@@ -156,7 +156,7 @@ public class suggestionsActivity extends ListActivity {
             runOnUiThread(new Runnable() {
                 public void run() {
                     ListAdapter adapter = new SimpleAdapter(
-                            suggestionsActivity.this,MeetingList,
+                            requestsActivity.this,MeetingList,
                             R.layout.list_item,
                             new String[]{TAG_NAME,TAG_LAST_NAME,TAG_DATE_REQUEST},
                             new int[]{R.id.name,R.id.state,R.id.meeting_date});
@@ -202,7 +202,7 @@ public class suggestionsActivity extends ListActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_suggestions, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_requests, container, false);
             return rootView;
         }
     }
