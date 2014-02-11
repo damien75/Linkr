@@ -14,10 +14,17 @@ switch($_POST["SELECT_FUNCTION"])
             getProfile($_POST["ID"]);
         }
     break;
+    case 'getPicture';
+        if (isset($_POST["ID"])){
+            getProfilePicture($_POST["ID"]);
+        }
+    break;
     default;
         echo 'Merci de faire un choix...';
     break;
 }
+         
+
 }
 
-?>									
+?>					

@@ -78,7 +78,6 @@ function getProfile($ID){
             $pro["Loc_X"] = $row["Loc_X"];
             $pro["Loc_Y"] = $row["Loc_Y"];
             $pro["Last_Subject"] = $row["Last_Subject"];
-            $pro["Picture"] = $row["Picture"];
             $pro["Company"] = $row["Company"];
             $pro["Exp_Years"] = $row["Exp_Years"];
             $pro["Sum_Grade"] = $row["Sum_Grade"];
@@ -97,6 +96,20 @@ function getProfile($ID){
         // echo no users JSON
         echo json_encode($response);
     }
+}
+
+function getProfilePicture($ID){
+   $dbh=connect();
+   $response = array();
+
+   $query = "SELECT picture FROM picture WHERE ID=?";
+   $sth = $dbh->prepare($query);
+   $sth->setFetchMode(PDO::FETCH_ASSOC);
+
+   $sth->execute(array($ID));
+   echo $sth->fetch(PDO::FETCH_ASSOC);
+   $sth->closeCursor();
+
 }
 
 ?>
