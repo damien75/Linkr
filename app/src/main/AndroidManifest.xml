@@ -36,7 +36,11 @@
         </activity>
         <activity
             android:name="sara.damien.app.ProfileActivity"
-            android:label="@string/title_activity_profile" >
+            android:label="@string/title_activity_profile"
+            android:parentActivityName="sara.damien.app.WelcomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="WelcomeActivity" />
         </activity>
     </application>
 

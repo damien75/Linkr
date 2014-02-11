@@ -7,11 +7,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 //import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -190,7 +188,7 @@ public class RequestsActivity extends ListActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
 
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.suggestions, menu);
+        getMenuInflater().inflate(R.menu.requests, menu);
         return true;
     }
 

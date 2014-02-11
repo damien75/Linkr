@@ -4,8 +4,6 @@ import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -27,7 +24,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +48,7 @@ public class ProfileActivity extends ListActivity {
     private static final String TAG_SUM_GRADE = "Sum_Grade";
     private static final String TAG_NUMBER_GRADE = "Number_Grade";
     private static final String TAG_AVG_GRADE = "Average Grade";
+    private static final String TAG_PICTURE = "Picture";
     private static final String SELECT_FUNCTION = "getProfile";
     private static final String ID = "1";
 
@@ -135,6 +132,7 @@ public class ProfileActivity extends ListActivity {
                         double average_grade=(double)sum_grade/((double)number_grade);
                         String avg_grade=String.valueOf(average_grade);
 
+
                         HashMap<String,String> map = new HashMap<String, String>();
                         map.put(TAG_NAME,name);
                         map.put(TAG_LOC_X, loc_x);
@@ -183,7 +181,7 @@ public class ProfileActivity extends ListActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
 
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.suggestions, menu);
+        getMenuInflater().inflate(R.menu.requests, menu);
         return true;
     }
 
