@@ -107,7 +107,7 @@ function getProfilePicture($ID){
    $sth->setFetchMode(PDO::FETCH_ASSOC);
 
    $sth->execute(array($ID));
-   return $sth->fetch(PDO::FETCH_ASSOC);
+   echo $sth->fetch(PDO::FETCH_ASSOC);
    $sth->closeCursor();
 
 }
