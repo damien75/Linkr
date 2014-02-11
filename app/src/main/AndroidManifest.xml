@@ -26,7 +26,7 @@
                 android:value="WelcomeActivity" />
         </activity>
         <activity
-            android:name="sara.damien.app.suggestionsActivity"
+            android:name=".requestsActivity"
             android:label="@string/title_activity_suggestions"
             android:parentActivityName="sara.damien.app.TopicActivity" >
             <meta-data

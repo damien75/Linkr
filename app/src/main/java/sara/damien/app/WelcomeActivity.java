@@ -2,18 +2,14 @@ package sara.damien.app;
 
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
-import android.widget.Button;
 import android.widget.Toast;
 
 public class WelcomeActivity extends ActionBarActivity {
@@ -71,7 +67,7 @@ public class WelcomeActivity extends ActionBarActivity {
     }
 
     public void openSuggestions (View view){
-        Intent intent=new Intent(this,suggestionsActivity.class);
+        Intent intent=new Intent(this,requestsActivity.class);
         startActivity(intent);
     }
 
