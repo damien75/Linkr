@@ -18,8 +18,6 @@ switch($_POST["SELECT_FUNCTION"])
         echo 'Merci de faire un choix...';
     break;
 }
-         
-
 }
 
 ?>									

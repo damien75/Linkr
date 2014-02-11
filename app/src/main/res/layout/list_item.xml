@@ -19,7 +19,17 @@
         android:textSize="16sp"
         android:textStyle="bold" />
 
-    <!-- Email label -->
+    <TextView
+        android:id="@+id/subject"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="2dip"
+        android:paddingTop="6dip"
+        android:textColor="#97DFC6"
+        android:textSize="16sp"
+         />
+
+    <!-- State label -->
     <TextView
         android:id="@+id/state"
         android:layout_width="fill_parent"
@@ -27,13 +37,12 @@
         android:paddingBottom="2dip"
         android:textColor="#acacac" />
 
-    <!-- Mobile number label -->
+    <!-- Date label -->
     <TextView
         android:id="@+id/meeting_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="left"
-        android:text="@string/meeting_date"
         android:textColor="#5d5d5d"
         android:textStyle="bold" />
 
