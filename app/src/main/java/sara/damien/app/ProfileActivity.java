@@ -1,5 +1,6 @@
 package sara.damien.app;
 
+import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -26,11 +27,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ProfileActivity extends ActionBarActivity {
+public class ProfileActivity extends ListActivity {
 
     private static String url ="http://www.golinkr.net";
     private ProgressDialog pDialog;
@@ -38,7 +40,7 @@ public class ProfileActivity extends ActionBarActivity {
 
     private static final String TAG_ID = "ID";
     private static final String TAG_SUCCESS = "success";
-    private static final String TAG_PROFILE_INFO = "PROFILE_INFO";
+    private static final String TAG_PROFILE_INFO = "Profile_Info";
     private static final String TAG_LAST_NAME = "Last_Name";
     private static final String TAG_FIRST_NAME = "First_Name";
     private static final String TAG_NAME = "name";
@@ -50,20 +52,19 @@ public class ProfileActivity extends ActionBarActivity {
     private static final String TAG_SUM_GRADE = "Sum_Grade";
     private static final String TAG_NUMBER_GRADE = "Number_Grade";
     private static final String TAG_AVG_GRADE = "Average Grade";
-
     private static final String SELECT_FUNCTION = "getProfile";
     private static final String ID = "1";
 
 
     JSONArray profileInfos = null;
-    HashMap<String,String> profile;
+    ArrayList<HashMap<String,String>> profile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_requests);
 
-        profile = new HashMap<String, String>();
+        profile = new ArrayList<HashMap<String, String>>();
         /*ListView lv = getListView();
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -136,13 +137,15 @@ public class ProfileActivity extends ActionBarActivity {
                         double average_grade=(double)sum_grade/((double)number_grade);
                         String avg_grade=String.valueOf(average_grade);
 
-                        profile.put(TAG_NAME,name);
-                        profile.put(TAG_LOC_X,loc_x);
-                        profile.put(TAG_LOC_Y,loc_y);
-                        profile.put(TAG_COMPANY,company);
-                        profile.put(TAG_LAST_SUBJECT,subject);
-                        profile.put(TAG_EXP_YEARS, experience);
-                        profile.put(TAG_AVG_GRADE,avg_grade);
+                        HashMap<String,String> map = new HashMap<String, String>();
+                        map.put(TAG_NAME,name);
+                        map.put(TAG_LOC_X, loc_x);
+                        map.put(TAG_LOC_Y, loc_y);
+                        map.put(TAG_COMPANY, company);
+                        map.put(TAG_LAST_SUBJECT, subject);
+                        map.put(TAG_EXP_YEARS, experience);
+                        map.put(TAG_AVG_GRADE, avg_grade);
+                        profile.add(map);
                     }
                 }
                 else{
@@ -162,11 +165,11 @@ public class ProfileActivity extends ActionBarActivity {
             pDialog.dismiss();
             runOnUiThread(new Runnable() {
                 public void run() {
-                    Adapter adapter = new SimpleAdapter(
+                    ListAdapter adapter = new SimpleAdapter(
                             ProfileActivity.this,profile,
                             R.layout.activity_profile,
-                            new String[]{TAG_NAME,TAG_LAST_NAME,TAG_DATE_REQUEST},
-                            new int[]{R.id.name,R.id.state,R.id.meeting_date});
+                            new String[]{TAG_NAME,TAG_AVG_GRADE},
+                            new int[]{R.id.textView,R.id.textView2});
                     setListAdapter(adapter);
                 }
             });
