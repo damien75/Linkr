@@ -71,6 +71,11 @@ public class WelcomeActivity extends ActionBarActivity {
         startActivity(intent);
     }
 
+    public void openProfile (View view){
+        Intent intent=new Intent(this,ProfileActivity.class);
+        startActivity(intent);
+    }
+
     /**
      * A placeholder fragment containing a simple view.
      */

@@ -9,8 +9,17 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Display Users"
+        android:text="Display Meetings"
         android:id="@+id/button"
         android:layout_gravity="center"
         android:onClick="openSuggestions"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Display Profile"
+        android:id="@+id/button2"
+        android:layout_centerHorizontal="true"
+        android:onClick="openProfile"
+        android:layout_gravity="center_horizontal|bottom" />
 </FrameLayout>
