@@ -67,7 +67,7 @@ public class WelcomeActivity extends ActionBarActivity {
     }
 
     public void openSuggestions (View view){
-        Intent intent=new Intent(this,requestsActivity.class);
+        Intent intent=new Intent(this,RequestsActivity.class);
         startActivity(intent);
     }
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="sara.damien.app" >
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -26,12 +27,16 @@
                 android:value="WelcomeActivity" />
         </activity>
         <activity
-            android:name=".requestsActivity"
+            android:name=".RequestsActivity"
             android:label="@string/title_activity_suggestions"
             android:parentActivityName="sara.damien.app.TopicActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="TopicActivity" />
+        </activity>
+        <activity
+            android:name="sara.damien.app.ProfileActivity"
+            android:label="@string/title_activity_profile" >
         </activity>
     </application>
 
