@@ -17,5 +17,7 @@
     <string name="meeting_status">Meeting scheduled </string>
     //ProfileActivity    <string name="title_activity_profile">Profile</string>
     <string name="title_activity_requests">RequestsActivity</string>
+    //Welcome Activity
+    //SubjectActivity
 
 </resources>

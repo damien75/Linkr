@@ -12,7 +12,7 @@
         android:text="Display Meetings"
         android:id="@+id/button"
         android:layout_gravity="center"
-        android:onClick="openSuggestions"/>
+        android:onClick="openRequests"/>
 
     <Button
         android:layout_width="wrap_content"
