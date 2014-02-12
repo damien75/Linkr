@@ -100,7 +100,6 @@ function getProfile($ID){
 
 function getProfilePicture($ID){
    $dbh=connect();
-   $response = array();
 
    $query = "SELECT picture FROM picture WHERE ID=?";
    $sth = $dbh->prepare($query);
@@ -108,7 +107,6 @@ function getProfilePicture($ID){
 
    $sth->execute(array($ID));
    echo $sth->fetch(PDO::FETCH_ASSOC);
-   $sth->closeCursor();
 
 }
 
