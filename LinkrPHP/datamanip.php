@@ -13,7 +13,9 @@ function connect(){
         }
       return $dbh;
 }
-
+    function submitSubject($ID){
+        $dbh=connect();
+    }
    function getRequest($ID1){
    $dbh=connect();
    $response = array();
@@ -106,7 +108,7 @@ function getProfilePicture($ID){
    $sth->setFetchMode(PDO::FETCH_ASSOC);
 
    $sth->execute(array($ID));
-   echo $sth->fetch(PDO::FETCH_ASSOC);
+   return $sth->fetch(PDO::FETCH_ASSOC);
 
 }
 
