@@ -9,10 +9,18 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/setup_meeting"
+        android:id="@+id/buttonTopic"
+        android:layout_gravity="center_horizontal"
+        android:onClick="openTopic"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Display Meetings"
         android:id="@+id/button"
         android:layout_gravity="center"
-        android:onClick="openSuggestions"/>
+        android:onClick="openRequests"/>
 
     <Button
         android:layout_width="wrap_content"

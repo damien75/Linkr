@@ -1,9 +1,8 @@
 package sara.damien.app;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -12,9 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+
+
 public class WelcomeActivity extends ActionBarActivity {
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,11 +21,12 @@ public class WelcomeActivity extends ActionBarActivity {
         setContentView(R.layout.activity_welcome);
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
-                    .commit();
+            /*getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container,new PlaceholderFragment())
+                    .commit();*/
         }
     }
+
 
 
     @Override
@@ -66,7 +66,7 @@ public class WelcomeActivity extends ActionBarActivity {
         startActivity(intent);
     }
 
-    public void openSuggestions (View view){
+    public void openRequests (View view){
         Intent intent=new Intent(this,RequestsActivity.class);
         startActivity(intent);
     }
@@ -92,4 +92,8 @@ public class WelcomeActivity extends ActionBarActivity {
         }
     }
 
+    private static abstract class Fragment {
+        public abstract View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                          Bundle savedInstanceState);
+    }
 }
