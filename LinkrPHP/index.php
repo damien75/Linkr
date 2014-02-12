@@ -19,6 +19,8 @@ switch($_POST["SELECT_FUNCTION"])
             getProfilePicture($_POST["ID"]);
         }
     break;
+    case 'submitSubject';
+    break;
     default;
         echo 'Merci de faire un choix...';
     break;
