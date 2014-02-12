@@ -13,9 +13,15 @@ function connect(){
         }
       return $dbh;
 }
-    function submitSubject($ID){
+    function submitSubject($ID,$subject){
         $dbh=connect();
+        $query="UPDATE user SET Last_Subject=? WHERE ID=?";
+        $sth = $dbh->prepare($query);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute(array($subject,$ID));
     }
+    
+    
    function getRequest($ID1){
    $dbh=connect();
    $response = array();
