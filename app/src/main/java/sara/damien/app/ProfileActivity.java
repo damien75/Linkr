@@ -1,6 +1,6 @@
 package sara.damien.app;
 
-import android.app.ListActivity;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -12,10 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import org.apache.http.NameValuePair;
@@ -28,7 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ProfileActivity extends ListActivity {
+public class ProfileActivity extends Activity {
 
     private static String url ="http://www.golinkr.net";
     private ProgressDialog pDialog;
@@ -48,44 +44,20 @@ public class ProfileActivity extends ListActivity {
     private static final String TAG_NUMBER_GRADE = "Number_Grade";
     private static final String TAG_AVG_GRADE = "Average Grade";
     private static final String SELECT_FUNCTION = "getProfile";
-    private static final String ID = "1";
+    private static final String ID = "2";
 
 
     JSONArray profileInfos = null;
-    ArrayList<HashMap<String,String>> profile;
+    HashMap<String,String> profile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_requests);
+        setContentView(R.layout.activity_profile);
 
-        profile = new ArrayList<HashMap<String, String>>();
-        ListView lv = getListView();
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String name = ((TextView) view.findViewById(R.id.textView))
-                        .getText().toString();
-                String cost = ((TextView) view.findViewById(R.id.textView2))
-                        .getText().toString();
-/*
-                // Starting single contact activity
-                Intent in = new Intent(getApplicationContext(),
-                        SingleContactActivity.class);
-                in.putExtra(TAG_NAME, name);
-                in.putExtra(TAG_EMAIL, cost);
-                in.putExtra(TAG_PHONE_MOBILE, description);
-                startActivity(in);*/
-            }
-        });
+        profile = new HashMap<String, String>();
         // Calling async task to get json
         new GetProfile().execute();
-
-        /*if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
-                    .commit();
-        }*/
     }
     private class GetProfile extends AsyncTask<Void, Void, Void> implements sara.damien.app.GetProfile {
 
@@ -130,16 +102,13 @@ public class ProfileActivity extends ListActivity {
                         double average_grade=(double)sum_grade/((double)number_grade);
                         String avg_grade=String.valueOf(average_grade);
 
-
-                        HashMap<String,String> map = new HashMap<String, String>();
-                        map.put(TAG_NAME,name);
-                        map.put(TAG_LOC_X, loc_x);
-                        map.put(TAG_LOC_Y, loc_y);
-                        map.put(TAG_COMPANY, company);
-                        map.put(TAG_LAST_SUBJECT, subject);
-                        map.put(TAG_EXP_YEARS, experience);
-                        map.put(TAG_AVG_GRADE, avg_grade);
-                        profile.add(map);
+                        profile.put(TAG_NAME,name);
+                        profile.put(TAG_LOC_X, loc_x);
+                        profile.put(TAG_LOC_Y, loc_y);
+                        profile.put(TAG_COMPANY, company);
+                        profile.put(TAG_LAST_SUBJECT, subject);
+                        profile.put(TAG_EXP_YEARS, experience);
+                        profile.put(TAG_AVG_GRADE, avg_grade);
                     }
                 }
                 else{
@@ -159,12 +128,15 @@ public class ProfileActivity extends ListActivity {
             pDialog.dismiss();
             runOnUiThread(new Runnable() {
                 public void run() {
-                    ListAdapter adapter = new SimpleAdapter(
-                            ProfileActivity.this,profile,
-                            R.layout.activity_profile,
-                            new String[]{TAG_NAME,TAG_AVG_GRADE,TAG_COMPANY},
-                            new int[]{R.id.textView,R.id.textView2,R.id.textView3});
-                    setListAdapter(adapter);
+                    TextView txt1 = (TextView) findViewById(R.id.textView);
+                    TextView txt2 = (TextView) findViewById(R.id.textView2);
+                    TextView txt3 = (TextView) findViewById(R.id.textView3);
+                    String t1 = profile.get(TAG_NAME);
+                    String t2 = profile.get(TAG_LOC_X);
+                    String t3 = profile.get(TAG_LOC_Y);
+                    txt1.setText(t1);
+                    txt2.setText(t2);
+                    txt3.setText(t3);
                 }
             });
         }
