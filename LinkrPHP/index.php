@@ -20,6 +20,9 @@ switch($_POST["SELECT_FUNCTION"])
         }
     break;
     case 'submitSubject';
+        if (isset($_POST["ID"])&&isset($_POST["subject"])){
+            submitSubject($_POST["ID"],$_POST["subject"]);
+        }
     break;
     default;
         echo 'Merci de faire un choix...';
