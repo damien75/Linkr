@@ -21,6 +21,14 @@ function connect(){
         $sth->execute(array($subject,$ID));
     }
     
+    function updateArchiveSubject ($ID,$subject){
+        $query="INSERT into archive_subject values (?,?,null,null)";
+        $sth = $dbh->prepare($query);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute(array($ID,$subject));
+
+    }
+    
     
    function getRequest($ID1){
    $dbh=connect();
@@ -118,4 +126,4 @@ function getProfilePicture($ID){
 
 }
 
-?>
+?>			
