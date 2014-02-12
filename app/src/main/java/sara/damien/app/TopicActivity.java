@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,8 @@ public class TopicActivity extends ActionBarActivity {
 
     JSONParser jsonParser = new JSONParser();
     EditText topic;
+    String ID1="1";
+    private static String url ="http://www.golinkr.net";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +70,10 @@ public class TopicActivity extends ActionBarActivity {
             String subject = topic.getText().toString();
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair("subject", subject));
+            params.add(new BasicNameValuePair("SELECT_FUNCTION", "submitSubject"));
+            params.add(new BasicNameValuePair("ID",ID1));
+            JSONObject json = jsonParser.makeHttpRequest(url,
+                    "POST", params);
             return null;
         }
 
