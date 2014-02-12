@@ -18,6 +18,8 @@
     //ProfileActivity    <string name="title_activity_profile">Profile</string>
     <string name="title_activity_requests">RequestsActivity</string>
     //Welcome Activity
+    <string name="setup_meeting">Set Up a Meeting</string>
     //SubjectActivity
-
+    <string name="enter_topic">Please choose a subject for your meeting</string>
+    <string name="go_meeting">GO MEETING !</string>
 </resources>
