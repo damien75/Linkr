@@ -22,6 +22,7 @@ switch($_POST["SELECT_FUNCTION"])
     case 'submitSubject';
         if (isset($_POST["ID"])&&isset($_POST["subject"])){
             submitSubject($_POST["ID"],$_POST["subject"]);
+            updateArchiveSubject($_POST["ID"],$_POST["subject"]);
         }
     break;
     default;
