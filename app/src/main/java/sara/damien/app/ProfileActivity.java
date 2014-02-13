@@ -146,7 +146,6 @@ public class ProfileActivity extends Activity {
                     txt4.setText(t4);
                     txt5.setText(t5);
                     txt6.setText(t6);
-
                 }
             });
         }
