@@ -30,4 +30,5 @@
     //SubjectActivity
     <string name="enter_topic">Please choose a subject for your meeting</string>
     <string name="go_meeting">GO MEETING !</string>
+    <string name="go_meeting2">GO MEETING !!!</string>
 </resources>
