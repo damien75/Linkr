@@ -169,7 +169,7 @@ public class RequestsActivity extends ListActivity {
                 public void run() {
                     ListAdapter adapter = new SimpleAdapter(
                             RequestsActivity.this, MeetingList,
-                            R.layout.list_item,
+                            R.layout.list_itemrequest,
                             new String[]{TAG_NAME, TAG_SUBJECT, TAG_STATE, TAG_DATE},
                             new int[]{R.id.name, R.id.subject, R.id.state, R.id.meeting_date});
                     setListAdapter(adapter);
