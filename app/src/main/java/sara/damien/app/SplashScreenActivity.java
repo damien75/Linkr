@@ -3,17 +3,13 @@ package sara.damien.app;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
 
 public class SplashScreenActivity extends Activity {
 
@@ -24,13 +20,11 @@ public class SplashScreenActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        Log.e("Splashscreen","onCreate!");
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 Intent i = new Intent(SplashScreenActivity.this,WelcomeActivity.class);
                 startActivity(i);
-                Log.e("Splashscreen","starting welcome activity!");
                 finish();
             }
         },SPLASH_SCREEN_TIMEOUT);
