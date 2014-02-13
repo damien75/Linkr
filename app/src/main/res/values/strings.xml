@@ -22,6 +22,9 @@
     <string name="profile_subject">#This is what I want to talk about!</string>
     <string name="profile_name">My first name and family name</string>
     <string name="profile_distance">I am this far from you...</string>
+    <string name="profile_company">My current company: </string>
+    <string name="profile_experience">I have worked in this company for: </string>
+    <string name="profile_grade">I am graded by other users: </string>
     //Welcome Activity
     <string name="setup_meeting">Set Up a Meeting</string>
     //SubjectActivity

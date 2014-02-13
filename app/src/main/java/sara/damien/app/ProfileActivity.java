@@ -130,13 +130,22 @@ public class ProfileActivity extends Activity {
                 public void run() {
                     TextView txt1 = (TextView) findViewById(R.id.textView);
                     TextView txt2 = (TextView) findViewById(R.id.textView2);
-                    TextView txt3 = (TextView) findViewById(R.id.textView3);
-                    String t1 = profile.get(TAG_NAME);
-                    String t2 = profile.get(TAG_LOC_X);
-                    String t3 = profile.get(TAG_LOC_Y);
+                    TextView txt3 = (TextView) findViewById(R.id.grade);
+                    TextView txt4 = (TextView) findViewById(R.id.company);
+                    TextView txt5 = (TextView) findViewById(R.id.years_experience);
+                    TextView txt6 = (TextView) findViewById(R.id.textView3);
+                    String t1 = profile.get(TAG_LAST_SUBJECT);
+                    String t2 = profile.get(TAG_NAME);
+                    String t3 = txt3.getText() + profile.get(TAG_AVG_GRADE);
+                    String t4 = txt4.getText() + profile.get(TAG_COMPANY);
+                    String t5 = txt5.getText() + profile.get(TAG_EXP_YEARS);
+                    String t6 = "My current position is the following: X="+profile.get(TAG_LOC_X)+" and Y="+profile.get(TAG_LOC_Y);
                     txt1.setText(t1);
                     txt2.setText(t2);
                     txt3.setText(t3);
+                    txt4.setText(t4);
+                    txt5.setText(t5);
+                    txt6.setText(t6);
                 }
             });
         }
