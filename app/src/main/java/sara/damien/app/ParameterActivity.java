@@ -16,6 +16,9 @@ import java.util.HashMap;
 
 public class ParameterActivity extends ListActivity {
     ArrayList<HashMap<String,String>> ParameterList;
+    private static final String TAG_MENU_ITEM = "success";
+    private static final String TAG_REQUEST = "meeting";
+    private static final String TAG_SHARE = "Last_Name";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,17 +29,21 @@ public class ParameterActivity extends ListActivity {
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
         }*/
-
-        /*runOnUiThread(new Runnable() {
+        HashMap<String,String> map = new HashMap<String, String>();
+        map.put(TAG_MENU_ITEM,"Edit Profile");
+        map.put(TAG_MENU_ITEM,"Requests");
+        map.put(TAG_MENU_ITEM,"Share");
+        ParameterList.add(map);
+        runOnUiThread(new Runnable() {
             public void run() {
                 ListAdapter adapter = new SimpleAdapter(
                         ParameterActivity.this, ParameterList,
                         R.layout.list_itemrequest,
-                        new String[]{TAG_NAME, TAG_SUBJECT, TAG_STATE, TAG_DATE},
-                        new int[]{R.id.name, R.id.subject, R.id.state, R.id.meeting_date});
+                        new String[]{TAG_MENU_ITEM},
+                        new int[]{R.id.menu_item});
                 setListAdapter(adapter);
             }
-        });*/
+        });
 
 
     }
