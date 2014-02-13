@@ -24,9 +24,28 @@
     <string name="profile_experience">I have worked in this company for: </string>
     <string name="profile_grade">I am graded by other users: </string>
     //Welcome Activity    <string name="setup_meeting">Set Up a Meeting</string>
-    //SubjectActivity    <string name="enter_topic">Please choose a subject for your meeting</string>
+    //Subject Activity    <string name="enter_topic">Please choose a subject for your meeting</string>
     <string name="go_meeting">GO MEETING !</string>
     <string name="go_meeting2">GO MEETING !!!!</string>
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
+
+    //Navigation Drawer Activity
+    <string-array name="nav_drawer_items">
+        <item >Home</item>
+        <item >Find People</item>
+        <item >Photos</item>
+        <item >Communities</item>
+        <item >Pages</item>
+        <item >What\'s Hot</item>
+    </string-array>
+
+    <array name="nav_drawer_icons">
+        <item>@drawable/ic_home</item>
+        <item>@drawable/ic_people</item>
+        <item>@drawable/ic_photos</item>
+        <item>@drawable/ic_communities</item>
+        <item>@drawable/ic_pages</item>
+        <item>@drawable/ic_whats_hot</item>
+    </array>
 
 </resources>
