@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/profile_picture"
-        android:src="@drawable/ic_launcher"
+        android:src="@drawable/lil-wayne-gq-2"
         android:layout_below="@id/textView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
