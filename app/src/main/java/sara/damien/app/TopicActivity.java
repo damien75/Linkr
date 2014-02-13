@@ -1,24 +1,23 @@
 package sara.damien.app;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -28,9 +27,14 @@ public class TopicActivity extends ActionBarActivity {
     private ProgressDialog pDialog;
 
     JSONParser jsonParser = new JSONParser();
+    private static final String TAG_LAST_SUBJECT = "Last_Subject";
+    private static final String TAG_SUBJECT = "subject";
+    private static String last_subject;
     EditText topic;
     String ID1="1";
     private static String url ="http://www.golinkr.net";
+
+    JSONArray subjects = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,10 @@ public class TopicActivity extends ActionBarActivity {
         }
 
         topic = (EditText) findViewById(R.id.editTopic);
+        last_subject = "test";
+        new getSubject().execute();
+        topic.setHint(last_subject);
+
         Button submit = (Button) findViewById(R.id.buttonGoMeeting);
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,6 +61,31 @@ public class TopicActivity extends ActionBarActivity {
         });
 
     }
+    class getSubject extends  AsyncTask<String, String, String>{
+
+        @Override
+        protected String doInBackground(String... strings) {
+            List<NameValuePair> params2 = new ArrayList<NameValuePair>();
+            params2.add(new BasicNameValuePair("SELECT_FUNCTION","getLastSubject"));
+            params2.add(new BasicNameValuePair("ID",ID1));
+            JSONObject json2 = jsonParser.makeHttpRequest(url,"POST",params2);
+            Log.e("getSubject","success");
+
+            try {
+                subjects=json2.getJSONArray(TAG_SUBJECT);
+                for (int i = 0; i<subjects.length();i++){
+                    JSONObject c = subjects.getJSONObject(i);
+                    last_subject = c.getString(TAG_LAST_SUBJECT);
+                    Log.e("lasst",last_subject);
+                }
+            }
+            catch (JSONException e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
     class ChooseSubject extends AsyncTask<String, String, String>{
 
         @Override
@@ -67,13 +100,20 @@ public class TopicActivity extends ActionBarActivity {
 
         @Override
         protected String doInBackground(String... strings) {
-            String subject = topic.getText().toString();
-            List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("subject", subject));
-            params.add(new BasicNameValuePair("SELECT_FUNCTION", "submitSubject"));
-            params.add(new BasicNameValuePair("ID",ID1));
-            JSONObject json = jsonParser.makeHttpRequest(url,
-                    "POST", params);
+            try{
+                if (topic.getText().length()>0){
+                    String subject = topic.getText().toString();
+                    List<NameValuePair> params = new ArrayList<NameValuePair>();
+                    params.add(new BasicNameValuePair("subject", subject));
+                    params.add(new BasicNameValuePair("SELECT_FUNCTION", "submitSubject"));
+                    params.add(new BasicNameValuePair("ID",ID1));
+                    jsonParser.makeHttpRequest(url,
+                            "POST", params);
+                }
+            }
+            catch (NullPointerException e){
+                e.printStackTrace();
+            }
             return null;
         }
 
@@ -98,10 +138,7 @@ public class TopicActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
 
@@ -116,8 +153,7 @@ public class TopicActivity extends ActionBarActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_topic, container, false);
-            return rootView;
+            return inflater.inflate(R.layout.fragment_topic, container, false);
         }
     }
 
