@@ -16,53 +16,67 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp" />
 
-    <ImageView
+    <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/profile_picture"
-        android:src="@drawable/lil-wayne-gq-2"
         android:layout_below="@id/textView"
-        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/textView3"
         android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"/>
+        android:layout_marginBottom="15dp"
+        android:layout_centerHorizontal="true">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/profile_picture"
+                android:src="@drawable/lil_wayne"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/grade"
-        android:text="@string/profile_grade"
-        android:layout_below="@id/profile_picture"
-        android:layout_centerHorizontal="true"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/grade"
+                android:text="@string/profile_grade"
+                android:layout_below="@id/profile_picture"
+                android:layout_centerHorizontal="true"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/profile_name"
-        android:id="@+id/textView2"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/grade"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/profile_name"
+                android:id="@+id/textView2"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/grade"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/company"
-        android:text="@string/profile_company"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="15dp"
-        android:layout_below="@id/textView2"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/company"
+                android:text="@string/profile_company"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_below="@id/textView2"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/years_experience"
-        android:text="@string/profile_experience"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="15dp"
-        android:layout_below="@id/company"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/years_experience"
+                android:text="@string/profile_experience"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_below="@id/company"/>
+            </RelativeLayout>
+        </ScrollView>
+
+
 
     <TextView
         android:layout_width="wrap_content"
@@ -72,7 +86,7 @@
         android:id="@+id/textView3"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="35dp"
         android:layout_gravity="center_horizontal|bottom" />
 
 </RelativeLayout>
