@@ -3,7 +3,7 @@
     android:shape="rectangle" >
 
     <!-- view background color -->
-    <solid android:color="@drawable/gradient_background" >
+    <solid android:color="#ff000060" >
     </solid>
 
     <!-- If you want to add some padding -->
