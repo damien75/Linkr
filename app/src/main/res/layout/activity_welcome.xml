@@ -16,33 +16,6 @@
         android:choiceMode="singleChoice"
         android:divider="#ff000000"
         android:dividerHeight="1dp"
-        android:listSelector="@drawable/drawer_shadow"
+        android:listSelector="@drawable/list_selector"
         android:background="#ff808080"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/setup_meeting"
-        android:id="@+id/buttonTopic"
-        android:layout_gravity="center_horizontal"
-        android:onClick="openTopic"
-        android:layout_marginTop="20dp"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Display Meetings"
-        android:id="@+id/button"
-        android:layout_gravity="center"
-        android:onClick="openRequests"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Display Profile"
-        android:id="@+id/button2"
-        android:layout_centerHorizontal="true"
-        android:onClick="openProfile"
-        android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="50dp"/>
 </android.support.v4.widget.DrawerLayout>

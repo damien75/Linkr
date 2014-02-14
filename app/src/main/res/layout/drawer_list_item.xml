@@ -1,7 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
-    android:background="@drawable/gradient_background">
+    android:layout_height="48dp">
 
     <ImageView
         android:id="@+id/icon"
@@ -28,7 +27,6 @@
     <TextView android:id="@+id/counter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/gradient_background"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="8dp"
