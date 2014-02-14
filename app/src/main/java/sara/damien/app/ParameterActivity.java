@@ -1,24 +1,19 @@
 package sara.damien.app;
 
 import android.app.ListActivity;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
-
 import java.util.ArrayList;
 import java.util.HashMap;
+
+//import android.support.v4.app.Fragment;
 
 public class ParameterActivity extends ListActivity {
     ArrayList<HashMap<String,String>> ParameterList;
     private static final String TAG_MENU_ITEM = "success";
-    private static final String TAG_REQUEST = "meeting";
-    private static final String TAG_SHARE = "Last_Name";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +33,7 @@ public class ParameterActivity extends ListActivity {
             public void run() {
                 ListAdapter adapter = new SimpleAdapter(
                         ParameterActivity.this, ParameterList,
-                        R.layout.list_itemrequest,
+                        R.layout.list_itemparameter,
                         new String[]{TAG_MENU_ITEM},
                         new int[]{R.id.menu_item});
                 setListAdapter(adapter);
@@ -63,17 +58,14 @@ public class ParameterActivity extends ListActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
 
 
     /**
      * A placeholder fragment containing a simple view.
-     */
+
     public static class PlaceholderFragment extends Fragment {
 
         public PlaceholderFragment() {
@@ -86,5 +78,5 @@ public class ParameterActivity extends ListActivity {
             return rootView;
         }
     }
-
+*/
 }

@@ -77,6 +77,7 @@ public class TopicActivity extends ActionBarActivity {
                     JSONObject c = subjects.getJSONObject(i);
                     last_subject = c.getString(TAG_LAST_SUBJECT);
                     Log.e("lasst",last_subject);
+
                 }
             }
             catch (JSONException e){

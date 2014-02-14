@@ -31,21 +31,17 @@
 
     //Navigation Drawer Activity
     <string-array name="nav_drawer_items">
-        <item >Home</item>
-        <item >Find People</item>
-        <item >Photos</item>
-        <item >Communities</item>
-        <item >Pages</item>
-        <item >What\'s Hot</item>
+        <item>Home</item>
+        <item >Edit Profile</item>
+        <item >Requests</item>
+        <item >Share</item>
     </string-array>
 
     <array name="nav_drawer_icons">
-        <item>@drawable/ic_home</item>
-        <item>@drawable/ic_people</item>
-        <item>@drawable/ic_photos</item>
-        <item>@drawable/ic_communities</item>
-        <item>@drawable/ic_pages</item>
-        <item>@drawable/ic_whats_hot</item>
+        <item>@drawable/ic_action_important</item>
+        <item>@drawable/ic_action_edit</item>
+        <item>@drawable/ic_action_group</item>
+        <item>@drawable/ic_action_share</item>
     </array>
 
 </resources>
