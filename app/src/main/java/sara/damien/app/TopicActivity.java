@@ -21,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class TopicActivity extends ActionBarActivity {
@@ -47,15 +48,20 @@ public class TopicActivity extends ActionBarActivity {
                     .commit();
         }
 
+        new GetProfile().execute();
         topic = (EditText) findViewById(R.id.editTopic);
         last_subject = "test";
         new getSubject().execute();
         topic.setHint(last_subject);
     }
 
-
+    Profile p;
+    HashMap<String,String> profile = new HashMap<String, String>();
     public void displayProfile (View view){
         Intent intent=new Intent(this,DisplayProfileActivity.class);
+        Bundle b = new Bundle();
+        b.putParcelable("profiles",p);
+        intent.putExtras(b);
         startActivity(intent);
         new ChooseSubject().execute();
     }
@@ -122,6 +128,119 @@ public class TopicActivity extends ActionBarActivity {
             // dismiss the dialog once done
             pDialog.dismiss();
         }
+    }
+
+    JSONParser jsonParser2 = new JSONParser();
+
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_PROFILE_INFO = "Profile_Info";
+    private static final String TAG_LAST_NAME = "Last_Name";
+    private static final String TAG_FIRST_NAME = "First_Name";
+    private static final String TAG_LOC_X = "Loc_X";
+    private static final String TAG_LOC_Y = "Loc_Y";
+    private static final String TAG_COMPANY = "Company";
+    private static final String TAG_EXP_YEARS = "Exp_Years";
+    private static final String TAG_SUM_GRADE = "Sum_Grade";
+    private static final String TAG_NUMBER_GRADE = "Number_Grade";
+    private static final String ID = "3";
+    private Profile[] profilestest = new Profile[10];
+
+
+    JSONArray profileInfos = null;
+
+    private class GetProfile extends AsyncTask<Void, Void, Void> implements sara.damien.app.GetProfile {
+
+/*
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // Showing progress dialog
+            pDialog = new ProgressDialog(TopicActivity.this);
+            pDialog.setMessage("Please wait...");
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }*/
+
+        @Override
+        protected Void doInBackground(Void... args) {
+            // Creating service handler class instance
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("SELECT_FUNCTION","getProfile"));
+            params.add(new BasicNameValuePair("ID", ID));
+            JSONObject json = jsonParser2.makeHttpRequest(url,"POST",params);
+
+            // Making a request to url and getting response
+            String jsonStr = json.toString();
+            Log.d("Response: ", "> " + jsonStr);
+
+            //if (jsonStr != null) {
+            try {
+                int success = json.getInt(TAG_SUCCESS);
+                if (success==1){
+                    profileInfos=json.getJSONArray(TAG_PROFILE_INFO);
+                    for (int i = 0; i<profileInfos.length();i++){
+                        JSONObject c = profileInfos.getJSONObject(i);
+                        String last_name = c.getString(TAG_FIRST_NAME);
+                        String first_name = c.getString(TAG_LAST_NAME);
+                        String loc_x = c.getString(TAG_LOC_X);
+                        String loc_y = c.getString(TAG_LOC_Y);
+                        String company = c.getString(TAG_COMPANY);
+                        String subject = c.getString(TAG_LAST_SUBJECT);
+                        String experience = c.getString(TAG_EXP_YEARS);
+                        int sum_grade = c.getInt(TAG_SUM_GRADE);
+                        int number_grade = c.getInt(TAG_NUMBER_GRADE);
+                        String s_grade=String.valueOf(sum_grade);
+                        String n_grade=String.valueOf(number_grade);
+
+                        profile.put(TAG_LAST_NAME,last_name);
+                        profile.put(TAG_FIRST_NAME,first_name);
+                        profile.put(TAG_LOC_X, loc_x);
+                        profile.put(TAG_LOC_Y, loc_y);
+                        profile.put(TAG_COMPANY, company);
+                        profile.put(TAG_LAST_SUBJECT, subject);
+                        profile.put(TAG_EXP_YEARS, experience);
+                        profile.put(TAG_SUM_GRADE, s_grade);
+                        profile.put(TAG_NUMBER_GRADE,n_grade);
+                    }
+                }
+                else{
+                    Intent i = new Intent(getApplicationContext(),WelcomeActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(i);
+                }
+            }
+            catch (JSONException e){
+                e.printStackTrace();
+            }
+            return null;
+
+        }
+        @Override
+        protected void onPostExecute(Void result) {
+           // pDialog.dismiss();
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    String t1 = profile.get(TAG_LAST_SUBJECT);
+                    String t2 = profile.get(TAG_LAST_NAME);
+                    String t21 = profile.get(TAG_FIRST_NAME);
+                    String t3 = profile.get(TAG_SUM_GRADE);
+                    int sum = Integer.parseInt(t3);
+                    String t31 = profile.get(TAG_NUMBER_GRADE);
+                    int num = Integer.parseInt(t31);
+                    String t4 = profile.get(TAG_COMPANY);
+                    String t5 = profile.get(TAG_EXP_YEARS);
+                    int exp = Integer.parseInt(t5);
+                    String t6 =profile.get(TAG_LOC_X);
+                    double x = Double.valueOf(t6);
+                    String t7 = profile.get(TAG_LOC_Y);
+                    double y = Double.valueOf(t7);
+                    int id = Integer.parseInt(ID);
+                    p = new Profile(true,t2,t21,t1,exp,x,y,t4,id,sum,num);
+                    profilestest[0]=p;
+                }
+            });
+        }
+
     }
 
     @Override
