@@ -33,5 +33,6 @@
         android:layout_height="wrap_content"
         android:text="@string/go_meeting"
         android:id="@+id/buttonGoMeeting"
-        android:layout_gravity="center_horizontal|bottom"/>
+        android:layout_gravity="center_horizontal|bottom"
+        android:onClick="displayProfile"/>
 </FrameLayout>

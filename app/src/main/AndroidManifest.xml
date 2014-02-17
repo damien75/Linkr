@@ -12,11 +12,12 @@
         <activity
             android:name="sara.damien.app.SplashScreenActivity"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.Black.NoTitleBar"><intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name="sara.damien.app.WelcomeActivity"
@@ -48,6 +49,10 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="WelcomeActivity" />
+        </activity>
+        <activity
+            android:name="sara.damien.app.DisplayProfileActivity"
+            android:label="@string/title_activity_display_profile" >
         </activity>
     </application>
 

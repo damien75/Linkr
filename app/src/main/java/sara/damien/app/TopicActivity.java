@@ -1,17 +1,17 @@
 package sara.damien.app;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 
 import org.apache.http.NameValuePair;
@@ -51,16 +51,15 @@ public class TopicActivity extends ActionBarActivity {
         last_subject = "test";
         new getSubject().execute();
         topic.setHint(last_subject);
-
-        Button submit = (Button) findViewById(R.id.buttonGoMeeting);
-        submit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new ChooseSubject().execute();
-            }
-        });
-
     }
+
+
+    public void displayProfile (View view){
+        Intent intent=new Intent(this,DisplayProfileActivity.class);
+        startActivity(intent);
+        new ChooseSubject().execute();
+    }
+
     class getSubject extends  AsyncTask<String, String, String>{
 
         @Override

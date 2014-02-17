@@ -9,32 +9,30 @@
     <string name="action_search">Search</string>
     <string name="title_activity_topic">Topic</string>
     <string name="title_activity_suggestions">Suggestions</string>
-    // Request activity    <string name="title_activity_requests">RequestsActivity</string>
+    // Request activity        <string name="title_activity_requests">RequestsActivity</string>
     <string name="meeting_date">Meeting Date: </string>
     <string name="request_sent_date">Request: </string>
     <string name="accepted_date">Accepted: </string>
     <string name="accepted_status">Accepted </string>
     <string name="request_status">Processing</string>
     <string name="meeting_status">Meeting scheduled </string>
-    //ProfileActivity    <string name="title_activity_profile">Profile</string>
+    //ProfileActivity        <string name="title_activity_profile">Profile</string>
     <string name="profile_subject">#This is what I want to talk about!</string>
     <string name="profile_name">My first name and family name</string>
     <string name="profile_distance">I am this far from you...</string>
     <string name="profile_company">My current company: </string>
     <string name="profile_experience">I have worked in this company for: </string>
     <string name="profile_grade">I am graded by other users: </string>
-    //Welcome Activity    <string name="setup_meeting">Set Up a Meeting</string>
-    //Subject Activity    <string name="enter_topic">Please choose a subject for your meeting</string>
+    //Welcome Activity        <string name="setup_meeting">Set Up a Meeting</string>
+    //Subject Activity        <string name="enter_topic">Please choose a subject for your meeting</string>
     <string name="go_meeting">GO MEETING !</string>
     <string name="go_meeting2">GO MEETING !!!!</string>
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
-
-    //Navigation Drawer Activity
-    <string-array name="nav_drawer_items">
+    //Navigation Drawer Activity    <string-array name="nav_drawer_items">
         <item>Home</item>
-        <item >Edit Profile</item>
-        <item >Requests</item>
-        <item >Share</item>
+        <item>Edit Profile</item>
+        <item>Requests</item>
+        <item>Share</item>
     </string-array>
 
     <array name="nav_drawer_icons">
@@ -43,5 +41,7 @@
         <item>@drawable/ic_action_group</item>
         <item>@drawable/ic_action_share</item>
     </array>
+
+    <string name="title_activity_display_profile">DisplayProfileActivity</string>
 
 </resources>
