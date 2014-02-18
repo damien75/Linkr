@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -59,8 +60,10 @@ public class TopicActivity extends ActionBarActivity {
     HashMap<String,String> profile = new HashMap<String, String>();
     public void displayProfile (View view){
         Intent intent=new Intent(this,DisplayProfileActivity.class);
+        Parcelable[] users = new Parcelable[profilestest.length];
+        System.arraycopy(profilestest,0,users,0,profilestest.length);
         Bundle b = new Bundle();
-        b.putParcelable("profiles",p);
+        b.putParcelableArray("profiles",users);
         intent.putExtras(b);
         startActivity(intent);
         new ChooseSubject().execute();

@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -170,8 +171,10 @@ public class DisplayProfileActivity extends FragmentActivity {
             ((TextView) rootView.findViewById(android.R.id.text1)).setText(
                     Integer.toString(args.getInt(ARG_OBJECT)));
             Bundle b = getIntent().getExtras();
-            Profile p = b.getParcelable("profiles");
-            ((TextView) rootView.findViewById(R.id.test)).setText(p.getFirst_Name());
+            Parcelable[] users = b.getParcelableArray("profiles");
+            Profile[]profilesss = new Profile[users.length];
+            System.arraycopy(users,0,profilesss,0,users.length);
+            ((TextView) rootView.findViewById(R.id.test)).setText(profilesss[0].getFirst_Name());
             return rootView;
         }
 
