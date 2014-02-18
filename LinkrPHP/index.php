@@ -25,6 +25,9 @@ switch($_POST["SELECT_FUNCTION"])
             updateArchiveSubject($_POST["ID"],$_POST["subject"]);
         }
     break;
+    case 'getAllProfile';
+            getAllProfile();
+    break;
     case 'getLastSubject';
          if (isset($_POST["ID"])){
          getLastSubject ($_POST["ID"]);
