@@ -46,6 +46,8 @@ public class Profile implements Parcelable {
         double avg = (double)this.Sum_Grade/((double)this.Number_Grade);
         return String.valueOf(avg);
     }
+    public String getCompany (){return this.Company;}
+    public int getExp_Years (){return this.Exp_Years;}
 
     @Override
     public int describeContents() {
