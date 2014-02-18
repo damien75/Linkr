@@ -39,6 +39,13 @@ public class Profile implements Parcelable {
     public String getFirst_Name(){
         return this.First_Name;
     }
+    public String getLast_Name(){
+        return this.Last_Name;
+    }
+    public String get_Avg_Grade(){
+        double avg = (double)this.Sum_Grade/((double)this.Number_Grade);
+        return String.valueOf(avg);
+    }
 
     @Override
     public int describeContents() {

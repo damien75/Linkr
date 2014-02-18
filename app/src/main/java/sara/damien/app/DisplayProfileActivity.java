@@ -168,13 +168,12 @@ public class DisplayProfileActivity extends FragmentActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_collection_object, container, false);
             Bundle args = getArguments();
-            ((TextView) rootView.findViewById(android.R.id.text1)).setText(
-                    Integer.toString(args.getInt(ARG_OBJECT)));
             Bundle b = getIntent().getExtras();
             Parcelable[] users = b.getParcelableArray("profiles");
             Profile[]profilesss = new Profile[users.length];
             System.arraycopy(users,0,profilesss,0,users.length);
-            ((TextView) rootView.findViewById(R.id.test)).setText(profilesss[0].getFirst_Name());
+            ((TextView) rootView.findViewById(android.R.id.text1)).setText(profilesss[args.getInt(ARG_OBJECT)].getLast_Name()+" "+profilesss[args.getInt(ARG_OBJECT)].getFirst_Name());
+            ((TextView) rootView.findViewById(R.id.grade)).setText(profilesss[args.getInt(ARG_OBJECT)].get_Avg_Grade());
             return rootView;
         }
 
@@ -249,9 +248,9 @@ public class DisplayProfileActivity extends FragmentActivity {
             @Override
             protected void onPostExecute(Void result) {
                 super.onPostExecute(result);
-                TextView txtv = (TextView) mContext.findViewById(R.id.test);
+                /*TextView txtv = (TextView) mContext.findViewById(R.id.test);
                 String t1 = MeetingList.get(TAG_NAME);
-                txtv.setText("wtf "+t1);
+                txtv.setText("wtf "+t1);*/
             }
 
         }

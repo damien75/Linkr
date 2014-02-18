@@ -63,7 +63,7 @@ public class TopicActivity extends ActionBarActivity {
         Parcelable[] users = new Parcelable[profilestest.length];
         System.arraycopy(profilestest,0,users,0,profilestest.length);
         Bundle b = new Bundle();
-        b.putParcelableArray("profiles",users);
+        b.putParcelableArray("profiles", users);
         intent.putExtras(b);
         startActivity(intent);
         new ChooseSubject().execute();
@@ -168,8 +168,7 @@ public class TopicActivity extends ActionBarActivity {
         protected Void doInBackground(Void... args) {
             // Creating service handler class instance
             List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("SELECT_FUNCTION","getProfile"));
-            params.add(new BasicNameValuePair("ID", ID));
+            params.add(new BasicNameValuePair("SELECT_FUNCTION","getAllProfile"));
             JSONObject json = jsonParser2.makeHttpRequest(url,"POST",params);
 
             // Making a request to url and getting response
@@ -204,6 +203,23 @@ public class TopicActivity extends ActionBarActivity {
                         profile.put(TAG_EXP_YEARS, experience);
                         profile.put(TAG_SUM_GRADE, s_grade);
                         profile.put(TAG_NUMBER_GRADE,n_grade);
+                        String t1 = profile.get(TAG_LAST_SUBJECT);
+                        String t2 = profile.get(TAG_LAST_NAME);
+                        String t21 = profile.get(TAG_FIRST_NAME);
+                        String t3 = profile.get(TAG_SUM_GRADE);
+                        int sum = Integer.parseInt(t3);
+                        String t31 = profile.get(TAG_NUMBER_GRADE);
+                        int num = Integer.parseInt(t31);
+                        String t4 = profile.get(TAG_COMPANY);
+                        String t5 = profile.get(TAG_EXP_YEARS);
+                        int exp = Integer.parseInt(t5);
+                        String t6 =profile.get(TAG_LOC_X);
+                        double x = Double.valueOf(t6);
+                        String t7 = profile.get(TAG_LOC_Y);
+                        double y = Double.valueOf(t7);
+                        int id = Integer.parseInt(ID);
+                        p = new Profile(true,t2,t21,t1,exp,x,y,t4,id,sum,num);
+                        profilestest[i]=p;
                     }
                 }
                 else{
@@ -222,24 +238,7 @@ public class TopicActivity extends ActionBarActivity {
         protected void onPostExecute(Void result) {
            // pDialog.dismiss();
             runOnUiThread(new Runnable() {
-                public void run() {
-                    String t1 = profile.get(TAG_LAST_SUBJECT);
-                    String t2 = profile.get(TAG_LAST_NAME);
-                    String t21 = profile.get(TAG_FIRST_NAME);
-                    String t3 = profile.get(TAG_SUM_GRADE);
-                    int sum = Integer.parseInt(t3);
-                    String t31 = profile.get(TAG_NUMBER_GRADE);
-                    int num = Integer.parseInt(t31);
-                    String t4 = profile.get(TAG_COMPANY);
-                    String t5 = profile.get(TAG_EXP_YEARS);
-                    int exp = Integer.parseInt(t5);
-                    String t6 =profile.get(TAG_LOC_X);
-                    double x = Double.valueOf(t6);
-                    String t7 = profile.get(TAG_LOC_Y);
-                    double y = Double.valueOf(t7);
-                    int id = Integer.parseInt(ID);
-                    p = new Profile(true,t2,t21,t1,exp,x,y,t4,id,sum,num);
-                    profilestest[0]=p;
+                public void run() { 
                 }
             });
         }
