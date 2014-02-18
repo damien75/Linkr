@@ -5,7 +5,8 @@
     android:orientation="vertical"
     android:padding="10dp"
     android:paddingLeft="10dp"
-    android:paddingRight="10dp" >
+    android:paddingRight="10dp"
+    android:id="@+id/item_list101">
 
     <!-- Name Label -->
 

@@ -153,7 +153,7 @@ public class TopicActivity extends ActionBarActivity {
 
     private class GetProfile extends AsyncTask<Void, Void, Void> implements sara.damien.app.GetProfile {
 
-/*
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -162,7 +162,7 @@ public class TopicActivity extends ActionBarActivity {
             pDialog.setMessage("Please wait...");
             pDialog.setCancelable(false);
             pDialog.show();
-        }*/
+        }
 
         @Override
         protected Void doInBackground(Void... args) {
@@ -236,7 +236,7 @@ public class TopicActivity extends ActionBarActivity {
         }
         @Override
         protected void onPostExecute(Void result) {
-           // pDialog.dismiss();
+            pDialog.dismiss();
             runOnUiThread(new Runnable() {
                 public void run() { 
                 }

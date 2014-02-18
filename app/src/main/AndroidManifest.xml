@@ -12,8 +12,8 @@
         <activity
             android:name="sara.damien.app.SplashScreenActivity"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.Black.NoTitleBar"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,7 +23,7 @@
         <activity
             android:name="sara.damien.app.WelcomeActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -32,7 +32,7 @@
             android:name="sara.damien.app.TopicActivity"
             android:label="@string/title_activity_topic"
             android:parentActivityName="sara.damien.app.WelcomeActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="WelcomeActivity" />
@@ -41,7 +41,7 @@
             android:name="sara.damien.app.RequestsActivity"
             android:label="@string/title_activity_suggestions"
             android:parentActivityName="sara.damien.app.TopicActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="TopicActivity" />
@@ -50,7 +50,7 @@
             android:name="sara.damien.app.ProfileActivity"
             android:label="@string/title_activity_profile"
             android:parentActivityName="sara.damien.app.WelcomeActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="WelcomeActivity" />
@@ -58,7 +58,11 @@
         <activity
             android:name="sara.damien.app.DisplayProfileActivity"
             android:label="@string/title_activity_display_profile"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="sara.damien.app.Requests2Activity"
+            android:label="@string/title_activity_requests2" >
         </activity>
     </application>
 

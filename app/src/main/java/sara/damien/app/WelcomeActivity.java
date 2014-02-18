@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
@@ -59,6 +60,7 @@ public class WelcomeActivity extends Activity {
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
         navDrawerItems = new ArrayList<NavDrawerItem>();
 
@@ -68,11 +70,11 @@ public class WelcomeActivity extends Activity {
         // Find People
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1)));
         // Photos
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1)));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1),true,"50+"));
         // Communities, Will add a counter here
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1), true, "22"));
         // Pages
-//        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1)));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1)));
         // What's hot, We  will add a counter here
 //        navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1), true, "50+"));
 
@@ -139,12 +141,16 @@ public class WelcomeActivity extends Activity {
                 break;
             case 2:
                 //fragment = new PhotosFragment();
+                Intent i = new Intent(this,RequestsActivity.class);
+                startActivity(i);
                 break;
             case 3:
                 //fragment = new CommunityFragment();
                 break;
             case 4:
                 //fragment = new PagesFragment();
+                Intent i2 =new Intent(this,TopicActivity.class);
+                startActivity(i2);
                 break;
             case 5:
                 //fragment = new WhatsHotFragment();
@@ -168,6 +174,18 @@ public class WelcomeActivity extends Activity {
             // error in creating fragment
             Log.e("MainActivity", "Error in creating fragment");
         }
+        /*HomeFragment fragment = new HomeFragment();
+        Bundle args = new Bundle();
+        args.putInt("position",position);
+        fragment.setArguments(args);
+
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.frame_container,fragment).commit();
+
+        // update selected item and title, then close the drawer
+        mDrawerList.setItemChecked(position, true);
+        setTitle(navMenuTitles[position]);
+        mDrawerLayout.closeDrawer(mDrawerList);*/
     }
 
     @Override
@@ -257,7 +275,8 @@ public class WelcomeActivity extends Activity {
     /**
      * A placeholder fragment containing a simple view.
 
-    public static class PlaceholderFragment extends Fragment {
+
+    public static class PlaceholderFragment extends android.app.Fragment {
 
         public PlaceholderFragment() {
         }
@@ -273,6 +292,6 @@ public class WelcomeActivity extends Activity {
     private static abstract class Fragment {
         public abstract View onCreateView(LayoutInflater inflater, ViewGroup container,
                                           Bundle savedInstanceState);
-    }
-        */
+    }*/
+
 }

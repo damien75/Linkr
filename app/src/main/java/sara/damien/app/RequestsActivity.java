@@ -28,7 +28,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class RequestsActivity extends ListActivity {
+public class RequestsActivity extends ListActivity{
+
     private static String url ="http://www.golinkr.net";
     private ProgressDialog pDialog;
     JSONParser jsonParser = new JSONParser();
@@ -57,6 +58,7 @@ public class RequestsActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_requests);
+
 
         MeetingList = new ArrayList<HashMap<String, String>>();
         ListView lv = getListView();
@@ -88,6 +90,7 @@ public class RequestsActivity extends ListActivity {
                     .commit();
         }*/
     }
+
     private class GetMeetings extends AsyncTask<Void, Void, Void> implements sara.damien.app.GetMeetings {
 
 
@@ -178,10 +181,6 @@ public class RequestsActivity extends ListActivity {
         }
 
     }
-
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
