@@ -1,10 +1,7 @@
 package sara.damien.app;
 
 import android.app.ActionBar;
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
@@ -14,47 +11,14 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class DisplayProfileActivity extends FragmentActivity {
-    private static String url ="http://www.golinkr.net";
-    private ProgressDialog pDialog;
-    static JSONParser jsonParser = new JSONParser();
-
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_MEETING = "meeting";
-    private static final String TAG_LAST_NAME = "Last_Name";
-    private static final String TAG_FIRST_NAME = "First_Name";
-    private static final String TAG_NAME = "name";
-    private static final String TAG_STATE = "State";
-    private static final String TAG_SUBJECT = "Subject";
-    private static final String TAG_DATE_REQUEST = "Date_Request";
-    private static final String TAG_DATE_ACCEPT = "Date_Accept";
-    private static final String TAG_DATE_MEETING = "Date_Meeting";
-    private static final String TAG_DATE= "Date";
-    private static final String TAG_STATUS= "Status";
-
-    private static final String SELECT_FUNCTION = "getRequest";
-    private static final String ID1 = "1";
-
-
-    JSONArray meetings = null;
-    HashMap<String,String> MeetingList;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide fragments representing
@@ -91,8 +55,6 @@ public class DisplayProfileActivity extends FragmentActivity {
         // Set up the ViewPager, attaching the adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mDemoCollectionPagerAdapter);
-
-        //new GetMeetings().execute();
     }
 
 
@@ -174,85 +136,11 @@ public class DisplayProfileActivity extends FragmentActivity {
             System.arraycopy(users,0,profilesss,0,users.length);
             ((TextView) rootView.findViewById(android.R.id.text1)).setText(profilesss[args.getInt(ARG_OBJECT)].getLast_Name()+" "+profilesss[args.getInt(ARG_OBJECT)].getFirst_Name());
             ((TextView) rootView.findViewById(R.id.grade)).setText(profilesss[args.getInt(ARG_OBJECT)].get_Avg_Grade());
+            TextView comp = ((TextView) rootView.findViewById(R.id.company));
+            TextView yexp = ((TextView) rootView.findViewById(R.id.years_experience));
+            comp.setText(comp.getText()+profilesss[args.getInt(ARG_OBJECT)].getCompany());
+            yexp.setText(yexp.getText()+String.valueOf(profilesss[args.getInt(ARG_OBJECT)].getExp_Years()));
             return rootView;
-        }
-
-
-        private void startNewAsyncTask() {
-            new GetMeetings(getActivity(),getArguments().getInt(ARG_OBJECT)).execute();
-        }
-
-
-
-        private class GetMeetings extends AsyncTask<Void, Void, Void>{
-
-
-            JSONArray meetings = null;
-            HashMap<String,String> MeetingList;
-            Activity mContext;
-            int arg;
-            String s="";
-
-            public GetMeetings(Activity contex, int n){
-                this.mContext=contex;
-                this.arg=n;
-            }
-            /*
-                    @Override
-                    protected void onPreExecute() {
-                        super.onPreExecute();
-                        // Showing progress dialog
-                        pDialog = new ProgressDialog(CollectionDemoActivity.this);
-                        pDialog.setMessage("Please wait...");
-                        pDialog.setCancelable(false);
-                        pDialog.show();
-                    }
-            */
-            @Override
-            protected Void doInBackground(Void... args) {
-                // Creating service handler class instance
-                List<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair("SELECT_FUNCTION",SELECT_FUNCTION));
-                params.add(new BasicNameValuePair("ID1", ID1));
-                JSONObject json = jsonParser.makeHttpRequest(url,"POST",params);
-
-                // Making a request to url and getting response
-                String jsonStr = json.toString();
-                Log.d("Response: ", "> " + jsonStr);
-
-                //if (jsonStr != null) {
-                try {
-                    int success = json.getInt(TAG_SUCCESS);
-                    if (success==1){
-                        meetings=json.getJSONArray(TAG_MEETING);
-                        for (int i = 0; i<meetings.length();i++){
-                            JSONObject c = meetings.getJSONObject(i);
-                            String name = c.getString(TAG_FIRST_NAME)+ " " + c.getString(TAG_LAST_NAME);
-
-                            MeetingList = new HashMap<String, String>();
-                            MeetingList.put(TAG_NAME,name);
-                        }
-                    }
-                    else{
-                        Intent i = new Intent(getApplicationContext(),WelcomeActivity.class);
-                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(i);
-                    }
-                }
-                catch (JSONException e){
-                    e.printStackTrace();
-                }
-                return null;
-
-            }
-            @Override
-            protected void onPostExecute(Void result) {
-                super.onPostExecute(result);
-                /*TextView txtv = (TextView) mContext.findViewById(R.id.test);
-                String t1 = MeetingList.get(TAG_NAME);
-                txtv.setText("wtf "+t1);*/
-            }
-
         }
 
 
