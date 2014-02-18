@@ -25,6 +25,11 @@ switch($_POST["SELECT_FUNCTION"])
             updateArchiveSubject($_POST["ID"],$_POST["subject"]);
         }
     break;
+    case 'getLastSubject';
+         if (isset($_POST["ID"])){
+         getLastSubject ($_POST["ID"]);
+         }
+    break;
     default;
         echo 'Merci de faire un choix...';
     break;

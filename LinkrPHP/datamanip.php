@@ -13,6 +13,20 @@ function connect(){
         }
       return $dbh;
 }
+
+    function getLastSubject($ID){
+        $response = array();
+        $dbh=connect();
+        $query = "SELECT Subject FROM user WHERE ID=?";
+   $sth = $dbh->prepare($query);
+   $sth->setFetchMode(PDO::FETCH_ASSOC);
+   $sth->execute(array($ID));
+   $result = $sth->fetchAll(PDO::FETCH_ASSOC);
+       
+            $response["subject"] = $result[0];
+            echo json_encode($response);
+    }
+    
     function submitSubject($ID,$subject){
         $dbh=connect();
         $query="UPDATE user SET Last_Subject=? WHERE ID=?";
@@ -20,9 +34,9 @@ function connect(){
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute(array($subject,$ID));
     }
-    
     function updateArchiveSubject ($ID,$subject){
-        $query="INSERT into archive_subject values (?,?,null,null)";
+        $dbh=connect();
+        $query="INSERT INTO archive_subject VALUES (?,?,default,default)";
         $sth = $dbh->prepare($query);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute(array($ID,$subject));
