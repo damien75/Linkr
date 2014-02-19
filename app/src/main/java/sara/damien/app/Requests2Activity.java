@@ -16,8 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListAdapter;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import org.apache.http.NameValuePair;
@@ -29,6 +27,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Requests2Activity extends FragmentActivity implements ActionBar.TabListener{
 
@@ -57,7 +56,7 @@ public class Requests2Activity extends FragmentActivity implements ActionBar.Tab
 
 
     JSONArray meetings = null;
-    ArrayList<HashMap<String,String>> MeetingList;
+    ArrayList<HashMap<String,String>> MeetingList = new ArrayList<HashMap<String, String>>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,8 +92,6 @@ public class Requests2Activity extends FragmentActivity implements ActionBar.Tab
                             .setTabListener(this));
         }
 
-
-        MeetingList = new ArrayList<HashMap<String, String>>();
         //ListView lv = getListView();
         //lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
         /*    @Override
@@ -140,10 +137,6 @@ public class Requests2Activity extends FragmentActivity implements ActionBar.Tab
 
     }
 
-   /* public void setListAdapter(ListAdapter listAdapter) {
-        this.listAdapter = listAdapter;
-    }*/
-
     public class AppSectionsPagerAdapter extends FragmentPagerAdapter {
 
         public AppSectionsPagerAdapter(FragmentManager fm) {
@@ -152,25 +145,16 @@ public class Requests2Activity extends FragmentActivity implements ActionBar.Tab
 
         @Override
         public Fragment getItem(int i) {
-            switch (i) {
-                /*case 0:
-                    // The first section of the app is the most interesting -- it offers
-                    // a launchpad into the other demonstrations in this example application.
-                    return new LaunchpadSectionFragment();*/
-
-                default:
-                    // The other sections of the app are dummy placeholders.
-                    Fragment fragment = new DummySectionFragment();
-                    Bundle args = new Bundle();
-                    args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, i + 1);
-                    fragment.setArguments(args);
-                    return fragment;
-            }
+            Fragment fragment = new DummySectionFragment();
+            Bundle args = new Bundle();
+            args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, i + 1);
+            fragment.setArguments(args);
+            return fragment;
         }
 
         @Override
         public int getCount() {
-            return 3;
+            return 7;
         }
 
         @Override
@@ -178,51 +162,9 @@ public class Requests2Activity extends FragmentActivity implements ActionBar.Tab
             return "Section " + (position + 1);
         }
     }
-    /* public class LaunchpadSectionFragment extends Fragment {
-
-         @Override
-         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                  Bundle savedInstanceState) {
-             View rootView = inflater.inflate(R.layout.fragment_requests, container, false);
-
-             new GetMeetings().execute();
-             // Demonstration of a collection-browsing activity.
-             rootView.findViewById(R.id.demo_collection_button)
-                     .setOnClickListener(new View.OnClickListener() {
-                         @Override
-                         public void onClick(View view) {
-                             Intent intent = new Intent(getActivity(), CollectionDemoActivity.class);
-                             Bundle b = new Bundle();
-                             b.putString("name", t1);
-                             intent.putExtras(b);
-                             startActivity(intent);
-                         }
-                     });
-
-             // Demonstration of navigating to external activities.
-             rootView.findViewById(R.id.demo_external_activity)
-                     .setOnClickListener(new View.OnClickListener() {
-                         @Override
-                         public void onClick(View view) {
-                             // Create an intent that asks the user to pick a photo, but using
-                             // FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET, ensures that relaunching
-                             // the application from the device home screen does not return
-                             // to the external activity.
-                             Intent externalActivityIntent = new Intent(Intent.ACTION_PICK);
-                             externalActivityIntent.setType("image/*");
-                             externalActivityIntent.addFlags(
-                                     Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-                             startActivity(externalActivityIntent);
-                         }
-                     });
-
-             return rootView;
-         }
-     }
-
-     /**
-      * A dummy fragment representing a section of the app, but that simply displays dummy text.
-      */
+    /**
+     * A dummy fragment representing a section of the app, but that simply displays dummy text.
+     */
     public class DummySectionFragment extends Fragment {
 
         public static final String ARG_SECTION_NUMBER = "section_number";
@@ -231,13 +173,24 @@ public class Requests2Activity extends FragmentActivity implements ActionBar.Tab
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_requests2, container, false);
-            new GetMeetings().execute();
             Bundle args = getArguments();
+            int section = args.getInt(ARG_SECTION_NUMBER);
             if (!MeetingList.isEmpty()){
-                ((TextView) rootView.findViewById(android.R.id.text1)).setText(MeetingList.get(0).get(TAG_NAME));
+                if (section<4){
+                    ((TextView)rootView.findViewById(android.R.id.text1)).setText("ok we are on number "
+                            + args.getInt(ARG_SECTION_NUMBER)
+                            + " and the corresponding meetinglist is here: "
+                            + MeetingList.get(section-1).get(TAG_FIRST_NAME));
+                }
+                else{
+                    ((TextView)rootView.findViewById(android.R.id.text1)).setText("ok we are on number "
+                            + args.getInt(ARG_SECTION_NUMBER)
+                            + " but the meeting list comes to an end... ");
+                }
+
             }
             else{
-                ((TextView)rootView.findViewById(android.R.id.text1)).setText("Database call failed");
+                ((TextView)rootView.findViewById(android.R.id.text1)).setText("Meeting List is empty... We are on section num "+args.getInt(ARG_SECTION_NUMBER));
             }
             return rootView;
         }
@@ -252,7 +205,7 @@ public class Requests2Activity extends FragmentActivity implements ActionBar.Tab
             // Showing progress dialog
             pDialog = new ProgressDialog(Requests2Activity.this);
             pDialog.setMessage("Please wait...");
-            pDialog.setCancelable(false);
+            pDialog.setCancelable(true);
             pDialog.show();
         }
 
@@ -275,7 +228,8 @@ public class Requests2Activity extends FragmentActivity implements ActionBar.Tab
                     meetings=json.getJSONArray(TAG_MEETING);
                     for (int i = 0; i<meetings.length();i++){
                         JSONObject c = meetings.getJSONObject(i);
-                        String name = c.getString(TAG_FIRST_NAME)+ " " + c.getString(TAG_LAST_NAME);
+                        String first_name = c.getString(TAG_FIRST_NAME);
+                        String last_name = c.getString(TAG_LAST_NAME);
                         String date_request = c.getString(TAG_DATE_REQUEST);
                         String date_accept = c.getString(TAG_DATE_ACCEPT);
                         String date_meeting = c.getString(TAG_DATE_MEETING);
@@ -298,11 +252,13 @@ public class Requests2Activity extends FragmentActivity implements ActionBar.Tab
                         }
 
                         HashMap<String,String> map = new HashMap<String, String>();
-                        map.put(TAG_NAME,name);
+                        map.put(TAG_FIRST_NAME,first_name);
+                        map.put(TAG_LAST_NAME,last_name);
                         map.put(TAG_DATE,date);
                         map.put(TAG_SUBJECT,subject);
                         map.put(TAG_STATUS, status);
                         MeetingList.add(map);
+
                     }
                 }
                 else{
@@ -322,13 +278,18 @@ public class Requests2Activity extends FragmentActivity implements ActionBar.Tab
             pDialog.dismiss();
             runOnUiThread(new Runnable() {
                 public void run() {
-                    ListAdapter adapter = new SimpleAdapter(
-                            Requests2Activity.this, MeetingList,
-                            R.layout.list_itemrequest,
-                            new String[]{TAG_NAME, TAG_SUBJECT, TAG_STATE, TAG_DATE},
-                            new int[]{R.id.name, R.id.subject, R.id.state, R.id.meeting_date});
-                    //setListAdapter(adapter);
-                }
+
+                        for (Map.Entry<String, String> mapEntry : MeetingList.get(1).entrySet())
+                        {
+                            String key = mapEntry.getKey();
+                            String value = mapEntry.getValue();
+                            Log.e("meetinglist",key+" "+value);
+                        }
+                    Log.e("meetinglist",MeetingList.get(0).get(TAG_FIRST_NAME));
+
+                    }
+
+
             });
         }
 

@@ -141,7 +141,7 @@ public class WelcomeActivity extends Activity {
                 break;
             case 2:
                 //fragment = new PhotosFragment();
-                Intent i = new Intent(this,RequestsActivity.class);
+                Intent i = new Intent(this,Requests2Activity.class);
                 startActivity(i);
                 break;
             case 3:
