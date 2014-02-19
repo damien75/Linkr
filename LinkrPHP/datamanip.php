@@ -190,4 +190,47 @@ function getProfilePicture($ID){
 
 }
 
+function getProfileSupID($IDMIN,$NBDOWN,$XU,$YU,$E){
+   $dbh=connect();
+   $response = array();
+
+   $query = "SELECT * FROM user WHERE ID>=? AND Loc_X-?>-? AND Loc_X-?<? AND Loc_Y-?>-? AND Loc_Y-?<?  LIMIT ?";
+   $sth = $dbh->prepare($query);
+   $sth->setFetchMode(PDO::FETCH_ASSOC);
+
+   $sth->execute(array($IDMIN,$XU,$E,$XU,$E,$YU,$E,$YU,$E,$NBDOWN));
+   $result = $sth->fetchAll(PDO::FETCH_ASSOC);
+   
+   if (!empty($result)) {
+ 
+       $response["success"] = 1;
+            $response["Profile_Info"] = array();
+            while($row = current($result)){
+            $pro = array();
+            $pro["Last_Name"] = $row["Last_Name"];
+            $pro["First_Name"] = $row["First_Name"];
+            $pro["Loc_X"] = $row["Loc_X"];
+            $pro["Loc_Y"] = $row["Loc_Y"];
+            $pro["Last_Subject"] = $row["Last_Subject"];
+            $pro["Company"] = $row["Company"];
+            $pro["Exp_Years"] = $row["Exp_Years"];
+            $pro["Sum_Grade"] = $row["Sum_Grade"];
+            $pro["Number_Grade"] = $row["Number_Grade"];
+            array_push($response["Profile_Info"], $pro);
+            $row=next($result);
+            }
+            // echoing JSON response
+            echo json_encode($response);
+        }
+     else {
+        // no product found
+        $response["success"] = 0;
+        $response["message"] = "No Profile found";
+ 
+        // echo no users JSON
+        echo json_encode($response);
+    }
+}
+
+
 ?>			

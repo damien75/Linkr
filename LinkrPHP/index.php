@@ -33,6 +33,11 @@ switch($_POST["SELECT_FUNCTION"])
          getLastSubject ($_POST["ID"]);
          }
     break;
+    case 'getProfileSupID';
+        if (isset($_POST["IDMIN"]) && isset($_POST["NBDOWN"]) && isset($_POST["XU"]) && isset($_POST["YU"]) && isset($_POST["E"])){
+            getProfileSupID($_POST["IDMIN"],$_POST["NBDOWN"],$_POST["XU"],$_POST["YU"],$_POST["E"]);
+        }
+    break;
     default;
         echo 'Merci de faire un choix...';
     break;
