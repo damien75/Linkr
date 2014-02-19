@@ -48,6 +48,7 @@ public class Profile implements Parcelable {
     }
     public String getCompany (){return this.Company;}
     public int getExp_Years (){return this.Exp_Years;}
+    public int getID (){return this.ID;}
 
     @Override
     public int describeContents() {
