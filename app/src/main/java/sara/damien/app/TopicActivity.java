@@ -49,24 +49,27 @@ public class TopicActivity extends ActionBarActivity {
                     .commit();
         }
 
-        new GetProfile().execute();
+        //new GetProfile().execute();
         topic = (EditText) findViewById(R.id.editTopic);
         last_subject = "test";
-        new getSubject().execute();
+        //new getSubject().execute();
         topic.setHint(last_subject);
     }
 
     Profile p;
     HashMap<String,String> profile = new HashMap<String, String>();
     public void displayProfile (View view){
-        Intent intent=new Intent(this,DisplayProfileActivity.class);
+        /*Intent intent=new Intent(this,DisplayProfileActivity.class);
         Parcelable[] users = new Parcelable[profilestest.length];
         System.arraycopy(profilestest,0,users,0,profilestest.length);
         Bundle b = new Bundle();
         b.putParcelableArray("profiles", users);
         intent.putExtras(b);
         startActivity(intent);
-        new ChooseSubject().execute();
+        new ChooseSubject().execute();*/
+
+        Intent i = new Intent(this,DefinitiveProfileActivity.class);
+        startActivity(i);
     }
 
     class getSubject extends  AsyncTask<String, String, String>{
