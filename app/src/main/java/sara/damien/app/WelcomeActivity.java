@@ -26,7 +26,6 @@ import sara.damien.app.model.NavDrawerItem;
 
 
 public class WelcomeActivity extends Activity {
-
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -292,6 +291,6 @@ public class WelcomeActivity extends Activity {
     private static abstract class Fragment {
         public abstract View onCreateView(LayoutInflater inflater, ViewGroup container,
                                           Bundle savedInstanceState);
-    }*/
+        }*/
 
 }

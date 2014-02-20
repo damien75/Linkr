@@ -30,9 +30,10 @@ import java.util.List;
 import java.util.Map;
 
 public class Requests2Activity extends FragmentActivity implements ActionBar.TabListener{
-
     AppSectionsPagerAdapter mAppSectionsPagerAdapter;
     ViewPager mViewPager;
+
+    int currentpos;
 
     private static String url ="http://www.golinkr.net";
     private ProgressDialog pDialog;
@@ -62,6 +63,12 @@ public class Requests2Activity extends FragmentActivity implements ActionBar.Tab
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_requests2);
+        currentpos=0;
+        GetMeetings g = new GetMeetings();
+        g.execute();
+        Log.d("responseee","execute ok");
+
+        new GetMeetings().execute();
 
         mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager());
 
@@ -77,6 +84,7 @@ public class Requests2Activity extends FragmentActivity implements ActionBar.Tab
                 // When swiping between different app sections, select the corresponding tab.
                 // We can also use ActionBar.Tab#select() to do this if we have a reference to the
                 // Tab.
+                currentpos=position;
                 actionBar.setSelectedNavigationItem(position);
             }
         });
@@ -113,7 +121,6 @@ public class Requests2Activity extends FragmentActivity implements ActionBar.Tab
             }
         });*/
         // Calling async task to get json
-        new GetMeetings().execute();
 
         /*if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -121,9 +128,17 @@ public class Requests2Activity extends FragmentActivity implements ActionBar.Tab
                     .commit();
         }*/
     }
+    public void update (int index){
+        if (index==currentpos){
+            //Ecrire le corps de l'affichage du fragment
+            ((TextView)findViewById(android.R.id.text1)).setText("Le meeting courant est celui avec " + MeetingList.get(currentpos).get(TAG_FIRST_NAME));
+
+        }
+    }
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, android.app.FragmentTransaction fragmentTransaction) {
+        currentpos=tab.getPosition();
         mViewPager.setCurrentItem(tab.getPosition());
     }
 
@@ -175,7 +190,7 @@ public class Requests2Activity extends FragmentActivity implements ActionBar.Tab
             View rootView = inflater.inflate(R.layout.fragment_requests2, container, false);
             Bundle args = getArguments();
             int section = args.getInt(ARG_SECTION_NUMBER);
-            if (!MeetingList.isEmpty()){
+            /*if (!MeetingList.isEmpty()){
                 if (section<4){
                     ((TextView)rootView.findViewById(android.R.id.text1)).setText("ok we are on number "
                             + args.getInt(ARG_SECTION_NUMBER)
@@ -191,7 +206,8 @@ public class Requests2Activity extends FragmentActivity implements ActionBar.Tab
             }
             else{
                 ((TextView)rootView.findViewById(android.R.id.text1)).setText("Meeting List is empty... We are on section num "+args.getInt(ARG_SECTION_NUMBER));
-            }
+            }*/
+            update(section);
             return rootView;
         }
     }
@@ -199,15 +215,15 @@ public class Requests2Activity extends FragmentActivity implements ActionBar.Tab
     private class GetMeetings extends AsyncTask<Void, Void, Void> implements sara.damien.app.GetMeetings {
 
 
-        @Override
+        /*@Override
         protected void onPreExecute() {
             super.onPreExecute();
             // Showing progress dialog
             pDialog = new ProgressDialog(Requests2Activity.this);
             pDialog.setMessage("Please wait...");
-            pDialog.setCancelable(true);
+            pDialog.setCancelable(false);
             pDialog.show();
-        }
+        }*/
 
         @Override
         protected Void doInBackground(Void... args) {
@@ -275,20 +291,21 @@ public class Requests2Activity extends FragmentActivity implements ActionBar.Tab
         }
         @Override
         protected void onPostExecute(Void result) {
-            pDialog.dismiss();
+            //pDialog.dismiss();
             runOnUiThread(new Runnable() {
                 public void run() {
-
-                        for (Map.Entry<String, String> mapEntry : MeetingList.get(1).entrySet())
-                        {
-                            String key = mapEntry.getKey();
-                            String value = mapEntry.getValue();
-                            Log.e("meetinglist",key+" "+value);
-                        }
-                    Log.e("meetinglist",MeetingList.get(0).get(TAG_FIRST_NAME));
+                    if (currentpos==0){
+                        ((TextView)findViewById(android.R.id.text1)).setText("Le meeting courant est celui avec "+MeetingList.get(currentpos).get(TAG_FIRST_NAME));
 
                     }
 
+                    for (Map.Entry<String, String> mapEntry : MeetingList.get(1).entrySet()) {
+                        String key = mapEntry.getKey();
+                        String value = mapEntry.getValue();
+                        Log.e("meetinglist", key + " " + value);
+                    }
+                    Log.e("meetinglist", MeetingList.get(0).get(TAG_FIRST_NAME));
+                }
 
             });
         }

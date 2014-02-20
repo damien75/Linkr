@@ -1,19 +1,17 @@
 package sara.damien.app;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
+import android.widget.TextView;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -58,13 +56,13 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_definitive_profile);
-            currentpos=0;
+        currentpos=0;
         Log.d("Response: ", "> " + String.valueOf(nbdownload));
         GetProfile g = new GetProfile();
         Log.d("responseee","ok");
         g.IDmin= 0;
         g.execute();
-        Log.d("responseeee","executee");
+        Log.d("responseeee","executee ");
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
@@ -97,6 +95,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                 g.execute();
             }
             //Ecrire le corps de l'affichage du fragment
+            ((TextView)findViewById(R.id.txt1)).setText("Le profil courant est celui de "+profiles.get(currentpos).getFirst_Name());
 
         }
     }
@@ -110,18 +109,19 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
             Log.d("responseeee","asynctask launched");
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair("SELECT_FUNCTION","getProfileSupID"));
-            params.add(new BasicNameValuePair("IDmin",String.valueOf(this.IDmin)));
+            params.add(new BasicNameValuePair("IDMIN",String.valueOf(this.IDmin)));
+            Log.e("idmin",String.valueOf(IDmin));
             params.add(new BasicNameValuePair("XU",String.valueOf(XU)));
             params.add(new BasicNameValuePair("YU",String.valueOf(YU)));
             params.add(new BasicNameValuePair("E",String.valueOf(E)));
             params.add(new BasicNameValuePair("NBDOWN",String.valueOf(nbdownload)));
-            Log.d("responseeee", "before http");
+            Log.d("responseeee", "before http values"+String.valueOf(XU)+" "+String.valueOf(YU)+" "+String.valueOf(E)+" "+String.valueOf(nbdownload));
             JSONObject json = jsonParser2.makeHttpRequest(url,"POST",params);
-            Log.d("responseee aille de json",String.valueOf(json.length()));
+            Log.d("responseee taille de json",String.valueOf(json.length()));
 
             // Making a request to url and getting response
-            //String jsonStr = json.toString();
-            //Log.d("Response: ", "> " + jsonStr);
+            String jsonStr = json.toString();
+            Log.d("Response: ", "> " + jsonStr);
 
             //if (jsonStr != null) {
             try {
@@ -143,6 +143,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
                         Profile p = new Profile(true,last_name,first_name,subject,experience,loc_x,loc_y,company,ID,sum_grade,number_grade);
                         profiles.add(p);
+                        //update(profiles.size()-1);
                     }
                 }
                 else{
@@ -158,13 +159,16 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
         }
 
-        /*@Override
+        @Override
         protected void onPostExecute(Void result) {
             runOnUiThread(new Runnable() {
                 public void run() {
+                    if(currentpos==0){
+                        ((TextView)findViewById(R.id.txt1)).setText("Le premier profil est celui de "+profiles.get(0).getFirst_Name());
+                    }
                 }
             });
-        }*/
+        }
     }
 
     @Override
