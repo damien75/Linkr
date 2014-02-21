@@ -57,12 +57,9 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_definitive_profile);
         currentpos=0;
-        Log.d("Response: ", "> " + String.valueOf(nbdownload));
         GetProfile g = new GetProfile();
-        Log.d("responseee","ok");
         g.IDmin= 0;
         g.execute();
-        Log.d("responseeee","executee ");
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
@@ -164,7 +161,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
             runOnUiThread(new Runnable() {
                 public void run() {
                     if(currentpos==0){
-                        ((TextView)findViewById(R.id.txt1)).setText("Le premier profil est celui de "+profiles.get(0).getFirst_Name());
+                        ((TextView)findViewById(R.id.txt1)).setText("Le premier profil est celui de " + profiles.get(0).getFirst_Name());
                     }
                 }
             });

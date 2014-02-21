@@ -5,5 +5,4 @@
     android:layout_height="match_parent"
     tools:context="sara.damien.app.DefinitiveProfileActivity"
     tools:ignore="MergeRootFrame" >
-
 </FrameLayout>
