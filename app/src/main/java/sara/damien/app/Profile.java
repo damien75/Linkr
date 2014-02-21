@@ -18,8 +18,9 @@ public class Profile implements Parcelable {
     private int Sum_Grade;
     private int Number_Grade;
     private int ID;
+    private int State;
 
-    public Profile (boolean downloaded,String last_Name,String first_name,String last_subject, int exp_Years, double loc_X, double loc_Y, String company, int ID, int sum_Grade, int number_Grade){
+    public Profile (boolean downloaded,String last_Name,String first_name,String last_subject, int exp_Years, double loc_X, double loc_Y, String company, int ID, int sum_Grade, int number_Grade,int State){
         this.downloaded=downloaded;
         this.Last_Name=last_Name;
         this.Company=company;
@@ -31,6 +32,7 @@ public class Profile implements Parcelable {
         this.Sum_Grade=sum_Grade;
         this.ID=ID;
         this.Number_Grade=number_Grade;
+        this.State=State;
     }
 
     public boolean isDownloaded (){
@@ -47,8 +49,12 @@ public class Profile implements Parcelable {
         return String.valueOf(avg);
     }
     public String getCompany (){return this.Company;}
-    public int getExp_Years (){return this.Exp_Years;}
+    public String getExp_Years (){return String.valueOf(this.Exp_Years);}
     public int getID (){return this.ID;}
+    public String getLast_Subject (){return this.Last_Subject;}
+    public int getState (){return this.State;}
+
+    public void setState (int i){this.State=i;}
 
     @Override
     public int describeContents() {
