@@ -87,58 +87,54 @@ public class Requests3Activity extends ActionBarActivity {
         if (index==currentpos){
             int c = currentpos%2;
             if (currentpos<MeetingList.size()){
-            TextView txt1 = (TextView)findViewById(R.id.sara1);
-            TextView txt2 = (TextView)findViewById(R.id.sara2);
-            TextView txt3 = (TextView)findViewById(R.id.sara3);
-            HashMap hashMap = MeetingList.get(currentpos);
-            String contact = "Your meeting is scheduled with "
-                    +hashMap.get(TAG_FIRST_NAME)
-                    +" "+hashMap.get(TAG_LAST_NAME);
-            String subject ="The subject of this meeting is the following: "+hashMap.get(TAG_SUBJECT);
-            String date;
-            if(hashMap.get(TAG_STATUS).equals("Processing")){
-                date="The date requested is on "+hashMap.get(TAG_DATE);
-            }
-            else if(hashMap.get(TAG_STATUS).equals("Accepted")){
-                date="The date you suggested has been accepted on "+hashMap.get(TAG_DATE);
-            }
-            else if(hashMap.get(TAG_STATUS).equals("Meeting scheduled")){
-                date="The meeting is scheduled on "+hashMap.get(TAG_DATE);
-            }
-            else {
-                date="There seems to be a problem with this meeting, let\'s try it all over again!";
-            }
-            if(state==1){
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.setCustomAnimations(R.anim.swipe_right_to_left_right,R.anim.swipe_right_to_left_left);
+                HashMap hashMap = MeetingList.get(currentpos);
+                String contact = "Your meeting is scheduled with "
+                        +hashMap.get(TAG_FIRST_NAME)
+                        +" "+hashMap.get(TAG_LAST_NAME);
+                String subject ="The subject of this meeting is the following: "+hashMap.get(TAG_SUBJECT);
+                String date;
+                if(hashMap.get(TAG_STATUS).equals("Processing")){
+                    date="The date requested is on "+hashMap.get(TAG_DATE);
+                }
+                else if(hashMap.get(TAG_STATUS).equals("Accepted")){
+                    date="The date you suggested has been accepted on "+hashMap.get(TAG_DATE);
+                }
+                else if(hashMap.get(TAG_STATUS).equals("Meeting scheduled")){
+                    date="The meeting is scheduled on "+hashMap.get(TAG_DATE);
+                }
+                else {
+                    date="There seems to be a problem with this meeting, let\'s try it all over again!";
+                }
+                if(state==1){
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    ft.setCustomAnimations(R.anim.swipe_right_to_left_right,R.anim.swipe_right_to_left_left);
                     DetailsFragment newFragment = new DetailsFragment().newInstance(c,contact,subject,date);
-                ft.replace(R.id.testcontainer, newFragment, "detailFragment");
+                    ft.replace(R.id.testcontainer, newFragment, "detailFragment");
                     ft.commit();
 
 
-            }
-            else if (state==2){
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.setCustomAnimations(R.anim.swipe_left_to_right_left,R.anim.swipe_left_to_right_right);
+                }
+                else if (state==2){
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    ft.setCustomAnimations(R.anim.swipe_left_to_right_left,R.anim.swipe_left_to_right_right);
                     DetailsFragment newFragment = new DetailsFragment().newInstance(c,contact,subject,date);
-                ft.replace(R.id.testcontainer, newFragment, "detailFragment");
-                ft.commit();
+                    ft.replace(R.id.testcontainer, newFragment, "detailFragment");
+                    ft.commit();
                 }
                 else {
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.setTransition(android.R.anim.fade_in);
-                DetailsFragment newFragment = new DetailsFragment().newInstance(c,contact,subject,date);
-                ft.replace(R.id.container,newFragment,"detailFragment");
-                ft.commit();
-            }
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    ft.setTransition(android.R.anim.fade_in);
+                    DetailsFragment newFragment = new DetailsFragment().newInstance(c,contact,subject,date);
+                    ft.replace(R.id.testcontainer,newFragment,"detailFragment");
+                    ft.commit();
+                }
             }
             else {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.setTransition(android.R.anim.fade_in);
                 DetailsFragment newFragment = new DetailsFragment().newInstance(c,"No more profiles to show","","");
-                ft.replace(R.id.container, newFragment, "detailFragment");
+                ft.replace(R.id.testcontainer, newFragment, "detailFragment");
                 ft.commit();
-
             }
         }
     }
@@ -151,11 +147,19 @@ public class Requests3Activity extends ActionBarActivity {
                     return false;
                 // right to left swipe
                 if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                    Toast.makeText(Requests3Activity.this, "Left Swipe", Toast.LENGTH_SHORT).show();
-                    update(++currentpos,1);
+                    if (currentpos<MeetingList.size()){
+                        update(++currentpos,1);
+                    }
+                    else {
+                        Toast.makeText(Requests3Activity.this, "Need charging", Toast.LENGTH_SHORT).show();
+                    }
                 }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                    Toast.makeText(Requests3Activity.this, "Right Swipe", Toast.LENGTH_SHORT).show();
-                    update(--currentpos,2);
+                    if (currentpos>0){
+                        update(--currentpos,2);
+                    }
+                    else {
+                        Toast.makeText(Requests3Activity.this, "You\'re already on the first page", Toast.LENGTH_SHORT).show();
+                    }
                 }
             } catch (Exception e) {
                 // nothing
@@ -251,9 +255,7 @@ public class Requests3Activity extends ActionBarActivity {
             //pDialog.dismiss();
             runOnUiThread(new Runnable() {
                 public void run() {
-                    for (int i=0; i<MeetingList.size();i++){
-                        update(i,0);
-                    }
+                    update(currentpos,0);
                 }
 
             });
