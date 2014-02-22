@@ -68,6 +68,10 @@
             android:name="sara.damien.app.DefinitiveProfileActivity"
             android:label="@string/title_activity_definitive_profile" >
         </activity>
+        <activity
+            android:name="sara.damien.app.Requests3Activity"
+            android:label="@string/title_activity_requests3" >
+        </activity>
     </application>
 
 </manifest>
