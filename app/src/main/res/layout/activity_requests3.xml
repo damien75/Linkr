@@ -8,30 +8,26 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="sara.damien.app.Requests3Activity"
     android:id="@+id/testcontainer">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="pas de fragment"
+        android:textSize="22sp"/>
 
-    <TextView
-        android:text="@string/hello_world"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="25sp"
-        android:id="@+id/sara"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/sara1"
-        android:textSize="25sp"
-        android:layout_below="@id/sara"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/sara2"
-        android:textSize="25sp"
-        android:layout_below="@id/sara1"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/sara3"
-        android:textSize="25sp"
-        android:layout_below="@id/sara2"/>
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/modul0"
+        android:name="sara.damien.app.Requests3Activity$DetailsFragment"
+        tools:layout="@layout/fragment_requests0">
 
+    </fragment>
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/modul1"
+        android:name="sara.damien.app.Requests3Activity$DetailsFragment"
+        tools:layout="@layout/fragment_requests0">
+
+    </fragment>
 </RelativeLayout>
