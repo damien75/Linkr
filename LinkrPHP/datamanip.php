@@ -14,6 +14,8 @@ function connect(){
       return $dbh;
 }
 
+
+
     function getLastSubject($ID){
         $response = array();
         $dbh=connect();
@@ -48,7 +50,21 @@ function connect(){
         $sth->execute(array($ID,$subject));
 
     }
+       function createMeeting ($ID1,$ID2,$Subject,$Message){
+        $dbh=connect();
+        $query="INSERT INTO meeting VALUES (?,?,'0',?,?,?,null,null,default,'2')";
+        $sth = $dbh->prepare($query);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute(array($ID1,$ID2,$Subject,$Message,date('Y-m-d H:i:s')));
+    } 
     
+       function acceptProposition ($ID1,$ID2){
+           $dbh=connect();
+        $query="UPDATE meeting SET Date_Accept=? AND Time=default AND Visibility=? WHERE ID1=? AND ID2=?";
+        $sth = $dbh->prepare($query);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute(array(date('Y-m-d H:i:s'),"1",$ID1,$ID2 ));         
+       }
     
    function getRequest($ID1){
    $dbh=connect();
@@ -212,6 +228,7 @@ $E=doubleval($E);
             $response["Profile_Info"] = array();
             while($row = current($result)){
             $pro = array();
+            $pro["ID"]=$row["ID"];
             $pro["Last_Name"] = $row["Last_Name"];
             $pro["First_Name"] = $row["First_Name"];
             $pro["Loc_X"] = $row["Loc_X"];
@@ -238,4 +255,4 @@ $E=doubleval($E);
 }
 
 
-?>
+?>					

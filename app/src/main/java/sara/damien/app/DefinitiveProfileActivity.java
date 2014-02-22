@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import org.apache.http.NameValuePair;
@@ -30,7 +31,10 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
     final int E=50;
     final int XU=0;
     final int YU=0;
+    private int currentID;
+    private String currentSubject;
 
+    JSONParser jsonParser = new JSONParser();
     JSONParser jsonParser2 = new JSONParser();
 
     private static final String TAG_SUCCESS = "success";
@@ -59,12 +63,15 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         currentpos=0;
         GetProfile g = new GetProfile();
         g.IDmin= 0;
+        this.currentID=1;
+        this.currentSubject="ceci est un sujet";
         g.execute();
-        if (savedInstanceState == null) {
+        Log.d("responseeee","executee ");
+        /*if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
-        }
+        }*/
     }
 
     public void nextProfile (View view){
@@ -83,6 +90,29 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         }
     }
 
+    public void CreateMeeting(View view){
+        profiles.get(currentpos).setState(1);
+
+        CreateMeeting CR = new CreateMeeting();
+        CR.ID1=currentID;
+        CR.ID2=profiles.get(currentpos).getID();
+        CR.subject="Subject"+profiles.get(currentpos).getFirst_Name();
+        CR.message="";
+        CR.execute();
+
+        Button bP = (Button) findViewById(R.id.buttonProposeMeeting);
+        Button bR = (Button) findViewById(R.id.buttonReject);
+        TextView accept = (TextView) findViewById(R.id.textAccepted);
+        bP.setVisibility(View.GONE);
+        bR.setVisibility(View.GONE);
+        accept.setVisibility(View.VISIBLE);
+    }
+
+    public void RejectProfile(View view){
+        profiles.remove(currentpos);
+        update(currentpos);
+    }
+
     public void update (int index){
         if (index==currentpos){
             if(profiles.size()- currentpos == currentdiff){
@@ -92,8 +122,73 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                 g.execute();
             }
             //Ecrire le corps de l'affichage du fragment
-            ((TextView)findViewById(R.id.txt1)).setText("Le profil courant est celui de "+profiles.get(currentpos).getFirst_Name());
+            TextView name = (TextView)findViewById(R.id.profile_name);
+            TextView subject = (TextView)findViewById(R.id.profile_subject);
+            TextView grade = (TextView)findViewById(R.id.grade);
+            TextView company = (TextView) findViewById(R.id.company);
+            TextView years = (TextView) findViewById(R.id.years_experience);
 
+            Button previous = (Button) findViewById(R.id.buttonPrevious);
+            Button next = (Button) findViewById(R.id.buttonNext);
+
+            Button bP = (Button) findViewById(R.id.buttonProposeMeeting);
+            Button bR = (Button) findViewById(R.id.buttonReject);
+            TextView accept = (TextView) findViewById(R.id.textAccepted);
+
+            if (currentpos>=profiles.size()){
+                name.setText("Plus de profiles disponibles");
+                subject.setVisibility(View.GONE);
+                grade.setVisibility(View.GONE);
+                company.setVisibility(View.GONE);
+                years.setVisibility(View.GONE);
+                bP.setVisibility(View.GONE);
+                bR.setVisibility(View.GONE);
+                accept.setVisibility(View.GONE);
+                next.setVisibility(View.GONE);
+            }
+            else{
+            name.setText(profiles.get(currentpos).getFirst_Name()+" "+profiles.get(currentpos).getLast_Name());
+            subject.setText(profiles.get(currentpos).getLast_Subject());
+            grade.setText(profiles.get(currentpos).get_Avg_Grade());
+            company.setText(profiles.get(currentpos).getCompany());
+            years.setText(profiles.get(currentpos).getExp_Years());
+
+
+            if (profiles.get(currentpos).getState()==0){
+                bP.setVisibility(1);
+                bR.setVisibility(1);
+                accept.setVisibility(View.GONE);
+            }
+            else{
+                bP.setVisibility(View.GONE);
+                bR.setVisibility(View.GONE);
+                accept.setVisibility(View.VISIBLE);
+            }
+            }
+
+        }
+    }
+
+    private class CreateMeeting extends AsyncTask<Void,Void,Void> implements sara.damien.app.GetProfile{
+        int ID1;
+        int ID2;
+        String subject;
+        String message;
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try{
+            List<NameValuePair> params2 = new ArrayList<NameValuePair>();
+            params2.add(new BasicNameValuePair("SELECT_FUNCTION","createMeeting"));
+            params2.add(new BasicNameValuePair("ID1",String.valueOf(ID1)));
+            params2.add(new BasicNameValuePair("ID2",String.valueOf(ID2)));
+            params2.add(new BasicNameValuePair("Subject",subject));
+            params2.add(new BasicNameValuePair("Message",message));
+            JSONObject json2 = jsonParser2.makeHttpRequest(url,"POST",params2);}
+            catch (NullPointerException e){
+                e.printStackTrace();
+            }
+            return null;
         }
     }
 
@@ -103,18 +198,14 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         @Override
         protected Void doInBackground(Void... args) {
             // Creating service handler class instance
-            Log.d("responseeee","asynctask launched");
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair("SELECT_FUNCTION","getProfileSupID"));
             params.add(new BasicNameValuePair("IDMIN",String.valueOf(this.IDmin)));
-            Log.e("idmin",String.valueOf(IDmin));
             params.add(new BasicNameValuePair("XU",String.valueOf(XU)));
             params.add(new BasicNameValuePair("YU",String.valueOf(YU)));
             params.add(new BasicNameValuePair("E",String.valueOf(E)));
-            params.add(new BasicNameValuePair("NBDOWN",String.valueOf(nbdownload)));
-            Log.d("responseeee", "before http values"+String.valueOf(XU)+" "+String.valueOf(YU)+" "+String.valueOf(E)+" "+String.valueOf(nbdownload));
-            JSONObject json = jsonParser2.makeHttpRequest(url,"POST",params);
-            Log.d("responseee taille de json",String.valueOf(json.length()));
+            params.add(new BasicNameValuePair("NBDOWN", String.valueOf(nbdownload)));
+            JSONObject json = jsonParser.makeHttpRequest(url,"POST",params);
 
             // Making a request to url and getting response
             String jsonStr = json.toString();
@@ -127,8 +218,8 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                     profileInfos=json.getJSONArray(TAG_PROFILE_INFO);
                     for (int i = 0; i<profileInfos.length();i++){
                         JSONObject c = profileInfos.getJSONObject(i);
-                        String last_name = c.getString(TAG_FIRST_NAME);
-                        String first_name = c.getString(TAG_LAST_NAME);
+                        String first_name = c.getString(TAG_FIRST_NAME);
+                        String last_name = c.getString(TAG_LAST_NAME);
                         Double loc_x = c.getDouble(TAG_LOC_X);
                         Double loc_y = c.getDouble(TAG_LOC_Y);
                         String company = c.getString(TAG_COMPANY);
@@ -137,10 +228,10 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                         int ID = c.getInt(TAG_ID);
                         int sum_grade = c.getInt(TAG_SUM_GRADE);
                         int number_grade = c.getInt(TAG_NUMBER_GRADE);
+                        int state=0;
 
-                        Profile p = new Profile(true,last_name,first_name,subject,experience,loc_x,loc_y,company,ID,sum_grade,number_grade);
+                        Profile p = new Profile(true,last_name,first_name,subject,experience,loc_x,loc_y,company,ID,sum_grade,number_grade,state);
                         profiles.add(p);
-                        //update(profiles.size()-1);
                     }
                 }
                 else{
@@ -160,8 +251,8 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         protected void onPostExecute(Void result) {
             runOnUiThread(new Runnable() {
                 public void run() {
-                    if(currentpos==0){
-                        ((TextView)findViewById(R.id.txt1)).setText("Le premier profil est celui de " + profiles.get(0).getFirst_Name());
+                    for (int i=0;i<nbdownload-1;i++){
+                        update(i);
                     }
                 }
             });
