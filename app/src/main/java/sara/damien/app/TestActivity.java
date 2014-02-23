@@ -10,6 +10,10 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.builder.api.LinkedInApi;
 import org.scribe.model.OAuthRequest;
@@ -18,6 +22,9 @@ import org.scribe.model.Token;
 import org.scribe.model.Verb;
 import org.scribe.model.Verifier;
 import org.scribe.oauth.OAuthService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TestActivity extends Activity {
     private class LinkedInAuth{
@@ -56,7 +63,6 @@ public class TestActivity extends Activity {
 
         public String getProfileInfo (){
             String url2 = "https://api.linkedin.com/v1/people/~?format=json";
-            //String url2 = "http://api.linkedin.com/v1/people/id=175554962";
             OAuthRequest request = new OAuthRequest(Verb.GET, url2);
             service.signRequest(accessToken, request); // the access token from step 4
             Response response = request.send();
@@ -73,19 +79,19 @@ public class TestActivity extends Activity {
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-        if (url.startsWith("linkr://")){
-            Uri uri = Uri.parse(url);
-            String authcode = uri.getQueryParameter("oauth_verifier");
-            if (authcode != null) {
-                lna.setAuthCode(authcode);
-                new LinkedInSecondStep(lna).execute();
+            if (url.startsWith("linkr://")){
+                Uri uri = Uri.parse(url);
+                String authcode = uri.getQueryParameter("oauth_verifier");
+                if (authcode != null) {
+                    lna.setAuthCode(authcode);
+                    new LinkedInSecondStep(lna).execute();
+                }
+                return true;
             }
-            return true;
+            else{
+                return super.shouldOverrideUrlLoading(view, url);
+            }
         }
-        else{
-            return super.shouldOverrideUrlLoading(view, url);
-        }
-    }
     }
 
     private class LinkedInFirstStep extends AsyncTask<Void, Void, Void> {
@@ -110,7 +116,12 @@ public class TestActivity extends Activity {
 
     public class LinkedInSecondStep extends AsyncTask <Void,Void,Void>{
         private LinkedInAuth lnauth;
-        String s;
+        String profileJsonInfos;
+        String firstName;
+        String lastName;
+        String headline;
+        String url;
+        String id;
         public LinkedInSecondStep (LinkedInAuth ln){
             lnauth=ln;
         }
@@ -118,7 +129,20 @@ public class TestActivity extends Activity {
         @Override
         protected Void doInBackground(Void... params) {
             lnauth.getAccessToken();
-            s = lnauth.getProfileInfo();
+            profileJsonInfos = lnauth.getProfileInfo();
+            try {
+                JSONObject jsonObject = new JSONObject(profileJsonInfos);
+                firstName=jsonObject.getString("firstName");
+                lastName=jsonObject.getString("lastName");
+                headline=jsonObject.getString("headline");
+                JSONObject standardProfileRequest = jsonObject.getJSONObject("siteStandardProfileRequest");
+                url=standardProfileRequest.getString("url");
+                int begin = url.indexOf("=");
+                int end =url.indexOf("&");
+                id=url.substring(begin+1,end);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             return null;
         }
 
@@ -126,7 +150,51 @@ public class TestActivity extends Activity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             TextView txt = (TextView) findViewById(R.id.toutoutou);
-            txt.setText(s);
+            String[] s = new String[3];
+            s[0]=id;
+            s[1]=lastName;
+            s[2]=firstName;
+            new createProfile().execute(s);
+            txt.setText("Hello " + firstName + " " + lastName + ". Your headline is the following: " + headline + " and your ID is: " + id);
+        }
+    }
+
+    public class createProfile extends AsyncTask<String,Void,Void>{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            ((TextView)findViewById(R.id.success)).setText("Your profile is being created");
+        }
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            try {
+                JSONParser jsonParser = new JSONParser();
+                List<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(new BasicNameValuePair("SELECT_FUNCTION","createProfile"));
+                params.add(new BasicNameValuePair("ID", strings[0]));
+                params.add(new BasicNameValuePair("Last_Name",strings[1]));
+                params.add(new BasicNameValuePair("First_Name",strings[2]));
+                params.add(new BasicNameValuePair("Company","pipo"));
+                params.add(new BasicNameValuePair("Exp_Years","1000"));
+                JSONObject json = jsonParser.makeHttpRequest("http://www.golinkr.net","POST",params);
+            }
+            catch (NullPointerException e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void result) {
+            //pDialog.dismiss();
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    TextView txt = (TextView)findViewById(R.id.success);
+                    txt.setText("Your profile was successfully created!");
+                }
+
+            });
         }
     }
 
