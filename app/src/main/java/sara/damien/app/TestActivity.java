@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -37,6 +39,9 @@ public class TestActivity extends Activity {
         String authUrl;
         String authCode;
         Token accessToken;
+        String token;
+        String secret;
+
 
         public LinkedInAuth (){
             service = new ServiceBuilder()
@@ -49,6 +54,13 @@ public class TestActivity extends Activity {
 
         public void getRequestToken (){
             requestToken = service.getRequestToken();
+            token = requestToken.getToken();
+            secret = requestToken.getSecret();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("token",token);
+            editor.putString("secret",secret);
+            editor.commit();
             authUrl = service.getAuthorizationUrl(requestToken);
         }
 
@@ -153,17 +165,82 @@ public class TestActivity extends Activity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            createProfile createProfile = new createProfile();
-            createProfile.idc= id;
-            createProfile.first_name=firstName;
-            createProfile.last_name=lastName;
-            createProfile.execute();
+            searchID searchID = new searchID();
+            searchID.idl=id;
+            searchID.first_name=firstName;
+            searchID.last_name=lastName;
+            searchID.execute();
+        }
+    }
 
+    public class searchID extends AsyncTask<Void,Void,Void>{
+        private String idl;
+        private int userID;
+        private String first_name;
+        private String last_name;
+        JSONObject json;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(TestActivity.this);
+            pDialog.setMessage("We are checking if your profile already exists...");
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... args) {
+            try {
+                JSONParser jsonParser = new JSONParser();
+                List<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(new BasicNameValuePair("SELECT_FUNCTION","existIDL"));
+                params.add(new BasicNameValuePair("IDL", idl));
+                json = jsonParser.makeHttpRequest("http://www.golinkr.net","POST",params);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void result) {
+            pDialog.dismiss();
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    String message ="";
+                    try {
+                        if (json.getInt("success")==1){
+                            userID = json.getInt("ID");
+                            Toast.makeText(TestActivity.this, "You have been connected with an already known profile with id: "+idl, Toast.LENGTH_LONG).show();
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putBoolean("Connected", true);
+                            editor.putInt("ID",userID);
+                            editor.commit();
+                            Intent i = new Intent(TestActivity.this, WelcomeActivity.class);
+                            startActivity(i);
+                            finish();
+                        }
+                        else {
+                            createProfile createProfile = new createProfile();
+                            createProfile.idl= idl;
+                            createProfile.first_name=first_name;
+                            createProfile.last_name=last_name;
+                            createProfile.execute();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            });
         }
     }
 
     public class createProfile extends AsyncTask<Void,Void,Void>{
-        private String idc;
+        private String idl;
+        private int userID;
         private String first_name;
         private String last_name;
 
@@ -182,14 +259,14 @@ public class TestActivity extends Activity {
                 JSONParser jsonParser = new JSONParser();
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
                 params.add(new BasicNameValuePair("SELECT_FUNCTION","createProfile"));
-                params.add(new BasicNameValuePair("IDL", idc));
+                params.add(new BasicNameValuePair("IDL", idl));
                 params.add(new BasicNameValuePair("Last_Name",last_name));
                 params.add(new BasicNameValuePair("First_Name",first_name));
                 params.add(new BasicNameValuePair("Company","pipo"));
                 params.add(new BasicNameValuePair("Exp_Years","1000"));
                 JSONObject json = jsonParser.makeHttpRequest("http://www.golinkr.net","POST",params);
             }
-            catch (NullPointerException e){
+            catch (Exception e){
                 e.printStackTrace();
             }
             return null;
@@ -199,11 +276,15 @@ public class TestActivity extends Activity {
             pDialog.dismiss();
             runOnUiThread(new Runnable() {
                 public void run() {
-                    Toast.makeText(TestActivity.this,"Your profile was successfully created! Welcome on Linkr!!!",Toast.LENGTH_LONG).show();
-                    Intent i = new Intent(TestActivity.this,WelcomeActivity.class);
+                    Toast.makeText(TestActivity.this, "Your profile was successfully created! Welcome on Linkr!!!", Toast.LENGTH_LONG).show();
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putBoolean("Connected", true);
+                    editor.putInt("ID",userID);
+                    editor.commit();
+                    Intent i = new Intent(TestActivity.this, WelcomeActivity.class);
                     startActivity(i);
                     finish();
-
                 }
 
             });

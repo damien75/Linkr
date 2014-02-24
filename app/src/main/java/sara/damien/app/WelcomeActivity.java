@@ -279,22 +279,22 @@ public class WelcomeActivity extends Activity {
      * A placeholder fragment containing a simple view.
 
 
-    public static class PlaceholderFragment extends android.app.Fragment {
+     public static class PlaceholderFragment extends android.app.Fragment {
 
-        public PlaceholderFragment() {
-        }
+     public PlaceholderFragment() {
+     }
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_welcome, container, false);
-            return rootView;
-        }
-    }
+     @Override
+     public View onCreateView(LayoutInflater inflater, ViewGroup container,
+     Bundle savedInstanceState) {
+     View rootView = inflater.inflate(R.layout.fragment_welcome, container, false);
+     return rootView;
+     }
+     }
 
-    private static abstract class Fragment {
-        public abstract View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                          Bundle savedInstanceState);
-        }*/
+     private static abstract class Fragment {
+     public abstract View onCreateView(LayoutInflater inflater, ViewGroup container,
+     Bundle savedInstanceState);
+     }*/
 
 }

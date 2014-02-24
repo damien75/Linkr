@@ -2,9 +2,11 @@ package sara.damien.app;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Handler;
-import android.support.v4.app.Fragment;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,17 +21,27 @@ public class SplashScreenActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent i = new Intent(SplashScreenActivity.this,TestActivity.class);
-                startActivity(i);
-                finish();
-            }
-        },SPLASH_SCREEN_TIMEOUT);
-
-
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if (prefs.getBoolean("Connected",false)) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent i = new Intent(SplashScreenActivity.this,WelcomeActivity.class);
+                    startActivity(i);
+                    finish();
+                }
+            },SPLASH_SCREEN_TIMEOUT);
+        }
+        else {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent i = new Intent(SplashScreenActivity.this,WelcomeActivity.class);
+                    startActivity(i);
+                    finish();
+                }
+            },SPLASH_SCREEN_TIMEOUT);
+        }
     }
 
 
