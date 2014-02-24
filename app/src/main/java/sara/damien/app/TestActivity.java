@@ -2,13 +2,15 @@ package sara.damien.app;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -27,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TestActivity extends Activity {
+    private ProgressDialog pDialog;
+
     private class LinkedInAuth{
         OAuthService service;
         Token requestToken;
@@ -149,33 +153,38 @@ public class TestActivity extends Activity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            TextView txt = (TextView) findViewById(R.id.toutoutou);
-            String[] s = new String[3];
-            s[0]=id;
-            s[1]=lastName;
-            s[2]=firstName;
-            new createProfile().execute(s);
-            txt.setText("Hello " + firstName + " " + lastName + ". Your headline is the following: " + headline + " and your ID is: " + id);
+            createProfile createProfile = new createProfile();
+            createProfile.idc= id;
+            createProfile.first_name=firstName;
+            createProfile.last_name=lastName;
+            createProfile.execute();
+
         }
     }
 
-    public class createProfile extends AsyncTask<String,Void,Void>{
+    public class createProfile extends AsyncTask<Void,Void,Void>{
+        private String idc;
+        private String first_name;
+        private String last_name;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            ((TextView)findViewById(R.id.success)).setText("Your profile is being created");
+            pDialog = new ProgressDialog(TestActivity.this);
+            pDialog.setMessage("Your profile is being created...");
+            pDialog.setCancelable(false);
+            pDialog.show();
         }
 
         @Override
-        protected Void doInBackground(String... strings) {
+        protected Void doInBackground(Void... args) {
             try {
                 JSONParser jsonParser = new JSONParser();
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
                 params.add(new BasicNameValuePair("SELECT_FUNCTION","createProfile"));
-                params.add(new BasicNameValuePair("ID", strings[0]));
-                params.add(new BasicNameValuePair("Last_Name",strings[1]));
-                params.add(new BasicNameValuePair("First_Name",strings[2]));
+                params.add(new BasicNameValuePair("IDL", idc));
+                params.add(new BasicNameValuePair("Last_Name",last_name));
+                params.add(new BasicNameValuePair("First_Name",first_name));
                 params.add(new BasicNameValuePair("Company","pipo"));
                 params.add(new BasicNameValuePair("Exp_Years","1000"));
                 JSONObject json = jsonParser.makeHttpRequest("http://www.golinkr.net","POST",params);
@@ -187,11 +196,14 @@ public class TestActivity extends Activity {
         }
         @Override
         protected void onPostExecute(Void result) {
-            //pDialog.dismiss();
+            pDialog.dismiss();
             runOnUiThread(new Runnable() {
                 public void run() {
-                    TextView txt = (TextView)findViewById(R.id.success);
-                    txt.setText("Your profile was successfully created!");
+                    Toast.makeText(TestActivity.this,"Your profile was successfully created! Welcome on Linkr!!!",Toast.LENGTH_LONG).show();
+                    Intent i = new Intent(TestActivity.this,WelcomeActivity.class);
+                    startActivity(i);
+                    finish();
+
                 }
 
             });

@@ -137,19 +137,23 @@ public class WelcomeActivity extends Activity {
                 break;
             case 1:
                 //fragment = new FindPeopleFragment();
+                Intent i1 = new Intent(this,RequestsActivity.class);
+                startActivity(i1);
                 break;
             case 2:
                 //fragment = new PhotosFragment();
-                Intent i = new Intent(this,Requests3Activity.class);
-                startActivity(i);
+                Intent i2 = new Intent(this,Requests2Activity.class);
+                startActivity(i2);
                 break;
             case 3:
                 //fragment = new CommunityFragment();
+                Intent i3 = new Intent(this,Requests3Activity.class);
+                startActivity(i3);
                 break;
             case 4:
                 //fragment = new PagesFragment();
-                Intent i2 =new Intent(this,TopicActivity.class);
-                startActivity(i2);
+                Intent i4 =new Intent(this,TopicActivity.class);
+                startActivity(i4);
                 break;
             case 5:
                 //fragment = new WhatsHotFragment();
