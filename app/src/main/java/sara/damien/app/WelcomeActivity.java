@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,7 +22,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import sara.damien.app.adapter.NavDrawerListAdapter;
 import sara.damien.app.model.NavDrawerItem;
@@ -48,6 +56,27 @@ public class WelcomeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
+        //GPS Tracker
+        GPSTracker gps = new GPSTracker(WelcomeActivity.this);
+
+        // check if GPS enabled
+        if(gps.canGetLocation()){
+
+            double latitude = gps.getLatitude();
+            double longitude = gps.getLongitude();
+            shareLocation share = new shareLocation();
+            share.loc_x=latitude;
+            share.loc_y=longitude;
+            share.execute();
+        }
+        else{
+            // can't get location
+            // GPS or Network is not enabled
+            // Ask user to enable GPS/network in settings
+            gps.showSettingsAlert();
+        }
+
+        //Drawer Menu
         mTitle = mDrawerTitle = getTitle();
 
         // load slide menu items
@@ -273,6 +302,49 @@ public class WelcomeActivity extends Activity {
     public void openProfile (View view){
         Intent intent=new Intent(this,ProfileActivity.class);
         startActivity(intent);
+    }
+
+    public class shareLocation extends AsyncTask<Void,Void,Void> {
+        private double loc_x;
+        private double loc_y;
+        String successMessage;
+
+        @Override
+        protected Void doInBackground(Void... args) {
+            try {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                int userID = prefs.getInt("ID",0);
+                JSONParser jsonParser = new JSONParser();
+                List<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(new BasicNameValuePair("SELECT_FUNCTION","shareLocation"));
+                params.add(new BasicNameValuePair("ID", String.valueOf(userID)));
+                params.add(new BasicNameValuePair("Loc_X", String.valueOf(loc_x)));
+                params.add(new BasicNameValuePair("Loc_Y", String.valueOf(loc_y)));
+                JSONObject json = jsonParser.makeHttpRequest("http://www.golinkr.net","POST",params);
+                int success = json.getInt("success");
+                if (success==1){
+                    successMessage="Location successfully shared";
+                }
+                else{
+                    successMessage="We were unable to share your location";
+                }
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(WelcomeActivity.this,successMessage,Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 
     /**

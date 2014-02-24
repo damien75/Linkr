@@ -206,6 +206,14 @@ function getProfilePicture($ID){
 
 }
 
+function shareLocation($ID,$loc_x,$loc_y){
+        $dbh=connect();
+        $query="UPDATE user SET Loc_X=? AND Loc_Y=? WHERE ID=?";
+        $sth = $dbh->prepare($query);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute(array($loc_x,$loc_y,$ID));
+    }
+
 function getProfileSupID($IDMIN,$NBDOWN,$XU,$YU,$E){
 $IDMIN=intval($IDMIN);
 $NBDOWN=intval($NBDOWN);
