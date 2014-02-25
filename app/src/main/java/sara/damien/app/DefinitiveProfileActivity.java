@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.apache.http.NameValuePair;
@@ -49,7 +50,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
     private static final String TAG_NUMBER_GRADE = "Number_Grade";
     private static final String TAG_LAST_SUBJECT = "Last_Subject";
     private static final String TAG_ID = "ID";
-    private static final String TAG_SUBJECT = "subject";
+    private static final String TAG_PICTURE = "Picture";
     private static String url ="http://www.golinkr.net";
     private static final String ID = "3";
 
@@ -153,8 +154,38 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
             company.setText(profiles.get(currentpos).getCompany());
             years.setText(profiles.get(currentpos).getExp_Years());
 
+                String picturelink= profiles.get(currentpos).getPicturelink();
+                if (!picturelink.equals("null")){
+                // Loader image - will be shown before loading image
+                int loader = R.drawable.lil_wayne;
 
-            if (profiles.get(currentpos).getState()==0){
+
+                // Imageview to show
+                ImageView image = (ImageView) findViewById(R.id.profile_picture);
+
+                int width = image.getWidth();
+                int height = image.getHeight();
+                int max=Math.max(width,height);
+
+                // Image url
+                String image_url = "http://www.golinkr.net/images/"+profiles.get(currentpos).getPicturelink();
+
+                // ImageLoader class instance
+                ImageLoader imgLoader = new ImageLoader(getApplicationContext());
+                imgLoader.outputsize=max;
+
+                // whenever you want to load an image from url
+                // call DisplayImage function
+                // url - image url to load
+                // loader - loader image, will be displayed before getting image
+                // image - ImageView
+                imgLoader.DisplayImage(image_url, loader, image);
+                }
+                else{
+                    ((ImageView)findViewById(R.id.profile_picture)).setImageResource(R.drawable.lil_wayne);
+                }
+
+                if (profiles.get(currentpos).getState()==0){
                 bP.setVisibility(1);
                 bR.setVisibility(1);
                 accept.setVisibility(View.GONE);
@@ -224,13 +255,14 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                         Double loc_y = c.getDouble(TAG_LOC_Y);
                         String company = c.getString(TAG_COMPANY);
                         String subject = c.getString(TAG_LAST_SUBJECT);
+                        String picturelink = c.getString(TAG_PICTURE);
                         int experience = c.getInt(TAG_EXP_YEARS);
                         int ID = c.getInt(TAG_ID);
                         int sum_grade = c.getInt(TAG_SUM_GRADE);
                         int number_grade = c.getInt(TAG_NUMBER_GRADE);
                         int state=0;
 
-                        Profile p = new Profile(true,last_name,first_name,subject,experience,loc_x,loc_y,company,ID,sum_grade,number_grade,state);
+                        Profile p = new Profile(true,last_name,first_name,subject,picturelink,experience,loc_x,loc_y,company,ID,sum_grade,number_grade,state);
                         profiles.add(p);
                     }
                 }
