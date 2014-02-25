@@ -64,10 +64,10 @@
         <activity
             android:name="sara.damien.app.Requests2Activity"
             android:label="@string/title_activity_requests2"
-            android:parentActivityName="sara.damien.app.WelcomeActivity">
+            android:parentActivityName="sara.damien.app.WelcomeActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="WelcomeActivity"/>
+                android:value="WelcomeActivity" />
         </activity>
         <activity
             android:name="sara.damien.app.DefinitiveProfileActivity"
@@ -76,10 +76,10 @@
         <activity
             android:name="sara.damien.app.Requests3Activity"
             android:label="@string/title_activity_requests3"
-            android:parentActivityName="sara.damien.app.WelcomeActivity">
+            android:parentActivityName="sara.damien.app.WelcomeActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="WelcomeActivity"/>
+                android:value="WelcomeActivity" />
         </activity>
         <activity
             android:name="sara.damien.app.TestActivity"
@@ -87,6 +87,10 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".RegisterManuallyActivity"
+            android:label="@string/title_activity_register" >
         </activity>
     </application>
 

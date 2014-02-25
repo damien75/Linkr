@@ -1,0 +1,72 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dip"
+    tools:context="sara.damien.app.RegisterManuallyActivity">
+
+    <!-- First_Name Label -->
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="First Name"
+        android:singleLine="true"
+        android:layout_marginBottom="5dip"/>
+
+    <!-- First_Name input text -->
+    <EditText android:id="@+id/txtFirst_Name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dip"/>
+
+    <!-- Last_Name Label -->
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Last_Name"
+        android:layout_marginBottom="5dip"/>
+
+    <!-- Last_Name input text -->
+    <EditText android:id="@+id/txtLast_Name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dip"
+        android:singleLine="true"/>
+
+    <!-- Company Label -->
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Company"
+        android:layout_marginBottom="5dip"/>
+
+    <!-- Company input text -->
+    <EditText android:id="@+id/txtCompany"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dip"
+        android:singleLine="true"/>
+
+    <!-- Exp_Years Label -->
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Nombre d'années d'expérience"
+        android:layout_marginBottom="5dip"/>
+
+    <!-- Exp_Years input text -->
+    <EditText android:id="@+id/txtExp_Years"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dip"
+        android:singleLine="true"/>
+
+    <!-- Login button -->
+    <Button android:id="@+id/btnRegister"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Register"
+        android:onClick="registerManual"/>
+
+</LinearLayout>
