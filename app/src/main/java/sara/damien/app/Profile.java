@@ -1,5 +1,6 @@
 package sara.damien.app;
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -19,8 +20,10 @@ public class Profile implements Parcelable {
     private int Number_Grade;
     private int ID;
     private int State;
+    private String picturelink;
+    private Bitmap mBitmap;
 
-    public Profile (boolean downloaded,String last_Name,String first_name,String last_subject, int exp_Years, double loc_X, double loc_Y, String company, int ID, int sum_Grade, int number_Grade,int State){
+    public Profile (boolean downloaded,String last_Name,String first_name,String last_subject,String picturelink, int exp_Years, double loc_X, double loc_Y, String company, int ID, int sum_Grade, int number_Grade,int State){
         this.downloaded=downloaded;
         this.Last_Name=last_Name;
         this.Company=company;
@@ -33,6 +36,7 @@ public class Profile implements Parcelable {
         this.ID=ID;
         this.Number_Grade=number_Grade;
         this.State=State;
+        this.picturelink=picturelink;
     }
 
     public boolean isDownloaded (){
@@ -53,8 +57,10 @@ public class Profile implements Parcelable {
     public int getID (){return this.ID;}
     public String getLast_Subject (){return this.Last_Subject;}
     public int getState (){return this.State;}
+    public String getPicturelink(){return this.picturelink;}
 
     public void setState (int i){this.State=i;}
+    public void setmBitmap (Bitmap bitmap){this.mBitmap=bitmap;}
 
     @Override
     public int describeContents() {
