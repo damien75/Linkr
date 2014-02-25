@@ -90,8 +90,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".RegisterManuallyActivity"
+            android:name="sara.damien.app.RegisterManuallyActivity"
             android:label="@string/title_activity_register" >
+        </activity>
+        <activity
+            android:name="sara.damien.app.ConnectionTypeActivity"
+            android:label="@string/title_activity_connection_type" >
         </activity>
     </application>
 

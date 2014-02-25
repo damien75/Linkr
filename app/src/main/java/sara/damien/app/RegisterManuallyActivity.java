@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -73,6 +74,7 @@ public class RegisterManuallyActivity extends ActionBarActivity {
         private String last_name;
         private String company;
         private String exp_years;
+        JSONObject json;
 
         @Override
         protected void onPreExecute() {
@@ -94,7 +96,7 @@ public class RegisterManuallyActivity extends ActionBarActivity {
                 params.add(new BasicNameValuePair("First_Name",first_name));
                 params.add(new BasicNameValuePair("Company",company));
                 params.add(new BasicNameValuePair("Exp_Years",exp_years));
-                JSONObject json = jsonParser.makeHttpRequest("http://www.golinkr.net","POST",params);
+                json = jsonParser.makeHttpRequest("http://www.golinkr.net","POST",params);
             }
             catch (Exception e){
                 e.printStackTrace();
@@ -106,15 +108,33 @@ public class RegisterManuallyActivity extends ActionBarActivity {
             pDialog.dismiss();
             runOnUiThread(new Runnable() {
                 public void run() {
-                    Toast.makeText(RegisterManuallyActivity.this, "Your profile was successfully created! Welcome on Linkr!!!", Toast.LENGTH_LONG).show();
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putBoolean("Connected", true);
-                    editor.putInt("ID",userID);
-                    editor.commit();
-                    Intent i = new Intent(RegisterManuallyActivity.this, WelcomeActivity.class);
-                    startActivity(i);
-                    finish();
+                    try {
+                        if (json.getInt("success")==1){
+                            userID=json.getInt("ID");
+                            Toast.makeText(RegisterManuallyActivity.this, "Your profile was successfully created! Welcome on Linkr!!!", Toast.LENGTH_LONG).show();
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putBoolean("Connected", true);
+                            editor.putInt("ID",userID);
+                            editor.commit();
+                            Intent i = new Intent(RegisterManuallyActivity.this, WelcomeActivity.class);
+                            startActivity(i);
+                            finish();
+                        }
+                        else {
+                            Toast.makeText(RegisterManuallyActivity.this,"Your profile was not successfully created in our database",Toast.LENGTH_LONG).show();
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putBoolean("Connected", false);
+                            editor.commit();
+                            Intent i = new Intent(RegisterManuallyActivity.this, ConnectionTypeActivity.class);
+                            startActivity(i);
+                            finish();
+                        }
+                    }
+                    catch (JSONException e){
+                        e.printStackTrace();
+                    }
                 }
 
             });

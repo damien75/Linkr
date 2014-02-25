@@ -296,7 +296,7 @@ public class TestActivity extends Activity {
                             SharedPreferences.Editor editor = prefs.edit();
                             editor.putBoolean("Connected", false);
                             editor.commit();
-                            Intent i = new Intent(TestActivity.this, TestActivity.class);
+                            Intent i = new Intent(TestActivity.this, ConnectionTypeActivity.class);
                             startActivity(i);
                             finish();
                         }
