@@ -243,6 +243,7 @@ public class TestActivity extends Activity {
         private int userID;
         private String first_name;
         private String last_name;
+        JSONObject json;
 
         @Override
         protected void onPreExecute() {
@@ -264,7 +265,7 @@ public class TestActivity extends Activity {
                 params.add(new BasicNameValuePair("First_Name",first_name));
                 params.add(new BasicNameValuePair("Company","pipo"));
                 params.add(new BasicNameValuePair("Exp_Years","1000"));
-                JSONObject json = jsonParser.makeHttpRequest("http://www.golinkr.net","POST",params);
+                json = jsonParser.makeHttpRequest("http://www.golinkr.net","POST",params);
             }
             catch (Exception e){
                 e.printStackTrace();
@@ -276,15 +277,33 @@ public class TestActivity extends Activity {
             pDialog.dismiss();
             runOnUiThread(new Runnable() {
                 public void run() {
-                    Toast.makeText(TestActivity.this, "Your profile was successfully created! Welcome on Linkr!!!", Toast.LENGTH_LONG).show();
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putBoolean("Connected", true);
-                    editor.putInt("ID",userID);
-                    editor.commit();
-                    Intent i = new Intent(TestActivity.this, WelcomeActivity.class);
-                    startActivity(i);
-                    finish();
+                    try {
+                        if (json.getInt("success")==1){
+                            userID=json.getInt("ID");
+                            Toast.makeText(TestActivity.this, "Your profile was successfully created! Welcome on Linkr!!!", Toast.LENGTH_LONG).show();
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putBoolean("Connected", true);
+                            editor.putInt("ID",userID);
+                            editor.commit();
+                            Intent i = new Intent(TestActivity.this, WelcomeActivity.class);
+                            startActivity(i);
+                            finish();
+                        }
+                        else {
+                            Toast.makeText(TestActivity.this,"Your profile was not successfully created in our database",Toast.LENGTH_LONG).show();
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putBoolean("Connected", false);
+                            editor.commit();
+                            Intent i = new Intent(TestActivity.this, TestActivity.class);
+                            startActivity(i);
+                            finish();
+                        }
+                    }
+                    catch (JSONException e){
+                        e.printStackTrace();
+                    }
                 }
 
             });

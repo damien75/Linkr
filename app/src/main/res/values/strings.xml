@@ -34,6 +34,7 @@
         <item>Requests</item>
         <item>Share</item>
         <item>Topic</item>
+        <item>Disconnect</item>
     </string-array>
 
     <array name="nav_drawer_icons">
@@ -42,6 +43,7 @@
         <item>@drawable/ic_action_group</item>
         <item>@drawable/ic_action_share</item>
         <item>@drawable/ic_action_chat</item>
+        <item>@drawable/ic_action_not_important</item>
     </array>
 
     <string name="title_activity_display_profile">DisplayProfileActivity</string>

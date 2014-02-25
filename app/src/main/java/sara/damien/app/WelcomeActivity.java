@@ -104,7 +104,7 @@ public class WelcomeActivity extends Activity {
         // Pages
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1)));
         // What's hot, We  will add a counter here
-//        navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1), true, "50+"));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1), true, "Bye bye..."));
 
 
         // Recycle the typed array
@@ -186,6 +186,13 @@ public class WelcomeActivity extends Activity {
                 break;
             case 5:
                 //fragment = new WhatsHotFragment();
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.remove("Connected");
+                editor.putBoolean("Connected", false);
+                editor.commit();
+                Intent i5 = new Intent(this,SplashScreenActivity.class);
+                startActivity(i5);
                 break;
 
             default:
