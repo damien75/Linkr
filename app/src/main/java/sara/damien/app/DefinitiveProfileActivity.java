@@ -37,6 +37,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
     private int currentID;
     private String currentSubject;
     private int nextFirstPos=0;
+    private boolean reject=false;
 
     private int lastProfileShown = -1;
     private boolean pictureShown = false;
@@ -97,6 +98,8 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
     public void RejectProfile(View view) {
         profiles.remove(currentpos);
+        reject=true;
+        nextFirstPos--;
         update(currentpos);
     }
 
@@ -146,8 +149,9 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
             } else {
                 Profile prof = profiles.get(currentpos);
 
-                if (currentpos != lastProfileShown) {
+                if (currentpos != lastProfileShown ||reject) {
                     lastProfileShown = currentpos;
+                    reject=false;
                     pictureShown = false;
 
                     name.setText(prof.getFirst_Name() + " " + prof.getLast_Name());
@@ -161,6 +165,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                         bR.setVisibility(View.GONE);
                         accept.setVisibility(View.VISIBLE);
                     }
+
                 }
 
                 if (!pictureShown) {
