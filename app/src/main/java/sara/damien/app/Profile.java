@@ -28,6 +28,9 @@ public class Profile implements Parcelable {
     private Bitmap picture;
     private boolean pictureDownloaded;
 
+    //ONLY FOR SINGLE PROFILE ACTIVITIES
+    public Profile (String ID){this.ID = ID;}
+
     public Profile (String ID, DefinitiveProfileActivity parent){
         this.ID = ID;
         this.parent = parent;
@@ -83,10 +86,9 @@ public class Profile implements Parcelable {
     public String getID (){return this.ID;}
     public String getLast_Subject (){return this.Last_Subject;}
     public int getState (){return this.State;}
-    public Bitmap getPicture(){
-
-        return this.picture;
-    }
+    public Bitmap getPicture(){return picture;}
+    public double getLoc_X(){return Loc_X;}
+    public double getLoc_Y(){return Loc_Y;}
 
     public void setState (int i){this.State=i;}
 

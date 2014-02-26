@@ -166,7 +166,7 @@ public class WelcomeActivity extends Activity {
                 break;
             case 1:
                 //fragment = new FindPeopleFragment();
-                Intent i1 = new Intent(this,RequestsActivity.class);
+                Intent i1 = new Intent(this,SwipeActivity.class);
                 startActivity(i1);
                 break;
             case 2:

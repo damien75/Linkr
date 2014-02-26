@@ -97,6 +97,14 @@
             android:name="sara.damien.app.ConnectionTypeActivity"
             android:label="@string/title_activity_connection_type" >
         </activity>
+        <activity
+            android:name="sara.damien.app.SwipeActivity"
+            android:label="@string/title_activity_swipe" >
+        </activity>
+        <activity
+            android:name="sara.damien.app.SingleProfileRequestActivity"
+            android:label="@string/title_activity_single_profile_request" >
+        </activity>
     </application>
 
 </manifest>
