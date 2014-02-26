@@ -55,7 +55,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         setContentView(R.layout.activity_definitive_profile);
         currentpos = 0;
         new ProfileIDsFinder().execute();
-        ProfilesDownloader profilesDownloader = new ProfilesDownloader(0,3);
+        ProfilesDownloader profilesDownloader = new ProfilesDownloader(nextFirstPos,nbdownload);
         profilesDownloader.execute();
         Log.d("responseeee", "executee ");
         /*if (savedInstanceState == null) {
