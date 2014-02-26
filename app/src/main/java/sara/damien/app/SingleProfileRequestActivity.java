@@ -1,9 +1,10 @@
 package sara.damien.app;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,12 +23,21 @@ public class SingleProfileRequestActivity extends ActionBarActivity {
     public String ID1;
     private String subject;
     private Profile requestedProfile;
+    private double latitude;
+    private double longitude;
+    private boolean gpsPositionKnown=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_profile_request);
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if (prefs.getBoolean("LocationFound",false)){
+            gpsPositionKnown=true;
+            latitude = (double)prefs.getFloat("Latitude",0);
+            longitude = (double)prefs.getFloat("Longitude",0);
+        }
         Bundle b = getIntent().getExtras();
         ID1 = b.getString("ID1");
         Toast.makeText(this,ID1,Toast.LENGTH_LONG).show();
@@ -45,7 +55,6 @@ public class SingleProfileRequestActivity extends ActionBarActivity {
             params.add(new BasicNameValuePair("SELECT_FUNCTION", "getProfile"));
             params.add(new BasicNameValuePair("ID", ID1));
             JSONObject json = jsonParser.makeHttpRequest(url, "POST", params);
-            Log.e("backg",json.toString());
             requestedProfile.setProfileFromJson(json);
             return null;
         }
@@ -62,9 +71,17 @@ public class SingleProfileRequestActivity extends ActionBarActivity {
             years.setText(years.getText() + " " + requestedProfile.getExp_Years());
             TextView accept = (TextView) findViewById(R.id.textAccepted);
             TextView distance = (TextView)findViewById(R.id.profile_position);
-            double longi = requestedProfile.getLoc_X()*Math.PI/180;
-            double lat = requestedProfile.getLoc_Y()*Math.PI/180;
-            /*double d = 6371*2*Math; // km
+            double longi1 = requestedProfile.getLoc_X()*Math.PI/180;
+            double lat1 = requestedProfile.getLoc_Y()*Math.PI/180;
+            double longi2 = longitude*Math.PI/180;
+            double lat2 = latitude*Math.PI/180;
+
+            if(gpsPositionKnown){
+                double a = Math.sqrt(Math.sin((lat2 - lat1) / 2) * Math.sin((lat2 - lat1) / 2) + Math.sin((longi2 - longi1) / 2) * Math.sin((longi2 - longi1) / 2) * Math.cos(lat1) * Math.cos(lat2));
+                double d = 6371000*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)); //distance en m
+                distance.setText(distance.getText() + " " + String.valueOf(d));
+            }
+            /*double d = 6371*2*Math.atan2(Math.sqrt(Math.sin(lat -))); // km
             var dLat = (lat2-lat1).toRad();
             var dLon = (lon2-lon1).toRad();
             var lat1 = lat1.toRad();
@@ -74,10 +91,17 @@ public class SingleProfileRequestActivity extends ActionBarActivity {
                     Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
             var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
             var d = R * c;
+*/
 
-            distance.setText(distance.getText() + " ");*/
             accept.setVisibility(View.GONE);
         }
+    }
+
+    public void acceptMeeting(View view){
+
+    }
+    public void refuseMeeting(View view){
+
     }
 
     @Override

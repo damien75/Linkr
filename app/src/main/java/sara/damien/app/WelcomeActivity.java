@@ -56,14 +56,20 @@ public class WelcomeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = prefs.edit();
+
         //GPS Tracker
         GPSTracker gps = new GPSTracker(WelcomeActivity.this);
 
         // check if GPS enabled
         if(gps.canGetLocation()){
-
             double latitude = gps.getLatitude();
             double longitude = gps.getLongitude();
+            Log.e("Location GPS","latitude = "+String.valueOf(latitude)+" longitude = "+String.valueOf(longitude));
+            editor.putFloat("Latitude",(float)latitude);
+            editor.putFloat("Longitude",(float)longitude);
+            editor.putBoolean("LocationFound",true);
             shareLocation share = new shareLocation();
             share.loc_x=latitude;
             share.loc_y=longitude;
@@ -73,8 +79,10 @@ public class WelcomeActivity extends Activity {
             // can't get location
             // GPS or Network is not enabled
             // Ask user to enable GPS/network in settings
+            editor.putBoolean("LocationFound",false);
             gps.showSettingsAlert();
         }
+        editor.commit();
 
         //Drawer Menu
         mTitle = mDrawerTitle = getTitle();
@@ -327,7 +335,7 @@ public class WelcomeActivity extends Activity {
                 params.add(new BasicNameValuePair("Loc_X", String.valueOf(loc_x)));
                 params.add(new BasicNameValuePair("Loc_Y", String.valueOf(loc_y)));
                 JSONObject json = jsonParser.makeHttpRequest("http://www.golinkr.net","POST",params);
-                Log.e("shareLocation","location was shared");
+                Log.e("shareLocation","location was shared for user with ID "+String.valueOf(userID));
 
             }
             catch (Exception e){
