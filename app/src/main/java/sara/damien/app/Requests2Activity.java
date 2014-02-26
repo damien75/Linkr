@@ -65,46 +65,11 @@ public class Requests2Activity extends FragmentActivity implements ActionBar.Tab
 
     JSONArray meetings = null;
     ArrayList<HashMap<String,String>> MeetingList = new ArrayList<HashMap<String, String>>();
-    /*class MyGestureDetector extends GestureDetector.SimpleOnGestureListener {
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            try {
-                if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
-                    return false;
-                // right to left swipe
-                if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                    update(currentpos);
-                    Toast.makeText(Requests2Activity.this, "Left Swipe", Toast.LENGTH_SHORT).show();
-                }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                    Toast.makeText(Requests2Activity.this, "Right Swipe", Toast.LENGTH_SHORT).show();
-                    update(currentpos);
-                }
-            } catch (Exception e) {
-                // nothing
-            }
-            return false;
-        }
 
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return true;
-        }
-    }*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_requests2);
-
-        // Gesture detection
-        /*gestureDetector = new GestureDetector(this, new MyGestureDetector());
-        gestureListener = new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                return gestureDetector.onTouchEvent(event);
-            }
-        };
-        ViewPager r = (ViewPager)findViewById(R.id.container);
-        r.setOnTouchListener(gestureListener);*/
-
 
         currentpos=0;
         GetMeetings g = new GetMeetings();
