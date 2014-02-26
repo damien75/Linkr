@@ -314,13 +314,12 @@ public class WelcomeActivity extends Activity {
     public class shareLocation extends AsyncTask<Void,Void,Void> {
         private double loc_x;
         private double loc_y;
-        String successMessage;
 
         @Override
         protected Void doInBackground(Void... args) {
             try {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                int userID = prefs.getInt("ID",0);
+                int userID = prefs.getInt("ID",1);
                 JSONParser jsonParser = new JSONParser();
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
                 params.add(new BasicNameValuePair("SELECT_FUNCTION","shareLocation"));
@@ -328,29 +327,13 @@ public class WelcomeActivity extends Activity {
                 params.add(new BasicNameValuePair("Loc_X", String.valueOf(loc_x)));
                 params.add(new BasicNameValuePair("Loc_Y", String.valueOf(loc_y)));
                 JSONObject json = jsonParser.makeHttpRequest("http://www.golinkr.net","POST",params);
-                int success = json.getInt("success");
-                if (success==1){
-                    successMessage="Location successfully shared";
-                }
-                else{
-                    successMessage="We were unable to share your location";
-                }
+                Log.e("shareLocation","location was shared");
+
             }
             catch (Exception e){
                 e.printStackTrace();
             }
             return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(WelcomeActivity.this,successMessage,Toast.LENGTH_LONG).show();
-                }
-            });
         }
     }
 
