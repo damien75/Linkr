@@ -44,21 +44,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
     JSONParser jsonParser = new JSONParser();
     JSONParser jsonParser2 = new JSONParser();
 
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_PROFILE_INFO = "Profile_Info";
-    private static final String TAG_LAST_NAME = "Last_Name";
-    private static final String TAG_FIRST_NAME = "First_Name";
-    private static final String TAG_LOC_X = "Loc_X";
-    private static final String TAG_LOC_Y = "Loc_Y";
-    private static final String TAG_COMPANY = "Company";
-    private static final String TAG_EXP_YEARS = "Exp_Years";
-    private static final String TAG_SUM_GRADE = "Sum_Grade";
-    private static final String TAG_NUMBER_GRADE = "Number_Grade";
-    private static final String TAG_LAST_SUBJECT = "Last_Subject";
-    private static final String TAG_ID = "ID";
-    private static final String TAG_PICTURE = "Picture";
     private static final String url = "http://www.golinkr.net";
-    private static final String ID = "3";
 
     JSONArray profileInfos = null;
 
@@ -135,7 +121,6 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
             TextView company = (TextView) findViewById(R.id.company);
             TextView years = (TextView) findViewById(R.id.years_experience);
 
-            Button previous = (Button) findViewById(R.id.buttonPrevious);
             Button next = (Button) findViewById(R.id.buttonNext);
 
             Button bP = (Button) findViewById(R.id.buttonProposeMeeting);
@@ -151,8 +136,9 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
             years.setVisibility(visibility);
             bP.setVisibility(visibility);
             bR.setVisibility(visibility);
-            accept.setVisibility(visibility);
+            accept.setVisibility(View.GONE);
             next.setVisibility(visibility);
+
 
             if (!has_profile) {
                 lastProfileShown = -1;
@@ -170,11 +156,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                     company.setText(prof.getCompany());
                     years.setText(prof.getExp_Years());
 
-                    if (prof.getState() == 0) {
-                        bP.setVisibility(1);
-                        bR.setVisibility(1);
-                        accept.setVisibility(View.GONE);
-                    } else {
+                    if (prof.getState() != 0) {
                         bP.setVisibility(View.GONE);
                         bR.setVisibility(View.GONE);
                         accept.setVisibility(View.VISIBLE);
