@@ -1,6 +1,7 @@
 package sara.damien.app;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -28,12 +30,16 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
     ArrayList<Profile> profiles = new ArrayList<Profile>();
     int currentpos;
     final int currentdiff = 2;
-    final int nbdownload= 4;
-    final int E=50;
-    final int XU=0;
-    final int YU=0;
+    final int nbdownload = 4;
+    final int E = 1000;
+    final int XU = 0;
+    final int YU = 0;
     private int currentID;
     private String currentSubject;
+    private int nextFirstPos=0;
+
+    private int lastProfileShown = -1;
+    private boolean pictureShown = false;
 
     JSONParser jsonParser = new JSONParser();
     JSONParser jsonParser2 = new JSONParser();
@@ -51,7 +57,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
     private static final String TAG_LAST_SUBJECT = "Last_Subject";
     private static final String TAG_ID = "ID";
     private static final String TAG_PICTURE = "Picture";
-    private static String url ="http://www.golinkr.net";
+    private static final String url = "http://www.golinkr.net";
     private static final String ID = "3";
 
     JSONArray profileInfos = null;
@@ -61,13 +67,11 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_definitive_profile);
-        currentpos=0;
-        GetProfile g = new GetProfile();
-        g.IDmin= 0;
-        this.currentID=1;
-        this.currentSubject="ceci est un sujet";
-        g.execute();
-        Log.d("responseeee","executee ");
+        currentpos = 0;
+        new ProfileIDsFinder().execute();
+        ProfilesDownloader profilesDownloader = new ProfilesDownloader(0,3);
+        profilesDownloader.execute();
+        Log.d("responseeee", "executee ");
         /*if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
@@ -75,30 +79,26 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         }*/
     }
 
-    public void nextProfile (View view){
-        if (currentpos<profiles.size()-1){
-        currentpos++;
-        Log.d("Current pos : ",""+ currentpos);
+    public void nextProfile(View view) {
+        currentpos = (currentpos + 1) % profiles.size();
+        Log.d("Current pos : ", "" + currentpos);
         update(currentpos);
-        }
     }
 
-    public void previousProfile (View view){
-        if (currentpos>0){
-            currentpos--;
-            Log.d("Current pos : ",""+ currentpos);
-            update(currentpos);
-        }
+    public void previousProfile(View view) {
+        currentpos = (currentpos - 1 + profiles.size()) % profiles.size();
+        Log.d("Current pos : ", "" + currentpos);
+        update(currentpos);
     }
 
-    public void CreateMeeting(View view){
+    public void CreateMeeting(View view) {
         profiles.get(currentpos).setState(1);
 
         CreateMeeting CR = new CreateMeeting();
-        CR.ID1=currentID;
-        CR.ID2=profiles.get(currentpos).getID();
-        CR.subject="Subject"+profiles.get(currentpos).getFirst_Name();
-        CR.message="";
+        CR.ID1 = currentID;
+        //CR.ID2 = profiles.get(currentpos).getID();
+        CR.subject = "Subject" + profiles.get(currentpos).getFirst_Name();
+        CR.message = "";
         CR.execute();
 
         Button bP = (Button) findViewById(R.id.buttonProposeMeeting);
@@ -109,23 +109,29 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         accept.setVisibility(View.VISIBLE);
     }
 
-    public void RejectProfile(View view){
+    public void RejectProfile(View view) {
         profiles.remove(currentpos);
         update(currentpos);
     }
 
-    public void update (int index){
-        if (index==currentpos){
-            if(profiles.size()- currentpos == currentdiff){
+    public void update(int index) {
+        if (index == currentpos) {
+            if (nextFirstPos - currentpos == currentdiff) {
                 Log.d("Response: ", "> " + currentpos);
-                GetProfile g = new GetProfile();
-                g.IDmin= profiles.get(profiles.size()-1).getID();
+                ProfilesDownloader g = new ProfilesDownloader(nextFirstPos,nbdownload);
                 g.execute();
             }
+
+            for (int preload_pos = currentpos - 2; preload_pos <= currentpos + 2; preload_pos++) {
+                int wrapped_pos = (preload_pos + profiles.size()) % profiles.size();
+                profiles.get(wrapped_pos).downloadPicture();
+            }
+            //TODO: deletePicture
+
             //Ecrire le corps de l'affichage du fragment
-            TextView name = (TextView)findViewById(R.id.profile_name);
-            TextView subject = (TextView)findViewById(R.id.profile_subject);
-            TextView grade = (TextView)findViewById(R.id.grade);
+            TextView name = (TextView) findViewById(R.id.profile_name);
+            TextView subject = (TextView) findViewById(R.id.profile_subject);
+            TextView grade = (TextView) findViewById(R.id.grade);
             TextView company = (TextView) findViewById(R.id.company);
             TextView years = (TextView) findViewById(R.id.years_experience);
 
@@ -136,71 +142,60 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
             Button bR = (Button) findViewById(R.id.buttonReject);
             TextView accept = (TextView) findViewById(R.id.textAccepted);
 
-            if (currentpos>=profiles.size()){
+            boolean has_profile = currentpos < profiles.size() && profiles.get(currentpos).isDownloaded();
+            int visibility = has_profile ? View.VISIBLE : View.GONE;
+
+            subject.setVisibility(visibility);
+            grade.setVisibility(visibility);
+            company.setVisibility(visibility);
+            years.setVisibility(visibility);
+            bP.setVisibility(visibility);
+            bR.setVisibility(visibility);
+            accept.setVisibility(visibility);
+            next.setVisibility(visibility);
+
+            if (!has_profile) {
+                lastProfileShown = -1;
                 name.setText("Plus de profiles disponibles");
-                subject.setVisibility(View.GONE);
-                grade.setVisibility(View.GONE);
-                company.setVisibility(View.GONE);
-                years.setVisibility(View.GONE);
-                bP.setVisibility(View.GONE);
-                bR.setVisibility(View.GONE);
-                accept.setVisibility(View.GONE);
-                next.setVisibility(View.GONE);
-            }
-            else{
-            name.setText(profiles.get(currentpos).getFirst_Name()+" "+profiles.get(currentpos).getLast_Name());
-            subject.setText(profiles.get(currentpos).getLast_Subject());
-            grade.setText(profiles.get(currentpos).get_Avg_Grade());
-            company.setText(profiles.get(currentpos).getCompany());
-            years.setText(profiles.get(currentpos).getExp_Years());
+            } else {
+                Profile prof = profiles.get(currentpos);
 
-                String picturelink= profiles.get(currentpos).getPicturelink();
-                if (!picturelink.equals("null")){
-                // Loader image - will be shown before loading image
-                int loader = R.drawable.lil_wayne;
+                if (currentpos != lastProfileShown) {
+                    lastProfileShown = currentpos;
+                    pictureShown = false;
 
+                    name.setText(prof.getFirst_Name() + " " + prof.getLast_Name());
+                    subject.setText(prof.getLast_Subject());
+                    grade.setText(prof.get_Avg_Grade());
+                    company.setText(prof.getCompany());
+                    years.setText(prof.getExp_Years());
 
-                // Imageview to show
-                ImageView image = (ImageView) findViewById(R.id.profile_picture);
-
-                int width = image.getWidth();
-                int height = image.getHeight();
-                int max=Math.max(width,height);
-
-                // Image url
-                String image_url = "http://www.golinkr.net/images/"+profiles.get(currentpos).getPicturelink();
-
-                // ImageLoader class instance
-                ImageLoader imgLoader = new ImageLoader(getApplicationContext());
-                imgLoader.outputsize=max;
-
-                // whenever you want to load an image from url
-                // call DisplayImage function
-                // url - image url to load
-                // loader - loader image, will be displayed before getting image
-                // image - ImageView
-                imgLoader.DisplayImage(image_url, loader, image);
-                }
-                else{
-                    ((ImageView)findViewById(R.id.profile_picture)).setImageResource(R.drawable.lil_wayne);
+                    if (prof.getState() == 0) {
+                        bP.setVisibility(1);
+                        bR.setVisibility(1);
+                        accept.setVisibility(View.GONE);
+                    } else {
+                        bP.setVisibility(View.GONE);
+                        bR.setVisibility(View.GONE);
+                        accept.setVisibility(View.VISIBLE);
+                    }
                 }
 
-                if (profiles.get(currentpos).getState()==0){
-                bP.setVisibility(1);
-                bR.setVisibility(1);
-                accept.setVisibility(View.GONE);
-            }
-            else{
-                bP.setVisibility(View.GONE);
-                bR.setVisibility(View.GONE);
-                accept.setVisibility(View.VISIBLE);
-            }
-            }
+                if (!pictureShown) {
+                    Bitmap picture = prof.getPicture();
+                    ImageView view = (ImageView) findViewById(R.id.profile_picture);
 
+                    if (picture != null) {
+                        pictureShown = true;
+                        view.setImageBitmap(picture);
+                    } else
+                        view.setImageResource(R.drawable.lil_wayne);
+                }
+            }
         }
     }
 
-    private class CreateMeeting extends AsyncTask<Void,Void,Void> implements sara.damien.app.GetProfile{
+    private class CreateMeeting extends AsyncTask<Void, Void, Void>  {
         int ID1;
         int ID2;
         String subject;
@@ -208,92 +203,119 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            try{
-            List<NameValuePair> params2 = new ArrayList<NameValuePair>();
-            params2.add(new BasicNameValuePair("SELECT_FUNCTION","createMeeting"));
-            params2.add(new BasicNameValuePair("ID1",String.valueOf(ID1)));
-            params2.add(new BasicNameValuePair("ID2",String.valueOf(ID2)));
-            params2.add(new BasicNameValuePair("Subject",subject));
-            params2.add(new BasicNameValuePair("Message",message));
-            JSONObject json2 = jsonParser2.makeHttpRequest(url,"POST",params2);}
-            catch (NullPointerException e){
+            try {
+                List<NameValuePair> params2 = new ArrayList<NameValuePair>();
+                params2.add(new BasicNameValuePair("SELECT_FUNCTION", "createMeeting"));
+                params2.add(new BasicNameValuePair("ID1", String.valueOf(ID1)));
+                params2.add(new BasicNameValuePair("ID2", String.valueOf(ID2)));
+                params2.add(new BasicNameValuePair("Subject", subject));
+                params2.add(new BasicNameValuePair("Message", message));
+                JSONObject json2 = jsonParser2.makeHttpRequest(url, "POST", params2);
+            } catch (NullPointerException e) {
                 e.printStackTrace();
             }
             return null;
         }
     }
 
-    private class GetProfile extends AsyncTask<Void, Void, Void> implements sara.damien.app.GetProfile {
-        int IDmin;
-
+    private class ProfileIDsFinder extends AsyncTask<Void, Void, Void>  {
         @Override
         protected Void doInBackground(Void... args) {
             // Creating service handler class instance
             List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("SELECT_FUNCTION","getProfileSupID"));
-            params.add(new BasicNameValuePair("IDMIN",String.valueOf(this.IDmin)));
-            params.add(new BasicNameValuePair("XU",String.valueOf(XU)));
-            params.add(new BasicNameValuePair("YU",String.valueOf(YU)));
-            params.add(new BasicNameValuePair("E",String.valueOf(E)));
-            params.add(new BasicNameValuePair("NBDOWN", String.valueOf(nbdownload)));
-            JSONObject json = jsonParser.makeHttpRequest(url,"POST",params);
+            params.add(new BasicNameValuePair("SELECT_FUNCTION", "getProfileIDs"));
+            params.add(new BasicNameValuePair("XU", String.valueOf(XU)));
+            params.add(new BasicNameValuePair("YU", String.valueOf(YU)));
+            params.add(new BasicNameValuePair("E", String.valueOf(E)));
+            String json = jsonParser.plainHttpRequest(url, "POST", params);
+
+            // Making a request to url and getting response
+
+            Log.d("Response: ", "> " + json);
+
+            //if (jsonStr != null) {
+            try {
+                profileInfos = new JSONArray(json);
+                if (profileInfos.length() > 0) {
+                    for (int i = 0; i < profileInfos.length(); i++) {
+                        String c = profileInfos.getString(i);
+                        Profile p = new Profile(c, DefinitiveProfileActivity.this);
+                        profiles.add(p);
+                    }
+                } else {
+                    Toast.makeText(DefinitiveProfileActivity.this, "No profile found", Toast.LENGTH_LONG).show();
+                    Intent i = new Intent(getApplicationContext(), WelcomeActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(i);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+
+        }
+    }
+
+
+    private class ProfilesDownloader extends AsyncTask<Void, Void, Void>  {
+        int firstPos, count;
+
+        public ProfilesDownloader(int firstPos, int count) {
+            nextFirstPos += count;
+            this.firstPos = firstPos;
+            this.count = count;
+        }
+
+        @Override
+        protected Void doInBackground(Void... args) {
+            int lastpos = Math.min(firstPos + count, profiles.size()) - 1;
+            ArrayList<String> IDs = new ArrayList<String>(count);
+            for (int pos = firstPos; pos <= lastpos; pos++) {
+                Profile prof = profiles.get(pos);
+                if (!prof.isDownloaded())
+                    IDs.add(prof.getID());
+            }
+
+            // Creating service handler class instance
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("SELECT_FUNCTION", "getProfilesInRange"));
+            params.add(new BasicNameValuePair("IDs", new JSONArray(IDs).toString()));
+            JSONObject json = jsonParser.makeHttpRequest(url, "POST", params);
 
             // Making a request to url and getting response
             String jsonStr = json.toString();
             Log.d("Response: ", "> " + jsonStr);
 
             //if (jsonStr != null) {
-            try {
-                int success = json.getInt(TAG_SUCCESS);
-                if (success==1){
-                    profileInfos=json.getJSONArray(TAG_PROFILE_INFO);
-                    for (int i = 0; i<profileInfos.length();i++){
-                        JSONObject c = profileInfos.getJSONObject(i);
-                        String first_name = c.getString(TAG_FIRST_NAME);
-                        String last_name = c.getString(TAG_LAST_NAME);
-                        Double loc_x = c.getDouble(TAG_LOC_X);
-                        Double loc_y = c.getDouble(TAG_LOC_Y);
-                        String company = c.getString(TAG_COMPANY);
-                        String subject = c.getString(TAG_LAST_SUBJECT);
-                        String picturelink = c.getString(TAG_PICTURE);
-                        int experience = c.getInt(TAG_EXP_YEARS);
-                        int ID = c.getInt(TAG_ID);
-                        int sum_grade = c.getInt(TAG_SUM_GRADE);
-                        int number_grade = c.getInt(TAG_NUMBER_GRADE);
-                        int state=0;
 
-                        Profile p = new Profile(true,last_name,first_name,subject,picturelink,experience,loc_x,loc_y,company,ID,sum_grade,number_grade,state);
-                        profiles.add(p);
-                    }
+            for (int pos = firstPos; pos <= lastpos; pos++) {
+                Profile prof = profiles.get(pos);
+
+                try {
+                    JSONObject data = json.getJSONObject(prof.getID());
+                    prof.setProfileFromJson(data);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-                else{
+            }
+                /*
                     Intent i = new Intent(getApplicationContext(),WelcomeActivity.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(i);
-                }
-            }
-            catch (JSONException e){
-                e.printStackTrace();
-            }
+                */
             return null;
 
         }
 
         @Override
         protected void onPostExecute(Void result) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    for (int i=0;i<nbdownload-1;i++){
-                        update(i);
-                    }
-                }
-            });
+                        update(currentpos);
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.definitive_profile, menu);
         return true;
@@ -321,12 +343,10 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
+                                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_definitive_profile, container, false);
 
             return rootView;
         }
     }
-
-
 }

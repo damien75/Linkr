@@ -4,6 +4,9 @@ import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by Damien on 17/02/2014.
  */
@@ -18,12 +21,36 @@ public class Profile implements Parcelable {
     private int Exp_Years;
     private int Sum_Grade;
     private int Number_Grade;
-    private int ID;
+    private String ID;
     private int State;
-    private String picturelink;
-    private Bitmap mBitmap;
 
-    public Profile (boolean downloaded,String last_Name,String first_name,String last_subject,String picturelink, int exp_Years, double loc_X, double loc_Y, String company, int ID, int sum_Grade, int number_Grade,int State){
+    private DefinitiveProfileActivity parent;
+    private Bitmap picture;
+    private boolean pictureDownloaded;
+
+    public Profile (String ID, DefinitiveProfileActivity parent){
+        this.ID = ID;
+        this.parent = parent;
+    }
+
+    public void setProfileFromJson (JSONObject json){
+        try {
+            this.Last_Name=json.getString("Last_Name");
+            this.First_Name=json.getString("First_Name");
+            this.Company=json.getString("Company");
+            this.Last_Subject=json.getString("Last_Subject");
+            this.Exp_Years=json.getInt("Exp_Years");
+            this.Loc_X=json.getDouble("Loc_X");
+            this.Loc_Y=json.getDouble("Loc_Y");
+            this.Sum_Grade=json.getInt("Sum_Grade");
+            this.Number_Grade=json.getInt("Number_Grade");
+            this.State=0;
+            this.downloaded=true;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    /*public Profile (boolean downloaded,String last_Name,String first_name,String last_subject,String picturelink, int exp_Years, double loc_X, double loc_Y, String company, String ID, int sum_Grade, int number_Grade,int State){
         this.downloaded=downloaded;
         this.Last_Name=last_Name;
         this.Company=company;
@@ -36,8 +63,7 @@ public class Profile implements Parcelable {
         this.ID=ID;
         this.Number_Grade=number_Grade;
         this.State=State;
-        this.picturelink=picturelink;
-    }
+    }*/
 
     public boolean isDownloaded (){
         return this.downloaded;
@@ -54,13 +80,15 @@ public class Profile implements Parcelable {
     }
     public String getCompany (){return this.Company;}
     public String getExp_Years (){return String.valueOf(this.Exp_Years);}
-    public int getID (){return this.ID;}
+    public String getID (){return this.ID;}
     public String getLast_Subject (){return this.Last_Subject;}
     public int getState (){return this.State;}
-    public String getPicturelink(){return this.picturelink;}
+    public Bitmap getPicture(){
+
+        return this.picture;
+    }
 
     public void setState (int i){this.State=i;}
-    public void setmBitmap (Bitmap bitmap){this.mBitmap=bitmap;}
 
     @Override
     public int describeContents() {
@@ -69,7 +97,7 @@ public class Profile implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(ID);
+        parcel.writeString(ID);
         parcel.writeString(Last_Name);
         parcel.writeString(First_Name);
         parcel.writeString(Company);
@@ -96,7 +124,7 @@ public class Profile implements Parcelable {
     };
 
     public Profile(Parcel in) {
-        this.ID = in.readInt();
+        this.ID = in.readString();
         this.Last_Name = in.readString();
         this.First_Name = in.readString();
         this.Company = in.readString();
@@ -106,5 +134,24 @@ public class Profile implements Parcelable {
         this.Loc_Y = in.readDouble();
         this.Sum_Grade = in.readInt();
         this.Number_Grade = in.readInt();
+    }
+
+    public void onImageReceived(Bitmap picture) {
+        this.picture = picture;
+        parent.update(parent.currentpos);
+    }
+
+    public void downloadPicture() {
+        if (!pictureDownloaded) {
+            pictureDownloaded = true;
+            new ImageDownloader(this).execute(this.ID);
+        }
+    }
+
+    public void deletePicture() {
+        if (picture != null) {
+            pictureDownloaded = false;
+            picture = null;
+        }
     }
 }

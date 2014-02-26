@@ -1,11 +1,6 @@
 package sara.damien.app;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
+import android.util.Log;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -19,7 +14,12 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 public class JSONParser {
 
@@ -32,9 +32,10 @@ public class JSONParser {
 
     }
 
+
     // function get json from url
     // by making HTTP POST or GET mehtod
-    public JSONObject makeHttpRequest(String url, String method,
+    public String plainHttpRequest(String url, String method,
                                       List<NameValuePair> params) {
 
         // Making HTTP request
@@ -85,6 +86,13 @@ public class JSONParser {
         } catch (Exception e) {
             Log.e("Buffer Error", "Error converting result " + e.toString());
         }
+
+        return json;
+    }
+
+    public JSONObject makeHttpRequest(String url, String method,
+                                      List<NameValuePair> params) {
+        String json = plainHttpRequest(url,method,params);
 
         // try parse the string to a JSON object
         try {

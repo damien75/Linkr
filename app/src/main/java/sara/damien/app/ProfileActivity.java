@@ -163,7 +163,7 @@ public class ProfileActivity extends Activity {
         // Calling async task to get json
         new GetProfile().execute();
     }
-    private class GetProfile extends AsyncTask<Void, Void, Void> implements sara.damien.app.GetProfile {
+    private class GetProfile extends AsyncTask<Void, Void, Void> {
 
 
         @Override
