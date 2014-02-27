@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -130,9 +131,7 @@ public class RequestsReceivedFragment extends ListFragment {
                     }
                 }
                 else{
-                    Intent i = new Intent(getActivity(),WelcomeActivity.class);
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(i);
+                    Toast.makeText(getActivity(),"No Requests found",Toast.LENGTH_SHORT).show();
                 }
             }
             catch (JSONException e){
