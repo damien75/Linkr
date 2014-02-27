@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -129,9 +128,6 @@ public class RequestsReceivedFragment extends ListFragment {
                         map.put(TAG_IDm,idm);
                         MeetingList.add(map);
                     }
-                }
-                else{
-                    Toast.makeText(getActivity(),"No Requests found",Toast.LENGTH_SHORT).show();
                 }
             }
             catch (JSONException e){

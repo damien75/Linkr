@@ -33,6 +33,7 @@ public class SingleProfileRequestActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_profile_request);
 
+        (findViewById(R.id.textAccepted)).setVisibility(View.GONE);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         if (prefs.getBoolean("LocationFound",false)){
             gpsPositionKnown=true;
@@ -96,7 +97,6 @@ public class SingleProfileRequestActivity extends ActionBarActivity {
             company.setText(company.getText() + " " + requestedProfile.getCompany());
             TextView years = (TextView) findViewById(R.id.years_experience);
             years.setText(years.getText() + " " + requestedProfile.getExp_Years());
-            (findViewById(R.id.textAccepted)).setVisibility(View.GONE);
             TextView distance = (TextView)findViewById(R.id.profile_position);
             double longi1 = requestedProfile.getLoc_X();
             double lat1 = requestedProfile.getLoc_Y();
