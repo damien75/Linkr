@@ -46,7 +46,7 @@ public class RequestsReceivedFragment extends ListFragment {
     private static final String TAG_STATUS= "Status";
     private static final String TAG_ID = "ID";
     private static final String TAG_IDm = "IDm";
-    private static String ID2 = "2";
+    private static String currentID;
 
 
     JSONArray meetings = null;
@@ -74,7 +74,7 @@ public class RequestsReceivedFragment extends ListFragment {
         View rootView = inflater.inflate(R.layout.fragment_requests_received, container, false);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-        ID2 = prefs.getString("ID","2");
+        currentID = prefs.getString("ID","2");
 
         MeetingList = new ArrayList<HashMap<String, String>>();
         new GetMeetings().execute();
@@ -98,7 +98,7 @@ public class RequestsReceivedFragment extends ListFragment {
             // Creating service handler class instance
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair("SELECT_FUNCTION","getReceivedRequests"));
-            params.add(new BasicNameValuePair("ID2", ID2));
+            params.add(new BasicNameValuePair("ID2", currentID));
             String jsonStr = jsonParser.plainHttpRequest(url,"POST",params);
 
             // Making a request to url and getting response
