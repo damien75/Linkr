@@ -9,9 +9,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import sara.damien.app.DebateMeetingFragment;
-import sara.damien.app.RequestsReceivedFragment;
-import sara.damien.app.RequestsScheduledFragment;
-import sara.damien.app.RequestsSentFragment;
+import sara.damien.app.requests.RequestsReceivedFragment;
+import sara.damien.app.requests.RequestsScheduledFragment;
+import sara.damien.app.requests.RequestsSentFragment;
 
 public class TabsPagerAdapter extends FragmentPagerAdapter {
 

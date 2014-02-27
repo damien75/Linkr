@@ -31,6 +31,7 @@ import java.util.List;
 
 import sara.damien.app.adapter.NavDrawerListAdapter;
 import sara.damien.app.model.NavDrawerItem;
+import sara.damien.app.requests.SwipeActivity;
 
 
 public class WelcomeActivity extends Activity {

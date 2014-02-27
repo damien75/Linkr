@@ -1,4 +1,4 @@
-package sara.damien.app;
+package sara.damien.app.requests;
 
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -16,7 +16,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
+
+import sara.damien.app.JSONParser;
+import sara.damien.app.Profile;
+import sara.damien.app.R;
 
 public class SingleProfileRequestActivity extends ActionBarActivity {
     private String MeetingID;
@@ -41,9 +44,6 @@ public class SingleProfileRequestActivity extends ActionBarActivity {
             latitude = (double)prefs.getFloat("Latitude",0);
             longitude = (double)prefs.getFloat("Longitude",0);
         }
-        Timer timer = new Timer();
-        Thread thread = new Thread();
-        thread.start();
         Bundle b = getIntent().getExtras();
         IDu = b.getString("IDu");
         MeetingID = b.getString("IDm");

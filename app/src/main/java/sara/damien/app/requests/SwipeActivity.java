@@ -1,4 +1,4 @@
-package sara.damien.app;
+package sara.damien.app.requests;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 
+import sara.damien.app.R;
 import sara.damien.app.adapter.TabsPagerAdapter;
 
 public class SwipeActivity extends FragmentActivity implements ActionBar.TabListener {

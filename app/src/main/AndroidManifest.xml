@@ -64,11 +64,11 @@
             android:label="@string/title_activity_connection_type" >
         </activity>
         <activity
-            android:name="sara.damien.app.SwipeActivity"
+            android:name=".requests.SwipeActivity"
             android:label="@string/title_activity_swipe" >
         </activity>
         <activity
-            android:name="sara.damien.app.SingleProfileRequestActivity"
+            android:name=".requests.SingleProfileRequestActivity"
             android:label="@string/title_activity_single_profile_request" >
         </activity>
     </application>
