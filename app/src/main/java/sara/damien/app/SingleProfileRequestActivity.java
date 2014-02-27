@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 public class SingleProfileRequestActivity extends ActionBarActivity {
     private String MeetingID;
@@ -40,6 +41,9 @@ public class SingleProfileRequestActivity extends ActionBarActivity {
             latitude = (double)prefs.getFloat("Latitude",0);
             longitude = (double)prefs.getFloat("Longitude",0);
         }
+        Timer timer = new Timer();
+        Thread thread = new Thread();
+        thread.start();
         Bundle b = getIntent().getExtras();
         IDu = b.getString("IDu");
         MeetingID = b.getString("IDm");
@@ -138,6 +142,7 @@ public class SingleProfileRequestActivity extends ActionBarActivity {
 
         @Override
         protected void onPostExecute(Void result){
+            (findViewById(R.id.buttonProposeMeeting)).setVisibility(View.GONE);
             (findViewById(R.id.textAccepted)).setVisibility(View.VISIBLE);
         }
     }
