@@ -80,7 +80,7 @@ public class DebateMeetingFragment extends ListFragment {
         new GetMeetings().execute();
         return rootView;
     }
-    private class GetMeetings extends AsyncTask<Void, Void, Void> implements sara.damien.app.GetMeetings {
+    private class GetMeetings extends AsyncTask<Void, Void, Void> {
 
 
         @Override

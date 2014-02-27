@@ -174,18 +174,14 @@ public class WelcomeActivity extends Activity {
                 break;
             case 1:
                 //fragment = new FindPeopleFragment();
-                Intent i1 = new Intent(this,SwipeActivity.class);
-                startActivity(i1);
                 break;
             case 2:
                 //fragment = new PhotosFragment();
-                Intent i2 = new Intent(this,Requests2Activity.class);
+                Intent i2 = new Intent(this,SwipeActivity.class);
                 startActivity(i2);
                 break;
             case 3:
                 //fragment = new CommunityFragment();
-                Intent i3 = new Intent(this,Requests3Activity.class);
-                startActivity(i3);
                 break;
             case 4:
                 //fragment = new PagesFragment();
@@ -310,7 +306,7 @@ public class WelcomeActivity extends Activity {
     }
 
     public void openRequests (View view){
-        Intent intent=new Intent(this,RequestsActivity.class);
+        Intent intent=new Intent(this,SwipeActivity.class);
         startActivity(intent);
     }
 
