@@ -1,4 +1,4 @@
-package sara.damien.app;
+package sara.damien.app.connection;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -29,6 +29,10 @@ import org.scribe.oauth.OAuthService;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import sara.damien.app.R;
+import sara.damien.app.WelcomeActivity;
+import sara.damien.app.utils.JSONParser;
 
 public class LinkedInConnectionActivity extends Activity {
     private ProgressDialog pDialog;

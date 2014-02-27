@@ -12,7 +12,7 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.AppCompat.Light" >
         <activity
-            android:name="sara.damien.app.SplashScreenActivity"
+            android:name=".utils.SplashScreenActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
@@ -40,27 +40,22 @@
                 android:value="WelcomeActivity" />
         </activity>
         <activity
-            android:name="sara.damien.app.DisplayProfileActivity"
-            android:label="@string/title_activity_display_profile"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
             android:name="sara.damien.app.DefinitiveProfileActivity"
             android:label="@string/title_activity_definitive_profile" >
         </activity>
         <activity
-            android:name="sara.damien.app.LinkedInConnectionActivity"
+            android:name=".connection.LinkedInConnectionActivity"
             android:label="@string/title_activity_linkedin_connection" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity
-            android:name="sara.damien.app.RegisterManuallyActivity"
+            android:name=".connection.RegisterManuallyActivity"
             android:label="@string/title_activity_register" >
         </activity>
         <activity
-            android:name="sara.damien.app.ConnectionTypeActivity"
+            android:name=".connection.ConnectionTypeActivity"
             android:label="@string/title_activity_connection_type" >
         </activity>
         <activity

@@ -30,8 +30,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sara.damien.app.adapter.NavDrawerListAdapter;
+import sara.damien.app.drawer.HomeFragment;
 import sara.damien.app.model.NavDrawerItem;
 import sara.damien.app.requests.SwipeActivity;
+import sara.damien.app.utils.GPSTracker;
+import sara.damien.app.utils.JSONParser;
+import sara.damien.app.utils.SplashScreenActivity;
 
 
 public class WelcomeActivity extends Activity {

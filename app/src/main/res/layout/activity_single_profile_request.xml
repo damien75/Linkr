@@ -35,8 +35,8 @@
                 android:id="@+id/relativeLayout">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/profile_name"
                     android:id="@+id/profile_name"
@@ -48,7 +48,6 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:id="@+id/company"
                     android:text="@string/profile_company"
-                    android:layout_marginLeft="15dp"
                     android:layout_marginTop="15dp"
                     android:layout_centerHorizontal="true"
                     android:layout_below="@id/profile_name"/>
@@ -59,7 +58,6 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:id="@+id/years_experience"
                     android:text="@string/profile_experience"
-                    android:layout_marginLeft="15dp"
                     android:layout_marginTop="15dp"
                     android:layout_centerHorizontal="true"
                     android:layout_below="@id/company"/>

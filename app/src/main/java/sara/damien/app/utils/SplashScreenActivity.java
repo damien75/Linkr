@@ -1,4 +1,4 @@
-package sara.damien.app;
+package sara.damien.app.utils;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,6 +12,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import sara.damien.app.R;
+import sara.damien.app.WelcomeActivity;
+import sara.damien.app.connection.ConnectionTypeActivity;
 
 public class SplashScreenActivity extends Activity {
 

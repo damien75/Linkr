@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import sara.damien.app.JSONParser;
+import sara.damien.app.utils.JSONParser;
 import sara.damien.app.R;
 
 public class RequestsReceivedFragment extends ListFragment {

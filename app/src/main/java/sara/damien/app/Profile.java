@@ -7,6 +7,8 @@ import android.os.Parcelable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import sara.damien.app.utils.ImageDownloader;
+
 /**
  * Created by Damien on 17/02/2014.
  */

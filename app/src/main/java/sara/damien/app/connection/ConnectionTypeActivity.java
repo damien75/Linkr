@@ -1,4 +1,4 @@
-package sara.damien.app;
+package sara.damien.app.connection;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +9,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+
+import sara.damien.app.R;
+import sara.damien.app.WelcomeActivity;
 
 public class ConnectionTypeActivity extends ActionBarActivity {
 

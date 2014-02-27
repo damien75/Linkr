@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import sara.damien.app.utils.JSONParser;
+
 public class TopicActivity extends ActionBarActivity {
     private ProgressDialog pDialog;
 

@@ -1,4 +1,4 @@
-package sara.damien.app;
+package sara.damien.app.connection;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -21,6 +21,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import sara.damien.app.R;
+import sara.damien.app.WelcomeActivity;
+import sara.damien.app.utils.JSONParser;
 
 public class RegisterManuallyActivity extends ActionBarActivity {
     EditText txtFirst_Name, txtLast_Name, txtCompany, txtExp_Years;

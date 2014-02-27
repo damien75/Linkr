@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="10dip"
-    tools:context="sara.damien.app.RegisterManuallyActivity">
+    tools:context="sara.damien.app.connection.RegisterManuallyActivity">
 
     <!-- First_Name Label -->
     <TextView

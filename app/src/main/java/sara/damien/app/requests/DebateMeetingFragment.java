@@ -1,4 +1,4 @@
-package sara.damien.app;
+package sara.damien.app.requests;
 
 /**
  * Created by Damien on 26/02/2014.
@@ -29,7 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import sara.damien.app.requests.SingleProfileRequestActivity;
+import sara.damien.app.utils.JSONParser;
+import sara.damien.app.R;
 
 public class DebateMeetingFragment extends ListFragment {
     private static String url ="http://www.golinkr.net";

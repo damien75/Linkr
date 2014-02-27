@@ -8,7 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import sara.damien.app.DebateMeetingFragment;
+import sara.damien.app.requests.DebateMeetingFragment;
 import sara.damien.app.requests.RequestsReceivedFragment;
 import sara.damien.app.requests.RequestsScheduledFragment;
 import sara.damien.app.requests.RequestsSentFragment;

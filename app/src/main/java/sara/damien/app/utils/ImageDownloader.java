@@ -1,4 +1,4 @@
-package sara.damien.app;
+package sara.damien.app.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +10,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.InputStream;
+
+import sara.damien.app.Profile;
 
 /**
  * Created by Sara-Fleur on 2/25/14.

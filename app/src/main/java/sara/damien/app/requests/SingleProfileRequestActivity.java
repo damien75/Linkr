@@ -17,7 +17,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import sara.damien.app.JSONParser;
+import sara.damien.app.utils.JSONParser;
 import sara.damien.app.Profile;
 import sara.damien.app.R;
 
