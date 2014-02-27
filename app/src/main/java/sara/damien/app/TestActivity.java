@@ -240,7 +240,7 @@ public class TestActivity extends Activity {
 
     public class createProfile extends AsyncTask<Void,Void,Void>{
         private String idl;
-        private int userID;
+        private String userID;
         private String first_name;
         private String last_name;
         JSONObject json;
@@ -279,12 +279,12 @@ public class TestActivity extends Activity {
                 public void run() {
                     try {
                         if (json.getInt("success")==1){
-                            userID=json.getInt("ID");
+                            userID=json.getString("ID");
                             Toast.makeText(TestActivity.this, "Your profile was successfully created! Welcome on Linkr!!!", Toast.LENGTH_LONG).show();
                             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                             SharedPreferences.Editor editor = prefs.edit();
                             editor.putBoolean("Connected", true);
-                            editor.putInt("ID",userID);
+                            editor.putString("ID",userID);
                             editor.commit();
                             Intent i = new Intent(TestActivity.this, WelcomeActivity.class);
                             startActivity(i);

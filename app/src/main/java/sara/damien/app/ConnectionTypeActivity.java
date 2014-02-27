@@ -19,11 +19,12 @@ public class ConnectionTypeActivity extends ActionBarActivity {
     }
     public void adminSignIn (View view){
         Intent i = new Intent(this, WelcomeActivity.class);
-        int id = Integer.parseInt(((EditText)findViewById(R.id.editID)).getText().toString());
+        //int id = Integer.parseInt(((EditText)findViewById(R.id.editID)).getText().toString());
+        String id = ((EditText)findViewById(R.id.editID)).getText().toString();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("Connected", true);
-        editor.putInt("ID",id);
+        editor.putString("ID",id);
         editor.commit();
         startActivity(i);
     }

@@ -69,7 +69,7 @@ public class RegisterManuallyActivity extends ActionBarActivity {
 
     public class createProfileManually extends AsyncTask<Void,Void,Void> {
         private String idl;
-        private int userID;
+        private String userID;
         private String first_name;
         private String last_name;
         private String company;
@@ -110,12 +110,12 @@ public class RegisterManuallyActivity extends ActionBarActivity {
                 public void run() {
                     try {
                         if (json.getInt("success")==1){
-                            userID=json.getInt("ID");
+                            userID=json.getString("ID");
                             Toast.makeText(RegisterManuallyActivity.this, "Your profile was successfully created! Welcome on Linkr!!!", Toast.LENGTH_LONG).show();
                             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                             SharedPreferences.Editor editor = prefs.edit();
                             editor.putBoolean("Connected", true);
-                            editor.putInt("ID",userID);
+                            editor.putString("ID",userID);
                             editor.commit();
                             Intent i = new Intent(RegisterManuallyActivity.this, WelcomeActivity.class);
                             startActivity(i);

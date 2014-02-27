@@ -327,16 +327,15 @@ public class WelcomeActivity extends Activity {
         protected Void doInBackground(Void... args) {
             try {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                int userID = prefs.getInt("ID",1);
+                String userID = prefs.getString("ID","2");
                 JSONParser jsonParser = new JSONParser();
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
                 params.add(new BasicNameValuePair("SELECT_FUNCTION","shareLocation"));
-                params.add(new BasicNameValuePair("ID", String.valueOf(userID)));
+                params.add(new BasicNameValuePair("ID", userID));
                 params.add(new BasicNameValuePair("Loc_X", String.valueOf(loc_x)));
                 params.add(new BasicNameValuePair("Loc_Y", String.valueOf(loc_y)));
                 JSONObject json = jsonParser.makeHttpRequest("http://www.golinkr.net","POST",params);
                 Log.e("shareLocation","location was shared for user with ID "+String.valueOf(userID));
-
             }
             catch (Exception e){
                 e.printStackTrace();
