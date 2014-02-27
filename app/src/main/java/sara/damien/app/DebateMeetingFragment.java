@@ -129,11 +129,7 @@ public class DebateMeetingFragment extends ListFragment {
                         MeetingList.add(map);
                     }
                 }
-                else{
-                    Intent i = new Intent(getActivity(),WelcomeActivity.class);
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(i);
-                }
+
             }
             catch (JSONException e){
                 e.printStackTrace();
