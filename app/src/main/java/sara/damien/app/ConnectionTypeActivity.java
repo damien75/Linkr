@@ -30,7 +30,7 @@ public class ConnectionTypeActivity extends ActionBarActivity {
     }
 
     public void linkedInSignIn (View view){
-        Intent i = new Intent(this, TestActivity.class);
+        Intent i = new Intent(this, LinkedInConnectionActivity.class);
         startActivity(i);
     }
 

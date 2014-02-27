@@ -50,7 +50,7 @@
     <string name="title_activity_requests2">Requests2Activity</string>
     <string name="title_activity_definitive_profile">DefinitiveProfileActivity</string>
     <string name="title_activity_requests3">Requests3Activity</string>
-    <string name="title_activity_test">TestActivity</string>
+    <string name="title_activity_linkedin_connection">Connection with Linkedin</string>
     <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_connection_type">ConnectionTypeActivity</string>
     <string name="title_activity_swipe">SwipeActivity</string>

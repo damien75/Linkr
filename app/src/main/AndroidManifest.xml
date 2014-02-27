@@ -40,15 +40,6 @@
                 android:value="WelcomeActivity" />
         </activity>
         <activity
-            android:name="sara.damien.app.ProfileActivity"
-            android:label="@string/title_activity_profile"
-            android:parentActivityName="sara.damien.app.WelcomeActivity"
-            android:screenOrientation="portrait" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="WelcomeActivity" />
-        </activity>
-        <activity
             android:name="sara.damien.app.DisplayProfileActivity"
             android:label="@string/title_activity_display_profile"
             android:screenOrientation="portrait" >
@@ -58,8 +49,8 @@
             android:label="@string/title_activity_definitive_profile" >
         </activity>
         <activity
-            android:name="sara.damien.app.TestActivity"
-            android:label="@string/title_activity_test" >
+            android:name="sara.damien.app.LinkedInConnectionActivity"
+            android:label="@string/title_activity_linkedin_connection" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>

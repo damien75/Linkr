@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -51,7 +50,7 @@ public class TopicActivity extends ActionBarActivity {
 
         //new GetProfile().execute();
         topic = (EditText) findViewById(R.id.editTopic);
-        last_subject = "test";
+        last_subject = "linkedin_connection";
         //new getSubject().execute();
         topic.setHint(last_subject);
     }

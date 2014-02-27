@@ -30,7 +30,7 @@ import org.scribe.oauth.OAuthService;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestActivity extends Activity {
+public class LinkedInConnectionActivity extends Activity {
     private ProgressDialog pDialog;
 
     private class LinkedInAuth{
@@ -183,7 +183,7 @@ public class TestActivity extends Activity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(TestActivity.this);
+            pDialog = new ProgressDialog(LinkedInConnectionActivity.this);
             pDialog.setMessage("We are checking if your profile already exists...");
             pDialog.setCancelable(false);
             pDialog.show();
@@ -212,13 +212,13 @@ public class TestActivity extends Activity {
                     try {
                         if (json.getInt("success")==1){
                             userID = json.getInt("ID");
-                            Toast.makeText(TestActivity.this, "You have been connected with an already known profile with id: "+idl, Toast.LENGTH_LONG).show();
+                            Toast.makeText(LinkedInConnectionActivity.this, "You have been connected with an already known profile with id: "+idl, Toast.LENGTH_LONG).show();
                             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                             SharedPreferences.Editor editor = prefs.edit();
                             editor.putBoolean("Connected", true);
                             editor.putInt("ID",userID);
                             editor.commit();
-                            Intent i = new Intent(TestActivity.this, WelcomeActivity.class);
+                            Intent i = new Intent(LinkedInConnectionActivity.this, WelcomeActivity.class);
                             startActivity(i);
                             finish();
                         }
@@ -248,7 +248,7 @@ public class TestActivity extends Activity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(TestActivity.this);
+            pDialog = new ProgressDialog(LinkedInConnectionActivity.this);
             pDialog.setMessage("Your profile is being created...");
             pDialog.setCancelable(false);
             pDialog.show();
@@ -280,23 +280,23 @@ public class TestActivity extends Activity {
                     try {
                         if (json.getInt("success")==1){
                             userID=json.getString("ID");
-                            Toast.makeText(TestActivity.this, "Your profile was successfully created! Welcome on Linkr!!!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(LinkedInConnectionActivity.this, "Your profile was successfully created! Welcome on Linkr!!!", Toast.LENGTH_LONG).show();
                             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                             SharedPreferences.Editor editor = prefs.edit();
                             editor.putBoolean("Connected", true);
-                            editor.putString("ID",userID);
+                            editor.putString("ID", userID);
                             editor.commit();
-                            Intent i = new Intent(TestActivity.this, WelcomeActivity.class);
+                            Intent i = new Intent(LinkedInConnectionActivity.this, WelcomeActivity.class);
                             startActivity(i);
                             finish();
                         }
                         else {
-                            Toast.makeText(TestActivity.this,"Your profile was not successfully created in our database",Toast.LENGTH_LONG).show();
+                            Toast.makeText(LinkedInConnectionActivity.this,"Your profile was not successfully created in our database",Toast.LENGTH_LONG).show();
                             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                             SharedPreferences.Editor editor = prefs.edit();
                             editor.putBoolean("Connected", false);
                             editor.commit();
-                            Intent i = new Intent(TestActivity.this, ConnectionTypeActivity.class);
+                            Intent i = new Intent(LinkedInConnectionActivity.this, ConnectionTypeActivity.class);
                             startActivity(i);
                             finish();
                         }
@@ -314,7 +314,7 @@ public class TestActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test);
+        setContentView(R.layout.activity_linkedin_connection);
         LinkedInAuth lna = new LinkedInAuth();
 
         final WebView webv = (WebView) findViewById(R.id.webv);
@@ -327,7 +327,7 @@ public class TestActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.test, menu);
+        getMenuInflater().inflate(R.menu.linkedin_connection, menu);
         return true;
     }
 }

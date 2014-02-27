@@ -310,11 +310,6 @@ public class WelcomeActivity extends Activity {
         startActivity(intent);
     }
 
-    public void openProfile (View view){
-        Intent intent=new Intent(this,ProfileActivity.class);
-        startActivity(intent);
-    }
-
     public class shareLocation extends AsyncTask<Void,Void,Void> {
         private double loc_x;
         private double loc_y;
