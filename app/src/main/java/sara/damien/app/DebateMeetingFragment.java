@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import sara.damien.app.requests.SingleProfileRequestActivity;
+
 public class DebateMeetingFragment extends ListFragment {
     private static String url ="http://www.golinkr.net";
     ProgressDialog pDialog;
