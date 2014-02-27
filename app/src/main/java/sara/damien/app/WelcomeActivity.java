@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sara.damien.app.adapter.NavDrawerListAdapter;
+import sara.damien.app.chat.MessageActivity;
 import sara.damien.app.drawer.HomeFragment;
 import sara.damien.app.model.NavDrawerItem;
 import sara.damien.app.requests.SwipeActivity;
@@ -315,6 +316,10 @@ public class WelcomeActivity extends Activity {
         startActivity(intent);
     }
 
+    public void openChat (View view){
+        Intent intent = new Intent(this, MessageActivity.class);
+        startActivity(intent);
+    }
     public class shareLocation extends AsyncTask<Void,Void,Void> {
         private double loc_x;
         private double loc_y;

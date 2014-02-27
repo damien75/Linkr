@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import sara.damien.app.chat.MessageActivity;
 import sara.damien.app.utils.JSONParser;
 import sara.damien.app.R;
 
@@ -37,13 +38,10 @@ public class DebateMeetingFragment extends ListFragment {
     ProgressDialog pDialog;
     JSONParser jsonParser = new JSONParser();
 
-    private static final String TAG_LAST_NAME1 = "Last_Name1";
-    private static final String TAG_FIRST_NAME1 = "First_Name1";
-    private static final String TAG_ID1 = "ID1";
-    private static final String TAG_LAST_NAME2 = "Last_Name2";
-    private static final String TAG_FIRST_NAME2 = "First_Name2";
-    private static final String TAG_ID2 = "ID2";
+    private static final String TAG_LAST_NAME = "Last_Name";
+    private static final String TAG_FIRST_NAME = "First_Name";
     private static final String TAG_ID = "ID";
+    private static final String TAG_MYSTATUS = "MyStatus";
     private static final String TAG_NAME = "Name";
     private static final String TAG_SUBJECT = "Subject";
     private static final String TAG_DATE_ACCEPT = "Date_Accept";
@@ -59,12 +57,16 @@ public class DebateMeetingFragment extends ListFragment {
         HashMap<String,String>meeting = MeetingList.get(position);
         String MeetingID = meeting.get(TAG_IDm);
         String IDu = meeting.get(TAG_ID);
+        String First_Name = meeting.get(TAG_FIRST_NAME);
+        String Last_Name = meeting.get(TAG_LAST_NAME);
         String subject = meeting.get(TAG_SUBJECT);
-        Intent i = new Intent(getActivity(),SingleProfileRequestActivity.class);
+        Intent i = new Intent(getActivity(),MessageActivity.class);
         Bundle b = new Bundle();
         b.putString("IDu",IDu);
         b.putString("IDm",MeetingID);
         b.putString("Subject",subject);
+        b.putString("First_Name",First_Name);
+        b.putString("Last_Name",Last_Name);
         i.putExtras(b);
         startActivity(i);
     }
@@ -83,7 +85,6 @@ public class DebateMeetingFragment extends ListFragment {
         return rootView;
     }
     private class GetMeetings extends AsyncTask<Void, Void, Void> {
-
 
         @Override
         protected void onPreExecute() {
@@ -113,26 +114,25 @@ public class DebateMeetingFragment extends ListFragment {
                 if (meetings.length()>0){
                     for (int i = 0; i<meetings.length();i++){
                         JSONObject c = meetings.getJSONObject(i);
-                        String name;
-                        String idu;
-                        if (c.getString(TAG_ID1)==currentID){
-                            name= c.getString(TAG_FIRST_NAME2)+ " " + c.getString(TAG_LAST_NAME2);
-                            idu = c.getString(TAG_ID2);
-                        }
-                        else{
-                            name= c.getString(TAG_FIRST_NAME1)+ " " + c.getString(TAG_LAST_NAME1);
-                            idu = c.getString(TAG_ID1);
-                        }
+                        String idu = c.getString(TAG_ID);
+                        String first_name = c.getString(TAG_FIRST_NAME);
+                        String last_name = c.getString(TAG_LAST_NAME);
+                        String name= first_name+ " " + last_name;
                         String date_accept = c.getString(TAG_DATE_ACCEPT);
                         String subject = c.getString(TAG_SUBJECT);
                         String idm = c.getString(TAG_IDm);
+                        String mystatus = c.getString(TAG_MYSTATUS);
 
                         HashMap<String,String> map = new HashMap<String, String>();
                         map.put(TAG_NAME,name);
+                        map.put(TAG_FIRST_NAME,first_name);
+                        map.put(TAG_LAST_NAME,last_name);
                         map.put(TAG_SUBJECT,subject);
                         map.put(TAG_ID,idu);
                         map.put(TAG_IDm,idm);
+                        map.put(TAG_MYSTATUS,mystatus);
                         map.put(TAG_DATE_ACCEPT,date_accept);
+                        map.put(TAG_SUBJECT,subject);
                         MeetingList.add(map);
                     }
                 }

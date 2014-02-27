@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <Button
@@ -7,17 +7,28 @@
         android:layout_height="wrap_content"
         android:text="@string/setup_meeting"
         android:id="@+id/buttonTopic"
-        android:layout_gravity="center_horizontal"
         android:onClick="openTopic"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Display Meetings"
         android:id="@+id/button"
-        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/buttonTopic"
+        android:layout_marginTop="50dp"
         android:onClick="openRequests"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Chat"
+        android:layout_below="@id/button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:onClick="openChat"/>
 
-</FrameLayout>
+
+</RelativeLayout>

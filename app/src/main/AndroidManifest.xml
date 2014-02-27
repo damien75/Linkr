@@ -12,7 +12,7 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.AppCompat.Light" >
         <activity
-            android:name=".utils.SplashScreenActivity"
+            android:name="sara.damien.app.utils.SplashScreenActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
@@ -44,27 +44,31 @@
             android:label="@string/title_activity_definitive_profile" >
         </activity>
         <activity
-            android:name=".connection.LinkedInConnectionActivity"
+            android:name="sara.damien.app.connection.LinkedInConnectionActivity"
             android:label="@string/title_activity_linkedin_connection" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".connection.RegisterManuallyActivity"
+            android:name="sara.damien.app.connection.RegisterManuallyActivity"
             android:label="@string/title_activity_register" >
         </activity>
         <activity
-            android:name=".connection.ConnectionTypeActivity"
+            android:name="sara.damien.app.connection.ConnectionTypeActivity"
             android:label="@string/title_activity_connection_type" >
         </activity>
         <activity
-            android:name=".requests.SwipeActivity"
+            android:name="sara.damien.app.requests.SwipeActivity"
             android:label="@string/title_activity_swipe" >
         </activity>
         <activity
-            android:name=".requests.SingleProfileRequestActivity"
+            android:name="sara.damien.app.requests.SingleProfileRequestActivity"
             android:label="@string/title_activity_single_profile_request" >
+        </activity>
+        <activity
+            android:name=".chat.MessageActivity"
+            android:label="@string/title_activity_message" >
         </activity>
     </application>
 
