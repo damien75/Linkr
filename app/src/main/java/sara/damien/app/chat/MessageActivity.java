@@ -74,6 +74,7 @@ public class MessageActivity extends ListActivity {
         String newMessage = text.getText().toString().trim();
         if(newMessage.length() > 0){
             text.setText("");
+            //TODO ajouter qqch pour dire que le message n'a pas encore été envoyé
             addNewMessage(new Message(newMessage, true));
             SendMessage sendMessage = new SendMessage();
             sendMessage.message = newMessage;
@@ -109,8 +110,6 @@ public class MessageActivity extends ListActivity {
             }catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
-
             return Utility.messages[rand.nextInt(Utility.messages.length-1)];
 
         }
@@ -136,8 +135,6 @@ public class MessageActivity extends ListActivity {
 
             addNewMessage(new Message(text, false)); // add the orignal message from server.
         }
-
-
     }
     void addNewMessage(Message m)
     {
