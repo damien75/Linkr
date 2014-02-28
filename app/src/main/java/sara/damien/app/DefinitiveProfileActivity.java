@@ -80,7 +80,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         update(currentpos);
     }
 
-    public void CreateMeeting(View view) {
+    public void proposeMeeting(View view) {
         profiles.get(currentpos).setState(1);
 
         CreateMeeting CR = new CreateMeeting();

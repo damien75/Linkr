@@ -121,7 +121,7 @@
         android:layout_height="wrap_content"
         android:text="Accept"
         android:id="@id/buttonProposeMeeting"
-        android:onClick="acceptMeeting"
+        android:onClick="proposeMeeting"
         android:layout_alignParentBottom="true"/>
 
     <TextView
