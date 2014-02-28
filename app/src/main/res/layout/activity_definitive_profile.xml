@@ -43,6 +43,7 @@
         android:layout_toRightOf="@id/buttonPrevious"
         android:layout_toLeftOf="@id/buttonNext"
         android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
         android:layout_above="@+id/profile_position"
         android:layout_centerHorizontal="true">
 
@@ -114,13 +115,14 @@
         android:text="@string/profile_distance"
         android:id="@+id/profile_position"
         android:layout_centerHorizontal="true"
-        android:layout_above="@+id/buttonProposeMeeting"/>
+        android:layout_alignParentBottom="true"
+        android:paddingBottom="50dp"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Accept"
-        android:id="@id/buttonProposeMeeting"
+        android:id="@+id/buttonProposeMeeting"
         android:onClick="proposeMeeting"
         android:layout_alignParentBottom="true"/>
 
