@@ -1,15 +1,22 @@
 package sara.damien.app.chat;
 
 import android.app.ListActivity;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.EditText;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import sara.damien.app.R;
+import sara.damien.app.utils.JSONParser;
 
 public class MessageActivity extends ListActivity {
 
@@ -21,20 +28,26 @@ public class MessageActivity extends ListActivity {
     static Random rand = new Random();
     static String sender;
     String IDm;
-    String IDu;
+    String ID2;
+    String ID1;
     String First_Name;
     String Last_Name;
     String Subject;
+    JSONParser jsonParser = new JSONParser();
+    private static String url ="http://www.golinkr.net";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        ID1 = prefs.getString("ID","1");
+
         text = (EditText) this.findViewById(R.id.messageEditor);
 
         Bundle bundle = getIntent().getExtras();
-        IDu = bundle.getString("IDu");
+        ID2 = bundle.getString("IDu");
         IDm = bundle.getString("IDm");
         First_Name = bundle.getString("First_Name");
         Last_Name = bundle.getString("Last_Name");
@@ -57,20 +70,27 @@ public class MessageActivity extends ListActivity {
         setListAdapter(adapter);
         addNewMessage(new Message("mmm, well, using 9 patches png to show them.", true));
     }
-    public void sendMessage(View v)
-    {
+    public void sendMessage(View v){
         String newMessage = text.getText().toString().trim();
-        if(newMessage.length() > 0)
-        {
+        if(newMessage.length() > 0){
             text.setText("");
             addNewMessage(new Message(newMessage, true));
-            new SendMessage().execute();
+            SendMessage sendMessage = new SendMessage();
+            sendMessage.message = newMessage;
+            sendMessage.execute();
         }
     }
-    private class SendMessage extends AsyncTask<Void, String, String>
-    {
+    private class SendMessage extends AsyncTask<Void, String, String>{
+        private String message;
         @Override
-        protected String doInBackground(Void... params) {
+        protected String doInBackground(Void... args) {
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("SELECT_FUNCTION","addMessage"));
+            params.add(new BasicNameValuePair("ID1", ID1));
+            params.add(new BasicNameValuePair("ID2", ID2));
+            params.add(new BasicNameValuePair("Message",message));
+            String jsonStr = jsonParser.plainHttpRequest(url,"POST",params);
+
             try {
                 Thread.sleep(2000); //simulate a network call
             }catch (InterruptedException e) {
@@ -92,7 +112,6 @@ public class MessageActivity extends ListActivity {
 
 
             return Utility.messages[rand.nextInt(Utility.messages.length-1)];
-
 
         }
         @Override
