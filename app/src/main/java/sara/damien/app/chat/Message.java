@@ -11,12 +11,14 @@ public class Message {
      * it reflects the changes/updates about the sender is writing, have entered text etc
      */
     boolean isStatusMessage;
+    boolean isSent;
 
-    public Message(String message, boolean isMine) {
+    public Message(String message, boolean isMine, boolean isSent) {
         super();
         this.message = message;
         this.isMine = isMine;
         this.isStatusMessage = false;
+        this.isSent=isSent;
     }
     /**
      * Constructor to make a status Message object
@@ -47,4 +49,6 @@ public class Message {
     public void setStatusMessage(boolean isStatusMessage) {
         this.isStatusMessage = isStatusMessage;
     }
+    public boolean isSent(){return this.isSent;}
+    public void setSent(){this.isSent=true;}
 }

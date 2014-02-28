@@ -5,11 +5,14 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,24 +61,24 @@ public class MessageActivity extends ListActivity {
 
         messages = new ArrayList<Message>();
 
-        messages.add(new Message("Hello", false));
-        messages.add(new Message("Hi!", true));
-        messages.add(new Message("Wassup??", false));
-        messages.add(new Message("nothing much, working on speech bubbles.", true));
-        messages.add(new Message("you say!", true));
-        messages.add(new Message("oh thats great. how are you showing them", false));
+        messages.add(new Message("Hello", false,true));
+        messages.add(new Message("Hi!", true,true));
+        messages.add(new Message("Wassup??", false,true));
+        messages.add(new Message("nothing much, working on speech bubbles.", true,true));
+        messages.add(new Message("you say!", true,true));
+        messages.add(new Message("oh thats great. how are you showing them", false,true));
 
 
         adapter = new MessageAdapter(this, messages);
         setListAdapter(adapter);
-        addNewMessage(new Message("mmm, well, using 9 patches png to show them.", true));
+        addNewMessage(new Message("mmm, well, using 9 patches png to show them.", true,true));
     }
     public void sendMessage(View v){
         String newMessage = text.getText().toString().trim();
         if(newMessage.length() > 0){
             text.setText("");
             //TODO ajouter qqch pour dire que le message n'a pas encore été envoyé
-            addNewMessage(new Message(newMessage, true));
+            addNewMessage(new Message(newMessage, true,false));
             SendMessage sendMessage = new SendMessage();
             sendMessage.message = newMessage;
             sendMessage.execute();
@@ -86,15 +89,25 @@ public class MessageActivity extends ListActivity {
         @Override
         protected String doInBackground(Void... args) {
             List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("SELECT_FUNCTION","addMessage"));
+            params.add(new BasicNameValuePair("SELECT_FUNCTION", "addMessage"));
             params.add(new BasicNameValuePair("ID1", ID1));
             params.add(new BasicNameValuePair("ID2", ID2));
             params.add(new BasicNameValuePair("Message",message));
-            String jsonStr = jsonParser.plainHttpRequest(url,"POST",params);
+            JSONObject json = jsonParser.makeHttpRequest(url,"POST",params);
+
+
 
             try {
-                Thread.sleep(2000); //simulate a network call
-            }catch (InterruptedException e) {
+                 boolean isSent = json.getBoolean("success");
+
+                 if (isSent){
+                     Log.d("sent", "OK");
+                     messages.get(messages.size()-1).setSent();
+                 }
+                else{
+                     //Toast.makeText(getApplicationContext(),"Votre message n'a pas été envoyé",Toast.LENGTH_LONG).show();
+                 }
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
 
@@ -104,12 +117,7 @@ public class MessageActivity extends ListActivity {
             }catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            this.publishProgress(String.format("%s has entered text", sender));
-            try {
-                Thread.sleep(3000);//simulate a network call
-            }catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
             return Utility.messages[rand.nextInt(Utility.messages.length-1)];
 
         }
@@ -133,7 +141,7 @@ public class MessageActivity extends ListActivity {
                 messages.remove(messages.size()-1);
             }
 
-            addNewMessage(new Message(text, false)); // add the orignal message from server.
+            addNewMessage(new Message(text, false,true)); // add the orignal message from server.
         }
     }
     void addNewMessage(Message m)

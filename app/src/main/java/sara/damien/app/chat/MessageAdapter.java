@@ -56,7 +56,7 @@ public class MessageAdapter extends BaseAdapter{
         //check if it is a status message then remove background, and change text color.
         if(message.isStatusMessage())
         {
-            holder.message.setBackgroundDrawable(null);
+            holder.message.setBackground(null);
             lp.gravity = Gravity.LEFT;
             holder.message.setTextColor(R.color.textFieldColor);
         }
@@ -65,8 +65,14 @@ public class MessageAdapter extends BaseAdapter{
             //Check whether message is mine to show green background and align to right
             if(message.isMine())
             {
-                holder.message.setBackgroundResource(R.drawable.speech_bubble_green);
+                if (message.isSent()){
+                    holder.message.setBackgroundResource(R.drawable.speech_bubble_green);
+                    lp.gravity = Gravity.RIGHT;
+                }
+                else{
+                holder.message.setBackgroundResource(R.drawable.speech_bubble_orange);
                 lp.gravity = Gravity.RIGHT;
+                }
             }
             //If not mine then it is from sender to show orange background and align to left
             else
