@@ -216,8 +216,8 @@ public class MessageActivity extends ListActivity {
                         ContentValues values = new ContentValues();
                         values.put(FeedEntry._ID,Integer.valueOf(messageID));
                         values.put(FeedEntry.COLUMN_NAME_DATE, messageTimeStamp);
-                        values.put(FeedEntry.COLUMN_NAME_ID1, myID);
-                        values.put(FeedEntry.COLUMN_NAME_ID2, currentID);
+                        values.put(FeedEntry.COLUMN_NAME_ID1, currentID);
+                        values.put(FeedEntry.COLUMN_NAME_ID2, myID);
                         values.put(FeedEntry.COLUMN_NAME_MESSAGE, messageText);
                         values.put(FeedEntry.COLUMN_NAME_VISIBILITY, "1");
 
