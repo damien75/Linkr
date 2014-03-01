@@ -212,6 +212,12 @@ function shareLocation($ID,$loc_x,$loc_y){
         $sth = $dbh->prepare($query);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute(array($loc_x,$loc_y,$ID));
+        $n = $sth->rowCount();
+        if ($n == 1) {
+            // success
+        } else {
+            // echec
+        }
     }
 
 function getProfileSupID($IDMIN,$NBDOWN,$XU,$YU,$E){

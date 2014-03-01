@@ -336,7 +336,7 @@ public class WelcomeActivity extends Activity {
                 params.add(new BasicNameValuePair("Loc_X", String.valueOf(loc_x)));
                 params.add(new BasicNameValuePair("Loc_Y", String.valueOf(loc_y)));
                 JSONObject json = jsonParser.makeHttpRequest("http://www.golinkr.net","POST",params);
-                Log.e("shareLocation","location was shared for user with ID "+String.valueOf(userID));
+                Log.e("shareLocation","location was shared for user with ID "+ userID);
             }
             catch (Exception e){
                 e.printStackTrace();

@@ -4,19 +4,22 @@ import android.app.ListActivity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import sara.damien.app.R;
 import sara.damien.app.utils.JSONParser;
@@ -36,8 +39,9 @@ public class MessageActivity extends ListActivity {
     String First_Name;
     String Last_Name;
     String Subject;
-    JSONParser jsonParser = new JSONParser();
+    JSONParser jsonParser;
     private static String url ="http://www.golinkr.net";
+    String latestTimeStamp;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,7 @@ public class MessageActivity extends ListActivity {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         ID1 = prefs.getString("ID","1");
+        latestTimeStamp = prefs.getString("TimeStamp", "2014-02-28 16:27:40");
 
         text = (EditText) this.findViewById(R.id.messageEditor);
 
@@ -72,6 +77,9 @@ public class MessageActivity extends ListActivity {
         adapter = new MessageAdapter(this, messages);
         setListAdapter(adapter);
         addNewMessage(new Message("mmm, well, using 9 patches png to show them.", true,true));
+
+        callCheckNewMessages();
+
     }
     public void sendMessage(View v){
         String newMessage = text.getText().toString().trim();
@@ -84,10 +92,12 @@ public class MessageActivity extends ListActivity {
             sendMessage.execute();
         }
     }
-    private class SendMessage extends AsyncTask<Void, String, String>{
+
+    private class SendMessage extends AsyncTask<Void, Void, Void>{
         private String message;
         @Override
-        protected String doInBackground(Void... args) {
+        protected Void doInBackground(Void... args) {
+            jsonParser = new JSONParser();
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair("SELECT_FUNCTION", "addMessage"));
             params.add(new BasicNameValuePair("ID1", ID1));
@@ -95,22 +105,18 @@ public class MessageActivity extends ListActivity {
             params.add(new BasicNameValuePair("Message",message));
             JSONObject json = jsonParser.makeHttpRequest(url,"POST",params);
 
-
-
             try {
                  boolean isSent = json.getBoolean("success");
-
                  if (isSent){
-                     Log.d("sent", "OK");
                      messages.get(messages.size()-1).setSent();
                  }
                 else{
-                     //Toast.makeText(getApplicationContext(),"Votre message n'a pas été envoyé",Toast.LENGTH_LONG).show();
+                     //TODO send message again
                  }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
+/*
             this.publishProgress(String.format("%s started writing", sender));
             try {
                 Thread.sleep(2000); //simulate a network call
@@ -119,8 +125,10 @@ public class MessageActivity extends ListActivity {
             }
 
             return Utility.messages[rand.nextInt(Utility.messages.length-1)];
-
+*/
+            return null;
         }
+        /*
         @Override
         public void onProgressUpdate(String... v) {
 
@@ -134,21 +142,90 @@ public class MessageActivity extends ListActivity {
                 addNewMessage(new Message(true,v[0])); //add new message, if there is no existing status message
             }
         }
+*/
         @Override
-        protected void onPostExecute(String text) {
-            if(messages.get(messages.size()-1).isStatusMessage)//check if there is any status message, now remove it.
+        protected void onPostExecute(Void text) {
+            /*if(messages.get(messages.size()-1).isStatusMessage)//check if there is any status message, now remove it.
             {
                 messages.remove(messages.size()-1);
             }
 
-            addNewMessage(new Message(text, false,true)); // add the orignal message from server.
+            addNewMessage(new Message(text, false,true)); // add the orignal message from server.*/
+            notification();
         }
     }
+
+    private class checkNewMessage extends AsyncTask<Void, String, Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            jsonParser = new JSONParser();
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("SELECT_FUNCTION", "getLastMessage"));
+            params.add(new BasicNameValuePair("ID1", ID2));
+            params.add(new BasicNameValuePair("ID2", ID1));
+            params.add(new BasicNameValuePair("Date",latestTimeStamp));
+            String json = jsonParser.plainHttpRequest(url,"POST",params);
+            try{
+                JSONArray newMessages = new JSONArray(json);
+                if (newMessages.length()>0){
+                    for (int i=0; i<newMessages.length(); i++){
+                        JSONObject message = newMessages.getJSONObject(i);
+                        String messageTimeStamp = message.getString("Date");
+                        String messageText = message.getString("Message");
+                        this.publishProgress(messageText);
+                    }
+                    latestTimeStamp = newMessages.getJSONObject(newMessages.length()-1).getString("Date");
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("TimeStamp",latestTimeStamp);
+                    editor.commit();
+                }
+                else {
+                }
+            }
+            catch (JSONException e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        public void onProgressUpdate(String... v) {
+            addNewMessage(new Message(v[0],false,true));
+        }
+    }
+
+    public void callCheckNewMessages(){
+        final Handler handler = new Handler();
+        Timer timer = new Timer();
+        TimerTask doAsynchronousTask = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    public void run() {
+                        try {
+                            new checkNewMessage().execute();
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        };
+        timer.schedule(doAsynchronousTask, 0, 5000); //execute in every 50000 ms
+    }
+
     void addNewMessage(Message m)
     {
         messages.add(m);
         adapter.notifyDataSetChanged();
         getListView().setSelection(messages.size()-1);
+    }
+
+    void notification(){
+        adapter.notifyDataSetChanged();
     }
 
 }
