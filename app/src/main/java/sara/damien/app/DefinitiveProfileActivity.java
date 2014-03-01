@@ -1,7 +1,10 @@
 package sara.damien.app;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -53,6 +56,11 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
     JSONArray profileInfos = null;
 
+    FeedProfileDbHelper mDbHelper;
+    private int dbSize;
+
+    ConnectionDetector cd;
+    Boolean isInternetPresent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,30 +68,45 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         setContentView(R.layout.activity_definitive_profile);
         currentpos = 0;
 
+        mDbHelper = new FeedProfileDbHelper(getApplicationContext());
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         currentID = prefs.getString("ID","1");
 
-        new ProfileIDsFinder().execute();
-        ProfilesDownloader profilesDownloader = new ProfilesDownloader(nextFirstPos,nbdownload);
-        profilesDownloader.execute();
-        Log.d("responseeee", "executee ");
-        /*if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
-                    .commit();
-        }*/
+        cd = new ConnectionDetector(getApplicationContext());
+        isInternetPresent = cd.isConnectingToInternet();
+        if(isInternetPresent){
+            new ProfileIDsFinder().execute();
+            ProfilesDownloader profilesDownloader = new ProfilesDownloader(nextFirstPos,nbdownload);
+            profilesDownloader.execute();
+        }
+        else {
+            new ProfilesLocalDownLoader(nextFirstPos,nbdownload).execute();
+        }
     }
 
     public void nextProfile(View view) {
-        currentpos = (currentpos + 1) % profiles.size();
-        Log.d("Current pos : ", "" + currentpos);
-        update(currentpos);
+        if (isInternetPresent){
+            currentpos = (currentpos + 1) % profiles.size();
+            Log.d("Current pos : ", "" + currentpos);
+            update(currentpos);
+        }
+        else {
+            currentpos = (currentpos + 1) % dbSize;
+            updateOffLine();
+        }
     }
 
     public void previousProfile(View view) {
-        currentpos = (currentpos - 1 + profiles.size()) % profiles.size();
-        Log.d("Current pos : ", "" + currentpos);
-        update(currentpos);
+        if (isInternetPresent){
+            currentpos = (currentpos - 1 + profiles.size()) % profiles.size();
+            Log.d("Current pos : ", "" + currentpos);
+            update(currentpos);
+        }
+        else {
+            currentpos = (currentpos - 1 + profiles.size()) % dbSize;
+            updateOffLine();
+        }
     }
 
     public void proposeMeeting(View view) {
@@ -111,6 +134,69 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         update(currentpos);
     }
 
+    public void updateOffLine(){
+        TextView name = (TextView) findViewById(R.id.profile_name);
+        TextView subject = (TextView) findViewById(R.id.profile_subject);
+        TextView grade = (TextView) findViewById(R.id.grade);
+        TextView company = (TextView) findViewById(R.id.company);
+        TextView years = (TextView) findViewById(R.id.years_experience);
+
+        Button next = (Button) findViewById(R.id.buttonNext);
+
+        Button bP = (Button) findViewById(R.id.buttonProposeMeeting);
+        Button bR = (Button) findViewById(R.id.buttonReject);
+        TextView accept = (TextView) findViewById(R.id.textAccepted);
+
+        boolean has_profile = currentpos < dbSize && profiles.get(currentpos).isDownloaded();
+        int visibility = has_profile ? View.VISIBLE : View.GONE;
+
+        subject.setVisibility(visibility);
+        grade.setVisibility(visibility);
+        company.setVisibility(visibility);
+        years.setVisibility(visibility);
+        bP.setVisibility(visibility);
+        bR.setVisibility(visibility);
+        accept.setVisibility(View.GONE);
+        next.setVisibility(visibility);
+
+        if (!has_profile) {
+            lastProfileShown = -1;
+            name.setText("Plus de profiles disponibles");
+        } else {
+            Profile prof = profiles.get(currentpos);
+
+            if (currentpos != lastProfileShown ||reject) {
+                lastProfileShown = currentpos;
+                reject=false;
+                pictureShown = false;
+
+                name.setText(prof.getFirst_Name() + " " + prof.getLast_Name());
+                subject.setText(prof.getLast_Subject());
+                grade.setText(prof.get_Avg_Grade());
+                company.setText(prof.getCompany());
+                years.setText(prof.getExp_Years());
+
+                if (prof.getState() != 0) {
+                    bP.setVisibility(View.GONE);
+                    bR.setVisibility(View.GONE);
+                    accept.setVisibility(View.VISIBLE);
+                }
+
+            }
+
+            if (!pictureShown) {
+                Bitmap picture = prof.getPicture();
+                ImageView view = (ImageView) findViewById(R.id.profile_picture);
+
+                if (picture != null) {
+                    pictureShown = true;
+                    view.setImageBitmap(picture);
+                } else
+                    view.setImageResource(R.drawable.lil_wayne);
+            }
+        }
+    }
+
     public void update(int index) {
         if (index == currentpos) {
             if (nextFirstPos - currentpos == currentdiff) {
@@ -121,11 +207,10 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
             for (int preload_pos = currentpos - 2; preload_pos <= currentpos + 2; preload_pos++) {
                 if (profiles.size()>0){
-                int wrapped_pos = (preload_pos + profiles.size()) % profiles.size();
-                profiles.get(wrapped_pos).downloadPicture();
+                    int wrapped_pos = (preload_pos + profiles.size()) % profiles.size();
+                    profiles.get(wrapped_pos).downloadPicture();
                 }
                 else{
-
                 }
             }
 
@@ -255,6 +340,70 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         }
     }
 
+    private class ProfilesLocalDownLoader extends AsyncTask<Void,Void,Void>{
+        int firstPos, count;
+
+        public ProfilesLocalDownLoader(int firstPos, int count){
+            nextFirstPos+=count;
+            this.firstPos=firstPos;
+            this.count=count;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+// Define a projection that specifies which columns from the database
+// you will actually use after this query.
+            String[] projection = {
+                    FeedProfile.FeedEntry._ID,
+                    FeedProfile.FeedEntry.COLUMN_NAME_FIRST_NAME,
+                    FeedProfile.FeedEntry.COLUMN_NAME_LAST_NAME,
+                    FeedProfile.FeedEntry.COLUMN_NAME_LAST_SUBJECT,
+                    FeedProfile.FeedEntry.COLUMN_NAME_LOC_X,
+                    FeedProfile.FeedEntry.COLUMN_NAME_LOC_Y,
+                    FeedProfile.FeedEntry.COLUMN_NAME_COMPANY,
+                    FeedProfile.FeedEntry.COLUMN_NAME_EXP_YEARS,
+                    FeedProfile.FeedEntry.COLUMN_NAME_SUM_GRADE,
+                    FeedProfile.FeedEntry.COLUMN_NAME_NUMBER_GRADE
+            };
+            Cursor c = db.query(
+                    FeedProfile.FeedEntry.TABLE_NAME,  // The table to query
+                    projection,                               // The columns to return
+                    "",                                // The columns for the WHERE clause
+                    null,                              // The values for the WHERE clause
+                    null,                                     // don't group the rows
+                    null,                                     // don't filter by row groups
+                    null                                 // The sort order
+            );
+            dbSize = c.getCount();
+            c.moveToFirst();
+            Log.d("countcursor",String.valueOf(c.getColumnCount()));
+            while (!c.isAfterLast()){
+                Log.d("rowread", String.valueOf(c.getString(0)));
+                Profile p = new Profile(true,
+                        c.getString(2),
+                        c.getString(1),
+                        c.getString(3),
+                        Integer.parseInt(c.getString(7)),
+                        Double.valueOf(c.getString(4)),
+                        Double.valueOf(c.getString(5)),
+                        c.getString(6),
+                        c.getString(0),
+                        Integer.parseInt(c.getString(8)),
+                        Integer.parseInt(c.getString(9)),
+                        0);
+                profiles.add(p);
+                c.moveToNext();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            updateOffLine();
+        }
+    }
 
     private class ProfilesDownloader extends AsyncTask<Void, Void, Void>  {
         int firstPos, count;
@@ -287,28 +436,45 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
             //if (jsonStr != null) {
 
+            // Gets the data repository in write mode
+            SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
             for (int pos = firstPos; pos <= lastpos; pos++) {
                 Profile prof = profiles.get(pos);
-
+                // Create a new map of values, where column names are the keys
+                ContentValues values = new ContentValues();
                 try {
                     JSONObject data = json.getJSONObject(prof.getID());
                     prof.setProfileFromJson(data);
+                    values.put(FeedProfile.FeedEntry._ID,prof.getID());
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_FIRST_NAME, data.getString("First_Name"));
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_LAST_NAME, data.getString("Last_Name"));
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_LAST_SUBJECT, data.getString("Last_Subject"));
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_LOC_X, data.getString("Loc_X"));
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_LOC_Y, data.getString("Loc_Y"));
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_COMPANY, data.getString("Company"));
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_EXP_YEARS, data.getString("Exp_Years"));
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_SUM_GRADE, data.getString("Sum_Grade"));
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_NUMBER_GRADE, data.getString("Number_Grade"));
+
+// Insert the new row, returning the primary key value of the new row
+                    long newRowId;
+                    newRowId = db.insert(
+                            FeedProfile.FeedEntry.TABLE_NAME,
+                            null,
+                            values);
+                    Log.e("ProfilesDownloader",String.valueOf(newRowId));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-                /*
-                    Intent i = new Intent(getApplicationContext(),WelcomeActivity.class);
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(i);
-                */
             return null;
 
         }
 
         @Override
         protected void onPostExecute(Void result) {
-                        update(currentpos);
+            update(currentpos);
         }
     }
 

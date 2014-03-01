@@ -29,6 +29,11 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
         android:onClick="openChat"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="openProfile"
+        android:text="profiles"/>
 
 
 </RelativeLayout>
