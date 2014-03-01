@@ -1,9 +1,11 @@
 package sara.damien.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -57,6 +59,10 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_definitive_profile);
         currentpos = 0;
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        prefs.getString("ID","1");
+
         new ProfileIDsFinder().execute();
         ProfilesDownloader profilesDownloader = new ProfilesDownloader(nextFirstPos,nbdownload);
         profilesDownloader.execute();
