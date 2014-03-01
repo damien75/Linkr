@@ -168,7 +168,7 @@ public class MessageActivity extends ListActivity {
 
 // How you want the results sorted in the resulting Cursor
                     String sortOrder =
-                            FeedEntry.COLUMN_NAME_DATE + " DESC";
+                            FeedEntry.COLUMN_NAME_DATE ;
 
                     Cursor c = db1.query(
                             FeedEntry.TABLE_NAME,  // The table to query
