@@ -61,7 +61,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         currentpos = 0;
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        prefs.getString("ID","1");
+        currentID = prefs.getString("ID","1");
 
         new ProfileIDsFinder().execute();
         ProfilesDownloader profilesDownloader = new ProfilesDownloader(nextFirstPos,nbdownload);
@@ -91,7 +91,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
         CreateMeeting CR = new CreateMeeting();
         CR.ID1 = currentID;
-        //CR.ID2 = profiles.get(currentpos).getID();
+        CR.ID2 = profiles.get(currentpos).getID();
         CR.subject = "Subject" + profiles.get(currentpos).getFirst_Name();
         CR.message = "";
         CR.execute();
@@ -192,7 +192,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
     private class CreateMeeting extends AsyncTask<Void, Void, Void>  {
         String ID1;
-        int ID2;
+        String ID2;
         String subject;
         String message;
 
