@@ -38,7 +38,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
     final int E = 1000;
     final int XU = 0;
     final int YU = 0;
-    private int currentID;
+    private String currentID;
     private String currentSubject;
     private int nextFirstPos=0;
     private boolean reject=false;
@@ -191,7 +191,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
     }
 
     private class CreateMeeting extends AsyncTask<Void, Void, Void>  {
-        int ID1;
+        String ID1;
         int ID2;
         String subject;
         String message;
