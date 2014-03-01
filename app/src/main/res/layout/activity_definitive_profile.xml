@@ -144,6 +144,6 @@
         android:id="@+id/buttonReject"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:onClick="refuseMeeting"/>
+        android:onClick="rejectProfile"/>
 
 </RelativeLayout>

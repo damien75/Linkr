@@ -98,7 +98,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         accept.setVisibility(View.VISIBLE);
     }
 
-    public void RejectProfile(View view) {
+    public void rejectProfile(View view) {
         profiles.remove(currentpos);
         reject=true;
         nextFirstPos--;
@@ -241,7 +241,6 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                 e.printStackTrace();
             }
             return null;
-
         }
     }
 
