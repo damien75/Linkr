@@ -120,10 +120,14 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
             }
 
             for (int preload_pos = currentpos - 2; preload_pos <= currentpos + 2; preload_pos++) {
+                if (profiles.size()>0){
                 int wrapped_pos = (preload_pos + profiles.size()) % profiles.size();
                 profiles.get(wrapped_pos).downloadPicture();
+                }
+                else{
+
+                }
             }
-            //TODO: deletePicture
 
             //Ecrire le corps de l'affichage du fragment
             TextView name = (TextView) findViewById(R.id.profile_name);
@@ -195,7 +199,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         String ID2;
         String subject;
         String message;
-//
+
         @Override
         protected Void doInBackground(Void... params) {
             try {
