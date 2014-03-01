@@ -192,7 +192,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
     private class CreateMeeting extends AsyncTask<Void, Void, Void>  {
         String ID1;
-        int ID2;
+        String ID2;
         String subject;
         String message;
 
@@ -201,8 +201,8 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
             try {
                 List<NameValuePair> params2 = new ArrayList<NameValuePair>();
                 params2.add(new BasicNameValuePair("SELECT_FUNCTION", "createMeeting"));
-                params2.add(new BasicNameValuePair("ID1", String.valueOf(ID1)));
-                params2.add(new BasicNameValuePair("ID2", String.valueOf(ID2)));
+                params2.add(new BasicNameValuePair("ID1", ID1));
+                params2.add(new BasicNameValuePair("ID2", ID2));
                 params2.add(new BasicNameValuePair("Subject", subject));
                 params2.add(new BasicNameValuePair("Message", message));
                 JSONObject json2 = jsonParser2.makeHttpRequest(url, "POST", params2);
