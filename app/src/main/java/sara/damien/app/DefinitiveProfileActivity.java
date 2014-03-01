@@ -219,6 +219,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
             // Creating service handler class instance
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair("SELECT_FUNCTION", "getProfileIDs"));
+            params.add(new BasicNameValuePair("myID", currentID));
             params.add(new BasicNameValuePair("XU", String.valueOf(XU)));
             params.add(new BasicNameValuePair("YU", String.valueOf(YU)));
             params.add(new BasicNameValuePair("E", String.valueOf(E)));
