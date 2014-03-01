@@ -31,8 +31,6 @@ import sara.damien.app.utils.JSONParser;
 
 public class MessageActivity extends ListActivity {
 
-    /** Called when the activity is first created. */
-
     ArrayList<Message> messages;
     MessageAdapter adapter;
     EditText text;
@@ -73,9 +71,6 @@ public class MessageActivity extends ListActivity {
 
         messages = new ArrayList<Message>();
 
-        messages.add(new Message("Hello", false,true));
-        messages.add(new Message("Hi!", true,true));
-
         LocalCall lc = new LocalCall();
         lc.execute();
         adapter = new MessageAdapter(this, messages);
@@ -113,6 +108,7 @@ public class MessageActivity extends ListActivity {
                  boolean isSent = json.getBoolean("success");
                  if (isSent){
                      String IDmsg = json.getString("lastID");
+                     String date = json.getString("date");
                      messages.get(messages.size()-1).setSent();
                      // Gets the data repository in write mode
                      SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -120,7 +116,7 @@ public class MessageActivity extends ListActivity {
 // Create a new map of values, where column names are the keys
                      ContentValues values = new ContentValues();
                      values.put(FeedEntry._ID,IDmsg);
-                     values.put(FeedEntry.COLUMN_NAME_DATE, "24-08");
+                     values.put(FeedEntry.COLUMN_NAME_DATE, date);
                      values.put(FeedEntry.COLUMN_NAME_ID1, myID);
                      values.put(FeedEntry.COLUMN_NAME_ID2, currentID);
                      values.put(FeedEntry.COLUMN_NAME_MESSAGE, message);
@@ -132,44 +128,6 @@ public class MessageActivity extends ListActivity {
                              FeedEntry.TABLE_NAME,
                              null,
                              values);
-
-                     SQLiteDatabase db1 = mDbHelper.getReadableDatabase();
-
-// Define a projection that specifies which columns from the database
-// you will actually use after this query.
-                     String[] projection = {
-                             FeedEntry._ID,
-                             FeedEntry.COLUMN_NAME_MESSAGE,
-                             FeedEntry.COLUMN_NAME_DATE
-                     };
-
-                     String selection =
-                             FeedEntry.COLUMN_NAME_ID1+"=?"
-                     ;
-
-                     String[] selectionArgs = {
-                             "1"
-                     };
-
-// How you want the results sorted in the resulting Cursor
-                     String sortOrder =
-                             FeedEntry.COLUMN_NAME_DATE + " DESC";
-
-                     Cursor c = db1.query(
-                             FeedEntry.TABLE_NAME,  // The table to query
-                             projection,                               // The columns to return
-                             selection,                                // The columns for the WHERE clause
-                             selectionArgs,                            // The values for the WHERE clause
-                             null,                                     // don't group the rows
-                             null,                                     // don't filter by row groups
-                             sortOrder                                 // The sort order
-                     );
-                     c.moveToFirst();
-                     while (!c.isAfterLast()){
-                         Log.d("rowread", String.valueOf(c.getString(0)));
-                         c.moveToNext();
-                     }
-
                  }
                 else{
                      //TODO send message again
@@ -177,33 +135,9 @@ public class MessageActivity extends ListActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-/*
-            this.publishProgress(String.format("%s started writing", sender));
-            try {
-                Thread.sleep(2000); //simulate a network call
-            }catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            return Utility.messages[rand.nextInt(Utility.messages.length-1)];
-*/
             return null;
         }
-        /*
-        @Override
-        public void onProgressUpdate(String... v) {
 
-            if(messages.get(messages.size()-1).isStatusMessage)//check wether we have already added a status message
-            {
-                messages.get(messages.size()-1).setMessage(v[0]); //update the status for that
-                adapter.notifyDataSetChanged();
-                getListView().setSelection(messages.size()-1);
-            }
-            else{
-                addNewMessage(new Message(true,v[0])); //add new message, if there is no existing status message
-            }
-        }
-*/
         @Override
         protected void onPostExecute(Void text) {
             /*if(messages.get(messages.size()-1).isStatusMessage)//check if there is any status message, now remove it.
@@ -227,7 +161,8 @@ public class MessageActivity extends ListActivity {
                     String[] projection = {
                             FeedEntry._ID,
                             FeedEntry.COLUMN_NAME_MESSAGE,
-                            FeedEntry.COLUMN_NAME_ID1
+                            FeedEntry.COLUMN_NAME_ID1,
+                            FeedEntry.COLUMN_NAME_DATE
                     };
 
 
@@ -248,7 +183,7 @@ public class MessageActivity extends ListActivity {
             Log.d("countcursor",String.valueOf(c.getColumnCount()));
                     while (!c.isAfterLast()){
                         Log.d("rowread", String.valueOf(c.getString(0)));
-                        messages.add(new Message(c.getString(1), c.getString(2).equals(myID),true));
+                        messages.add(new Message(c.getString(1)+" envoyé à "+c.getString(3), c.getString(2).equals(myID),true));
                         c.moveToNext();
                     }
             return null;
@@ -273,7 +208,25 @@ public class MessageActivity extends ListActivity {
                         JSONObject message = newMessages.getJSONObject(i);
                         String messageTimeStamp = message.getString("Date");
                         String messageText = message.getString("Message");
+                        String messageID = message.getString("IDmsg");
                         this.publishProgress(messageText);
+                        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+// Create a new map of values, where column names are the keys
+                        ContentValues values = new ContentValues();
+                        values.put(FeedEntry._ID,Integer.valueOf(messageID));
+                        values.put(FeedEntry.COLUMN_NAME_DATE, messageTimeStamp);
+                        values.put(FeedEntry.COLUMN_NAME_ID1, myID);
+                        values.put(FeedEntry.COLUMN_NAME_ID2, currentID);
+                        values.put(FeedEntry.COLUMN_NAME_MESSAGE, messageText);
+                        values.put(FeedEntry.COLUMN_NAME_VISIBILITY, "1");
+
+// Insert the new row, returning the primary key value of the new row
+                        long newRowId;
+                        newRowId = db.insert(
+                                FeedEntry.TABLE_NAME,
+                                null,
+                                values);
                     }
                     latestTimeStamp = newMessages.getJSONObject(newMessages.length()-1).getString("Date");
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
