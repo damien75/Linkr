@@ -112,12 +112,14 @@ public class MessageActivity extends ListActivity {
             try {
                  boolean isSent = json.getBoolean("success");
                  if (isSent){
+                     String IDmsg = json.getString("lastID");
                      messages.get(messages.size()-1).setSent();
                      // Gets the data repository in write mode
                      SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
 // Create a new map of values, where column names are the keys
                      ContentValues values = new ContentValues();
+                     values.put(FeedEntry._ID,IDmsg);
                      values.put(FeedEntry.COLUMN_NAME_DATE, "24-08");
                      values.put(FeedEntry.COLUMN_NAME_ID1, myID);
                      values.put(FeedEntry.COLUMN_NAME_ID2, currentID);
