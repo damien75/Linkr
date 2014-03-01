@@ -195,7 +195,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         String ID2;
         String subject;
         String message;
-
+//
         @Override
         protected Void doInBackground(Void... params) {
             try {
