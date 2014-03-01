@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
@@ -45,19 +46,23 @@ public class MessageAdapter extends BaseAdapter{
             holder = new ViewHolder();
             convertView = LayoutInflater.from(mContext).inflate(R.layout.sms_row, parent, false);
             holder.message = (TextView) convertView.findViewById(R.id.message_text);
+            holder.time = (TextView) convertView.findViewById(R.id.message_time);
+            holder.global = (LinearLayout) convertView.findViewById(R.id.global);
             convertView.setTag(holder);
         }
         else
             holder = (ViewHolder) convertView.getTag();
 
         holder.message.setText(message.getMessage());
+        holder.time.setText(message.getTime());
 
         LayoutParams lp = (LayoutParams) holder.message.getLayoutParams();
+        LayoutParams lglobal = (LayoutParams) holder.global.getLayoutParams();
         //check if it is a status message then remove background, and change text color.
         if(message.isStatusMessage())
         {
             holder.message.setBackground(null);
-            lp.gravity = Gravity.LEFT;
+            lglobal.gravity = Gravity.LEFT;
             holder.message.setTextColor(R.color.textFieldColor);
         }
         else
@@ -66,19 +71,19 @@ public class MessageAdapter extends BaseAdapter{
             if(message.isMine())
             {
                 if (message.isSent()){
-                    holder.message.setBackgroundResource(R.drawable.speech_bubble_green);
-                    lp.gravity = Gravity.RIGHT;
+                    holder.global.setBackgroundResource(R.drawable.speech_bubble_green);
+                    lglobal.gravity = Gravity.RIGHT;
                 }
                 else{
-                holder.message.setBackgroundResource(R.drawable.speech_bubble_orange);
-                lp.gravity = Gravity.RIGHT;
+                holder.global.setBackgroundResource(R.drawable.speech_bubble_orange);
+                lglobal.gravity = Gravity.RIGHT;
                 }
             }
             //If not mine then it is from sender to show orange background and align to left
             else
             {
-                holder.message.setBackgroundResource(R.drawable.speech_bubble_orange);
-                lp.gravity = Gravity.LEFT;
+                holder.global.setBackgroundResource(R.drawable.speech_bubble_orange);
+                lglobal.gravity = Gravity.LEFT;
             }
             holder.message.setLayoutParams(lp);
             holder.message.setTextColor(R.color.textColor);
@@ -88,6 +93,8 @@ public class MessageAdapter extends BaseAdapter{
     private static class ViewHolder
     {
         TextView message;
+        TextView time;
+        LinearLayout global;
     }
 
     @Override

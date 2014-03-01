@@ -12,13 +12,15 @@ public class Message {
      */
     boolean isStatusMessage;
     boolean isSent;
+    String time;
 
-    public Message(String message, boolean isMine, boolean isSent) {
+    public Message(String message, boolean isMine, boolean isSent,String time) {
         super();
         this.message = message;
         this.isMine = isMine;
         this.isStatusMessage = false;
         this.isSent=isSent;
+        this.time=time;
     }
     /**
      * Constructor to make a status Message object
@@ -51,4 +53,5 @@ public class Message {
     }
     public boolean isSent(){return this.isSent;}
     public void setSent(){this.isSent=true;}
+    public String getTime(){return this.time;}
 }

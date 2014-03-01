@@ -75,8 +75,7 @@ public class MessageActivity extends ListActivity {
         lc.execute();
         adapter = new MessageAdapter(this, messages);
         setListAdapter(adapter);
-        addNewMessage(new Message("mmm, well, using 9 patches png to show them.", true,true));
-
+        //addNewMessage(new Message("testemessage",true,true,"24/08"));
         callCheckNewMessages();
 
     }
@@ -85,7 +84,7 @@ public class MessageActivity extends ListActivity {
         if(newMessage.length() > 0){
             text.setText("");
             //TODO ajouter qqch pour dire que le message n'a pas encore été envoyé
-            addNewMessage(new Message(newMessage, true,false));
+            addNewMessage(new Message(newMessage, true,false,""));
             SendMessage sendMessage = new SendMessage();
             sendMessage.message = newMessage;
             sendMessage.execute();
@@ -183,10 +182,15 @@ public class MessageActivity extends ListActivity {
             Log.d("countcursor",String.valueOf(c.getColumnCount()));
                     while (!c.isAfterLast()){
                         Log.d("rowread", String.valueOf(c.getString(0)));
-                        messages.add(new Message(c.getString(1)+" envoyé à "+c.getString(3), c.getString(2).equals(myID),true));
+                        messages.add(new Message(c.getString(1)+" envoyé à "+c.getString(3), c.getString(2).equals(myID),true,c.getString(3)));
                         c.moveToNext();
                     }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void text){
+            adapter.notifyDataSetChanged();
         }
     }
 
@@ -209,7 +213,7 @@ public class MessageActivity extends ListActivity {
                         String messageTimeStamp = message.getString("Date");
                         String messageText = message.getString("Message");
                         String messageID = message.getString("IDmsg");
-                        this.publishProgress(messageText);
+                        this.publishProgress(messageText,messageTimeStamp);
                         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
 // Create a new map of values, where column names are the keys
@@ -245,7 +249,7 @@ public class MessageActivity extends ListActivity {
 
         @Override
         public void onProgressUpdate(String... v) {
-            addNewMessage(new Message(v[0],false,true));
+            addNewMessage(new Message(v[0],false,true,v[1]));
         }
     }
 
