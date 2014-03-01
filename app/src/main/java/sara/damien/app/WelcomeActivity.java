@@ -320,6 +320,10 @@ public class WelcomeActivity extends Activity {
         Intent intent = new Intent(this, MessageActivity.class);
         startActivity(intent);
     }
+    public void openProfile(View view){
+        Intent i = new Intent(this, DefinitiveProfileActivity.class);
+        startActivity(i);
+    }
     public class shareLocation extends AsyncTask<Void,Void,Void> {
         private double loc_x;
         private double loc_y;
