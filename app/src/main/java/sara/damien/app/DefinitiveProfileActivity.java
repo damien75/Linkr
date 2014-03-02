@@ -29,11 +29,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import sara.damien.app.utils.JSONParser;
 
 public class DefinitiveProfileActivity extends ActionBarActivity {
+    SharedPreferences prefs;
     ArrayList<Profile> profiles = new ArrayList<Profile>();
     int currentpos;
     final int currentdiff = 2;
@@ -70,7 +73,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
         mDbHelper = new FeedProfileDbHelper(getApplicationContext());
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         currentID = prefs.getString("ID","1");
 
         cd = new ConnectionDetector(getApplicationContext());
@@ -112,21 +115,23 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
     public void proposeMeeting(View view) {
         if (isInternetPresent){
-        profiles.get(currentpos).setState(1);
+            profiles.get(currentpos).setState(1);
 
-        CreateMeeting CR = new CreateMeeting();
-        CR.ID1 = currentID;
-        CR.ID2 = profiles.get(currentpos).getID();
-        CR.subject = "Subject" + profiles.get(currentpos).getFirst_Name();
-        CR.message = "";
-        CR.execute();
+            CreateMeeting CR = new CreateMeeting();
+            CR.ID1 = currentID;
+            CR.ID2 = profiles.get(currentpos).getID();
+            CR.subject = "Subject" + profiles.get(currentpos).getFirst_Name();
+            CR.message = "";
+            CR.execute();
 
-        Button bP = (Button) findViewById(R.id.buttonProposeMeeting);
-        Button bR = (Button) findViewById(R.id.buttonReject);
-        TextView accept = (TextView) findViewById(R.id.textAccepted);
-        bP.setVisibility(View.GONE);
-        bR.setVisibility(View.GONE);
-        accept.setVisibility(View.VISIBLE);
+            Button bP = (Button) findViewById(R.id.buttonProposeMeeting);
+            Button bR = (Button) findViewById(R.id.buttonReject);
+            Button bN = (Button) findViewById(R.id.neverEver);
+            TextView accept = (TextView) findViewById(R.id.textAccepted);
+            bP.setVisibility(View.GONE);
+            bR.setVisibility(View.GONE);
+            bN.setVisibility(View.GONE);
+            accept.setVisibility(View.VISIBLE);
         }
         else {
             Toast.makeText(this, "You need to be connected to send invitations",Toast.LENGTH_SHORT).show();
@@ -134,6 +139,19 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
     }
 
     public void rejectProfile(View view) {
+        SharedPreferences.Editor editor = prefs.edit();
+        Set<String> blockedIDs = prefs.getStringSet("blockedIDs", new HashSet<String>());
+        blockedIDs.add(profiles.get(currentpos).getID());
+        Log.e("BlockedIDs", blockedIDs.toString());
+        editor.putStringSet("blockedIDs", blockedIDs);
+        editor.commit();
+        profiles.remove(currentpos);
+        reject=true;
+        nextFirstPos--;
+        update(currentpos);
+    }
+
+    public void notNow(){
         profiles.remove(currentpos);
         reject=true;
         nextFirstPos--;
@@ -152,6 +170,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
         Button bP = (Button) findViewById(R.id.buttonProposeMeeting);
         Button bR = (Button) findViewById(R.id.buttonReject);
+        Button bN = (Button) findViewById(R.id.neverEver);
         TextView accept = (TextView) findViewById(R.id.textAccepted);
 
         Log.e("has profile ",String.valueOf(currentpos)+" "+String.valueOf(dbSize)+" "+profiles.toString());
@@ -167,6 +186,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         accept.setVisibility(View.GONE);
         next.setVisibility(visibility);
         previous.setVisibility(visibility);
+        bN.setVisibility(visibility);
 
         if (!has_profile) {
             lastProfileShown = -1;
@@ -235,6 +255,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
             Button bP = (Button) findViewById(R.id.buttonProposeMeeting);
             Button bR = (Button) findViewById(R.id.buttonReject);
+            Button bN = (Button) findViewById(R.id.neverEver);
             TextView accept = (TextView) findViewById(R.id.textAccepted);
 
             boolean has_profile = currentpos < profiles.size() && profiles.get(currentpos).isDownloaded();
@@ -254,6 +275,8 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
             bR.setVisibility(visibility);
             accept.setVisibility(View.GONE);
             next.setVisibility(visibility);
+            previous.setVisibility(visibility);
+            bN.setVisibility(visibility);
 
 
             if (!has_profile) {
@@ -321,18 +344,21 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
     private class ProfileIDsFinder extends AsyncTask<Void, Void, Void>  {
         @Override
         protected Void doInBackground(Void... args) {
+            Set<String> blockedIDs = prefs.getStringSet("blockedIDs", new HashSet<String>());
             // Creating service handler class instance
+            Log.e("ProfilesIDs","called "+new JSONArray(blockedIDs));
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair("SELECT_FUNCTION", "getProfileIDs"));
             params.add(new BasicNameValuePair("myID", currentID));
             params.add(new BasicNameValuePair("XU", String.valueOf(XU)));
             params.add(new BasicNameValuePair("YU", String.valueOf(YU)));
             params.add(new BasicNameValuePair("E", String.valueOf(E)));
+            params.add(new BasicNameValuePair("blockedIDs", new JSONArray(blockedIDs).toString()));
             String json = jsonParser.plainHttpRequest(url, "POST", params);
 
             // Making a request to url and getting response
 
-            Log.d("Response: ", "> " + json);
+            Log.d("Response IDs Found: ", "> " + json);
 
             //if (jsonStr != null) {
             try {
@@ -344,7 +370,6 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                         profiles.add(p);
                     }
                 } else {
-                    Toast.makeText(DefinitiveProfileActivity.this, "No profile found", Toast.LENGTH_LONG).show();
                     Intent i = new Intent(getApplicationContext(), WelcomeActivity.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(i);
@@ -391,7 +416,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
             );
             dbSize += c.getCount();
             c.moveToFirst();
-            Log.d("countcursor",String.valueOf(c.getColumnCount()));
+            Log.d("countcursor", String.valueOf(c.getColumnCount()));
             while (!c.isAfterLast()){
                 Log.d("rowread", String.valueOf(c.getString(0)));
                 Profile p = new Profile(true,
@@ -436,6 +461,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                 if (!prof.isDownloaded())
                     IDs.add(prof.getID());
             }
+            Log.e("ProfilesDownloader",new JSONArray(IDs).toString());
 
             // Creating service handler class instance
             List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -451,42 +477,42 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                 if(lastpos==profiles.size()-1){
                     lastIDDownloaded=true;
                 }
-            // Gets the data repository in write mode
-            SQLiteDatabase db = mDbHelper.getWritableDatabase();
+                // Gets the data repository in write mode
+                SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
                 //Delete what was previously put in the DB
                 // Issue SQL statement.
                 db.delete(FeedProfile.FeedEntry.TABLE_NAME, null, null);
 
-            for (int pos = firstPos; pos <= lastpos; pos++) {
-                Profile prof = profiles.get(pos);
-                // Create a new map of values, where column names are the keys
-                ContentValues values = new ContentValues();
-                try {
-                    JSONObject data = json.getJSONObject(prof.getID());
-                    prof.setProfileFromJson(data);
-                    values.put(FeedProfile.FeedEntry._ID,prof.getID());
-                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_FIRST_NAME, data.getString("First_Name"));
-                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_LAST_NAME, data.getString("Last_Name"));
-                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_LAST_SUBJECT, data.getString("Last_Subject"));
-                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_LOC_X, data.getString("Loc_X"));
-                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_LOC_Y, data.getString("Loc_Y"));
-                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_COMPANY, data.getString("Company"));
-                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_EXP_YEARS, data.getString("Exp_Years"));
-                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_SUM_GRADE, data.getString("Sum_Grade"));
-                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_NUMBER_GRADE, data.getString("Number_Grade"));
+                for (int pos = firstPos; pos <= lastpos; pos++) {
+                    Profile prof = profiles.get(pos);
+                    // Create a new map of values, where column names are the keys
+                    ContentValues values = new ContentValues();
+                    try {
+                        JSONObject data = json.getJSONObject(prof.getID());
+                        prof.setProfileFromJson(data);
+                        values.put(FeedProfile.FeedEntry._ID,prof.getID());
+                        values.put(FeedProfile.FeedEntry.COLUMN_NAME_FIRST_NAME, data.getString("First_Name"));
+                        values.put(FeedProfile.FeedEntry.COLUMN_NAME_LAST_NAME, data.getString("Last_Name"));
+                        values.put(FeedProfile.FeedEntry.COLUMN_NAME_LAST_SUBJECT, data.getString("Last_Subject"));
+                        values.put(FeedProfile.FeedEntry.COLUMN_NAME_LOC_X, data.getString("Loc_X"));
+                        values.put(FeedProfile.FeedEntry.COLUMN_NAME_LOC_Y, data.getString("Loc_Y"));
+                        values.put(FeedProfile.FeedEntry.COLUMN_NAME_COMPANY, data.getString("Company"));
+                        values.put(FeedProfile.FeedEntry.COLUMN_NAME_EXP_YEARS, data.getString("Exp_Years"));
+                        values.put(FeedProfile.FeedEntry.COLUMN_NAME_SUM_GRADE, data.getString("Sum_Grade"));
+                        values.put(FeedProfile.FeedEntry.COLUMN_NAME_NUMBER_GRADE, data.getString("Number_Grade"));
 
 // Insert the new row, returning the primary key value of the new row
-                    long newRowId;
-                    newRowId = db.insert(
-                            FeedProfile.FeedEntry.TABLE_NAME,
-                            null,
-                            values);
-                    Log.e("ProfilesDownloader",String.valueOf(newRowId));
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                        long newRowId;
+                        newRowId = db.insert(
+                                FeedProfile.FeedEntry.TABLE_NAME,
+                                null,
+                                values);
+                        Log.e("ProfilesDownloader",String.valueOf(newRowId));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
             }
             else {
                 Log.e("ProfilesDownloader", "No profiles corresponding to the range of IDs given fetched");

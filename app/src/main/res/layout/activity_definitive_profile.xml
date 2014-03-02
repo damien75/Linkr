@@ -125,7 +125,8 @@
         android:text="Accept"
         android:id="@+id/buttonProposeMeeting"
         android:onClick="proposeMeeting"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true"
+        android:background="#00ff2e" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -137,14 +138,24 @@
         android:layout_centerHorizontal="true"
         android:background="#17c62a"
         android:textColor="#ffffff" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Never show this profile again"
+        android:id="@+id/neverEver"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="#b10200"
+        android:onClick="rejectProfile"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Refuse"
+        android:text="Not Now..."
         android:id="@+id/buttonReject"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:onClick="rejectProfile"/>
+        android:onClick="notNow"
+        android:background="#ffbdb4" />
 
 </RelativeLayout>
