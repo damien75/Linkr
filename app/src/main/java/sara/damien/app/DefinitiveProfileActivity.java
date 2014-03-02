@@ -42,7 +42,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
     final int XU = 0;
     final int YU = 0;
     private String currentID;
-    private String currentSubject;
+    private boolean lastIDDownloaded = false;
     private int nextFirstPos=0;
     private boolean reject=false;
 
@@ -57,7 +57,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
     JSONArray profileInfos = null;
 
     FeedProfileDbHelper mDbHelper;
-    private int dbSize;
+    private int dbSize=0;
 
     ConnectionDetector cd;
     Boolean isInternetPresent;
@@ -81,7 +81,8 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
             profilesDownloader.execute();
         }
         else {
-            new ProfilesLocalDownLoader(nextFirstPos,nbdownload).execute();
+            Log.e("local profiles downloader ","called");
+            new ProfilesLocalDownLoader(nbdownload).execute();
         }
     }
 
@@ -110,6 +111,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
     }
 
     public void proposeMeeting(View view) {
+        if (isInternetPresent){
         profiles.get(currentpos).setState(1);
 
         CreateMeeting CR = new CreateMeeting();
@@ -125,6 +127,10 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         bP.setVisibility(View.GONE);
         bR.setVisibility(View.GONE);
         accept.setVisibility(View.VISIBLE);
+        }
+        else {
+            Toast.makeText(this, "You need to be connected to send invitations",Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void rejectProfile(View view) {
@@ -142,11 +148,13 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         TextView years = (TextView) findViewById(R.id.years_experience);
 
         Button next = (Button) findViewById(R.id.buttonNext);
+        Button previous = (Button) findViewById(R.id.buttonPrevious);
 
         Button bP = (Button) findViewById(R.id.buttonProposeMeeting);
         Button bR = (Button) findViewById(R.id.buttonReject);
         TextView accept = (TextView) findViewById(R.id.textAccepted);
 
+        Log.e("has profile ",String.valueOf(currentpos)+" "+String.valueOf(dbSize)+" "+profiles.toString());
         boolean has_profile = currentpos < dbSize && profiles.get(currentpos).isDownloaded();
         int visibility = has_profile ? View.VISIBLE : View.GONE;
 
@@ -158,6 +166,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         bR.setVisibility(visibility);
         accept.setVisibility(View.GONE);
         next.setVisibility(visibility);
+        previous.setVisibility(visibility);
 
         if (!has_profile) {
             lastProfileShown = -1;
@@ -222,6 +231,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
             TextView years = (TextView) findViewById(R.id.years_experience);
 
             Button next = (Button) findViewById(R.id.buttonNext);
+            Button previous = (Button) findViewById(R.id.buttonPrevious);
 
             Button bP = (Button) findViewById(R.id.buttonProposeMeeting);
             Button bR = (Button) findViewById(R.id.buttonReject);
@@ -229,6 +239,12 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
             boolean has_profile = currentpos < profiles.size() && profiles.get(currentpos).isDownloaded();
             int visibility = has_profile ? View.VISIBLE : View.GONE;
+            if (currentpos==0 && has_profile && !lastIDDownloaded){
+                previous.setEnabled(false);
+            }
+            else {
+                previous.setEnabled(true);
+            }
 
             subject.setVisibility(visibility);
             grade.setVisibility(visibility);
@@ -341,12 +357,9 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
     }
 
     private class ProfilesLocalDownLoader extends AsyncTask<Void,Void,Void>{
-        int firstPos, count;
 
-        public ProfilesLocalDownLoader(int firstPos, int count){
+        public ProfilesLocalDownLoader(int count){
             nextFirstPos+=count;
-            this.firstPos=firstPos;
-            this.count=count;
         }
 
         @Override
@@ -376,7 +389,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                     null,                                     // don't filter by row groups
                     null                                 // The sort order
             );
-            dbSize = c.getCount();
+            dbSize += c.getCount();
             c.moveToFirst();
             Log.d("countcursor",String.valueOf(c.getColumnCount()));
             while (!c.isAfterLast()){
@@ -434,10 +447,16 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
             String jsonStr = json.toString();
             Log.d("Response: ", "> " + jsonStr);
 
-            //if (jsonStr != null) {
-
+            if (json.length()>0) {
+                if(lastpos==profiles.size()-1){
+                    lastIDDownloaded=true;
+                }
             // Gets the data repository in write mode
             SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+                //Delete what was previously put in the DB
+                // Issue SQL statement.
+                db.delete(FeedProfile.FeedEntry.TABLE_NAME, null, null);
 
             for (int pos = firstPos; pos <= lastpos; pos++) {
                 Profile prof = profiles.get(pos);
@@ -467,6 +486,10 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+            }
+            else {
+                Log.e("ProfilesDownloader", "No profiles corresponding to the range of IDs given fetched");
             }
             return null;
 
