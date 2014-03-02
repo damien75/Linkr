@@ -21,8 +21,6 @@ public class MessageAdapter extends BaseAdapter{
     private Context mContext;
     private ArrayList<Message> mMessages;
 
-
-
     public MessageAdapter(Context context, ArrayList<Message> messages) {
         super();
         this.mContext = context;

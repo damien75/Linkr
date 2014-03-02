@@ -19,7 +19,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -84,7 +86,8 @@ public class MessageActivity extends ListActivity {
         if(newMessage.length() > 0){
             text.setText("");
             //TODO ajouter qqch pour dire que le message n'a pas encore été envoyé
-            addNewMessage(new Message(newMessage, true,false,""));
+            String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+            addNewMessage(new Message(newMessage, true, false, timeStamp));
             SendMessage sendMessage = new SendMessage();
             sendMessage.message = newMessage;
             sendMessage.execute();
@@ -182,7 +185,7 @@ public class MessageActivity extends ListActivity {
             Log.d("countcursor",String.valueOf(c.getColumnCount()));
                     while (!c.isAfterLast()){
                         Log.d("rowread", String.valueOf(c.getString(0)));
-                        messages.add(new Message(c.getString(1)+" envoyé à "+c.getString(3), c.getString(2).equals(myID),true,c.getString(3)));
+                        messages.add(new Message(c.getString(1), c.getString(2).equals(myID),true,c.getString(3)));
                         c.moveToNext();
                     }
             return null;
