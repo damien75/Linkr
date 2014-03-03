@@ -199,6 +199,7 @@ public class WelcomeActivity extends Activity {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.remove("Connected");
+                editor.remove("blockedIDs");
                 editor.putBoolean("Connected", false);
                 editor.commit();
                 Intent i5 = new Intent(this,SplashScreenActivity.class);
@@ -332,7 +333,7 @@ public class WelcomeActivity extends Activity {
         protected Void doInBackground(Void... args) {
             try {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                String userID = prefs.getString("ID","2");
+                String userID = prefs.getString("ID","0");
                 JSONParser jsonParser = new JSONParser();
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
                 params.add(new BasicNameValuePair("SELECT_FUNCTION","shareLocation"));

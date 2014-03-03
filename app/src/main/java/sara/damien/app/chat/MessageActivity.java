@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import sara.damien.app.FeedReaderContract.FeedEntry;
-import sara.damien.app.FeedReaderDbHelper;
+import sara.damien.app.DB.FeedReaderContract.FeedEntry;
+import sara.damien.app.DB.FeedReaderDbHelper;
 import sara.damien.app.R;
 import sara.damien.app.utils.JSONParser;
 
@@ -54,7 +54,7 @@ public class MessageActivity extends ListActivity {
         setContentView(R.layout.main);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        myID = prefs.getString("ID","1");
+        myID = prefs.getString("ID","0");
         latestTimeStamp = prefs.getString("TimeStamp", "2014-02-28 16:27:40");
 
         text = (EditText) this.findViewById(R.id.messageEditor);
@@ -130,6 +130,7 @@ public class MessageActivity extends ListActivity {
                              FeedEntry.TABLE_NAME,
                              null,
                              values);
+                     Log.e("Message sent ",String.valueOf(newRowId));
                  }
                 else{
                      //TODO send message again
@@ -234,14 +235,13 @@ public class MessageActivity extends ListActivity {
                                 FeedEntry.TABLE_NAME,
                                 null,
                                 values);
+                        Log.e("New Message uploaded",String.valueOf(newRowId));
                     }
                     latestTimeStamp = newMessages.getJSONObject(newMessages.length()-1).getString("Date");
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putString("TimeStamp",latestTimeStamp);
                     editor.commit();
-                }
-                else {
                 }
             }
             catch (JSONException e){

@@ -43,8 +43,6 @@ public class RequestsReceivedFragment extends ListFragment {
     private static final String TAG_STATE = "State";
     private static final String TAG_SUBJECT = "Subject";
     private static final String TAG_DATE_REQUEST = "Date_Request";
-    private static final String TAG_DATE_ACCEPT = "Date_Accept";
-    private static final String TAG_DATE_MEETING = "Date_Meeting";
     private static final String TAG_DATE= "Date";
     private static final String TAG_STATUS= "Status";
     private static final String TAG_ID = "ID";
@@ -77,7 +75,7 @@ public class RequestsReceivedFragment extends ListFragment {
         View rootView = inflater.inflate(R.layout.fragment_requests_received, container, false);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-        currentID = prefs.getString("ID","2");
+        currentID = prefs.getString("ID","0");
 
         MeetingList = new ArrayList<HashMap<String, String>>();
         new GetMeetings().execute();

@@ -1,7 +1,9 @@
 package sara.damien.app;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,14 +27,22 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import sara.damien.app.DB.FeedMeeting;
+import sara.damien.app.DB.FeedMeetingDbHelper;
+import sara.damien.app.DB.FeedProfile;
+import sara.damien.app.DB.FeedProfileDbHelper;
+import sara.damien.app.utils.ConnectionDetector;
 import sara.damien.app.utils.JSONParser;
 
 public class DefinitiveProfileActivity extends ActionBarActivity {
+    String subject;
     SharedPreferences prefs;
     ArrayList<Profile> profiles = new ArrayList<Profile>();
     int currentpos;
@@ -41,7 +51,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
     final int E = 1000;
     final int XU = 0;
     final int YU = 0;
-    private String currentID;
+    private String myID;
     private boolean lastIDDownloaded = false;
     private int nextFirstPos=0;
     private boolean reject=false;
@@ -56,7 +66,8 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
     JSONArray profileInfos = null;
 
-    FeedProfileDbHelper mDbHelper;
+    FeedProfileDbHelper mDbProfileHelper;
+    FeedMeetingDbHelper mDbMeetingHelper;
 
     ConnectionDetector cd;
     boolean isInternetPresent;
@@ -66,11 +77,13 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_definitive_profile);
         currentpos = 0;
+        subject = getIntent().getStringExtra("subject");
 
-        mDbHelper = new FeedProfileDbHelper(getApplicationContext());
+        mDbProfileHelper = new FeedProfileDbHelper(getApplicationContext());
+        mDbMeetingHelper = new FeedMeetingDbHelper(getApplicationContext());
 
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        currentID = prefs.getString("ID","1");
+        myID = prefs.getString("ID","0");
 
         cd = new ConnectionDetector(getApplicationContext());
         isInternetPresent = cd.isConnectingToInternet();
@@ -96,26 +109,18 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
     public void proposeMeeting(View view) {
         if (isInternetPresent){
-            profiles.get(currentpos).setState(1);
+            Profile profile = profiles.get(currentpos);
+            profile.setState(1);
 
             CreateMeeting CR = new CreateMeeting();
-            CR.ID1 = currentID;
+            CR.ID1 = myID;
             CR.ID2 = profiles.get(currentpos).getID();
-            CR.subject = "Subject " + profiles.get(currentpos).getFirst_Name();
+            CR.subject = subject;
             CR.message = "";
             CR.execute();
-
-            Button bP = (Button) findViewById(R.id.buttonProposeMeeting);
-            Button bR = (Button) findViewById(R.id.buttonReject);
-            Button bN = (Button) findViewById(R.id.neverEver);
-            TextView accept = (TextView) findViewById(R.id.textAccepted);
-            bP.setVisibility(View.GONE);
-            bR.setVisibility(View.GONE);
-            bN.setVisibility(View.GONE);
-            accept.setVisibility(View.VISIBLE);
         }
         else {
-            Toast.makeText(this, "You need to be connected to send invitations",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "You need to be connected to send invitations", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -152,8 +157,6 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                 if (profiles.size()>0){
                     int wrapped_pos = (preload_pos + profiles.size()) % profiles.size();
                     profiles.get(wrapped_pos).downloadPicture();
-                }
-                else{
                 }
             }
 
@@ -232,14 +235,15 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         }
     }
 
-    private class CreateMeeting extends AsyncTask<Void, Void, Void>  {
+    private class CreateMeeting extends AsyncTask<Void, Void, Boolean>  {
         String ID1;
         String ID2;
         String subject;
         String message;
+        String IDm;
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Boolean doInBackground(Void... params) {
             try {
                 List<NameValuePair> params2 = new ArrayList<NameValuePair>();
                 params2.add(new BasicNameValuePair("SELECT_FUNCTION", "createMeeting"));
@@ -248,10 +252,76 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                 params2.add(new BasicNameValuePair("Subject", subject));
                 params2.add(new BasicNameValuePair("Message", message));
                 JSONObject json2 = jsonParser2.makeHttpRequest(url, "POST", params2);
+                Log.e("Create Meeting ",json2.toString());
+                if (json2.getString("success").equals("1")){
+                    IDm = json2.getString("ID");
+                    Profile profile = profiles.get(currentpos);
+                    // Gets the data repository in write mode
+                    SQLiteDatabase db = mDbProfileHelper.getWritableDatabase();
+                    // Create a new map of values, where column names are the keys
+                    ContentValues values = new ContentValues();
+                    values.put(FeedProfile.FeedEntry._ID,profile.getID());
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_FIRST_NAME, profile.getFirst_Name());
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_LAST_NAME, profile.getLast_Name());
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_LAST_SUBJECT, profile.getLast_Subject());
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_LOC_X, profile.getLoc_X());
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_LOC_Y, profile.getLoc_Y());
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_COMPANY, profile.getCompany());
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_EXP_YEARS, profile.getExp_Years());
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_SUM_GRADE, profile.getSum_Grade());
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_NUMBER_GRADE, profile.getNumber_Grade());
+
+// Insert the new row, returning the primary key value of the new row
+                    long newRowId;
+                    newRowId = db.insert(
+                            FeedProfile.FeedEntry.TABLE_NAME,
+                            null,
+                            values);
+                    Log.e("Profile added to requests sent ",String.valueOf(newRowId));
+
+                    SQLiteDatabase db2 = mDbMeetingHelper.getWritableDatabase();
+                    ContentValues values1 = new ContentValues();
+                    values1.put(FeedMeeting.FeedEntry._ID, IDm);
+                    values1.put(FeedMeeting.FeedEntry.COLUMN_NAME_ID1, ID1);
+                    values1.put(FeedMeeting.FeedEntry.COLUMN_NAME_ID2, ID2);
+                    values1.put(FeedMeeting.FeedEntry.COLUMN_NAME_SUBJECT, subject);
+                    values1.put(FeedMeeting.FeedEntry.COLUMN_NAME_STATE, "0");
+                    values1.put(FeedMeeting.FeedEntry.COLUMN_NAME_MESSAGE, "empty message");
+                    String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+                    values1.put(FeedMeeting.FeedEntry.COLUMN_NAME_DATE_REQUEST, time);
+                    values1.put(FeedMeeting.FeedEntry.COLUMN_NAME_TIME, time);
+
+                    long newMeetingRowId;
+                    newMeetingRowId = db2.insert(
+                            FeedMeeting.FeedEntry.TABLE_NAME,
+                            null,
+                            values1
+                    );
+                    Log.e("Meeting added to local DB ",String.valueOf(newMeetingRowId));
+                    return true;
+                }
             } catch (NullPointerException e) {
                 e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-            return null;
+            return false;
+        }
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (result){
+                Button bP = (Button) findViewById(R.id.buttonProposeMeeting);
+                Button bR = (Button) findViewById(R.id.buttonReject);
+                Button bN = (Button) findViewById(R.id.neverEver);
+                TextView accept = (TextView) findViewById(R.id.textAccepted);
+                bP.setVisibility(View.GONE);
+                bR.setVisibility(View.GONE);
+                bN.setVisibility(View.GONE);
+                accept.setVisibility(View.VISIBLE);
+            }
+            else {
+                Toast.makeText(getApplicationContext(),"Bad connection, try again later...", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -259,16 +329,14 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         @Override
         protected Void doInBackground(Void... args) {
             Set<String> blockedIDs = prefs.getStringSet("blockedIDs", new HashSet<String>());
-            ArrayList<String> bIDs = new ArrayList<String>(blockedIDs);
             // Creating service handler class instance
-            Log.e("ProfilesIDs","called "+new JSONArray(bIDs).toString()+" "+bIDs);
             List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("SELECT_FUNCTION", "getProfileIDs"));
-            params.add(new BasicNameValuePair("myID", currentID));
+            params.add(new BasicNameValuePair("SELECT_FUNCTION", "getProfilesID2"));
+            params.add(new BasicNameValuePair("myID", myID));
             params.add(new BasicNameValuePair("XU", String.valueOf(XU)));
             params.add(new BasicNameValuePair("YU", String.valueOf(YU)));
             params.add(new BasicNameValuePair("E", String.valueOf(E)));
-            params.add(new BasicNameValuePair("blockedIDs", new JSONArray(bIDs).toString()));
+            params.add(new BasicNameValuePair("blockedIDs", new JSONArray(blockedIDs).toString()));
             String json = jsonParser.plainHttpRequest(url, "POST", params);
 
             // Making a request to url and getting response
@@ -368,10 +436,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
     /**
@@ -385,9 +450,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_definitive_profile, container, false);
-
-            return rootView;
+            return inflater.inflate(R.layout.fragment_definitive_profile, container, false);
         }
     }
 }

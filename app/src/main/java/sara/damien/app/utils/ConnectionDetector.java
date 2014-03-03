@@ -1,4 +1,4 @@
-package sara.damien.app;
+package sara.damien.app.utils;
 
 /**
  * Created by Damien on 01/03/2014.

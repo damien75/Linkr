@@ -1,4 +1,4 @@
-package sara.damien.app;
+package sara.damien.app.DB;
 
 import android.provider.BaseColumns;
 
@@ -20,6 +20,6 @@ public class FeedProfile {
         public static final String COLUMN_NAME_SUM_GRADE = "Sum_Grade";
         public static final String COLUMN_NAME_NUMBER_GRADE = "Number_Grade";
         public static final String COLUMN_NAME_STATE = "State";
-        public static final String COMUMN_NAME_PICTURE = "Picture";
+        public static final String COLUMN_NAME_PICTURE = "Picture";
     }
 }

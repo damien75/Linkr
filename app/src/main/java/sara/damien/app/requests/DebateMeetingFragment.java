@@ -78,7 +78,7 @@ public class DebateMeetingFragment extends ListFragment {
         View rootView = inflater.inflate(R.layout.fragment_debate_meeting, container, false);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-        currentID = prefs.getString("ID","2");
+        currentID = prefs.getString("ID","0");
 
         MeetingList = new ArrayList<HashMap<String, String>>();
         new GetMeetings().execute();
