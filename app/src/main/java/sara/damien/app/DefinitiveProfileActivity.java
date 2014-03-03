@@ -91,9 +91,10 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
     public void nextProfile(View view) {
         if (isInternetPresent){
+            if (profiles.size()!=0){
             currentpos = (currentpos + 1) % profiles.size();
             Log.d("Current pos : ", "" + currentpos);
-            update(currentpos);
+            update(currentpos);}
         }
         else {
             currentpos = (currentpos + 1) % dbSize;
