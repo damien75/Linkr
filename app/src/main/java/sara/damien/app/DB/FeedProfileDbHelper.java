@@ -1,4 +1,4 @@
-package sara.damien.app;
+package sara.damien.app.DB;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -23,7 +23,7 @@ public class FeedProfileDbHelper extends SQLiteOpenHelper {
                     FeedProfile.FeedEntry.COLUMN_NAME_SUM_GRADE + TEXT_TYPE + COMMA_SEP  +
                     FeedProfile.FeedEntry.COLUMN_NAME_NUMBER_GRADE + TEXT_TYPE + COMMA_SEP  +
                     FeedProfile.FeedEntry.COLUMN_NAME_STATE + TEXT_TYPE + COMMA_SEP  +
-                    FeedProfile.FeedEntry.COMUMN_NAME_PICTURE + TEXT_TYPE +
+                    FeedProfile.FeedEntry.COLUMN_NAME_PICTURE + TEXT_TYPE +
                     " )";
 
     private static final String SQL_DELETE_ENTRIES =

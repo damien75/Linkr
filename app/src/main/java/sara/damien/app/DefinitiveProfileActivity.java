@@ -3,7 +3,6 @@ package sara.damien.app;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -28,14 +27,22 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import sara.damien.app.DB.FeedMeeting;
+import sara.damien.app.DB.FeedMeetingDbHelper;
+import sara.damien.app.DB.FeedProfile;
+import sara.damien.app.DB.FeedProfileDbHelper;
+import sara.damien.app.utils.ConnectionDetector;
 import sara.damien.app.utils.JSONParser;
 
 public class DefinitiveProfileActivity extends ActionBarActivity {
+    String subject;
     SharedPreferences prefs;
     ArrayList<Profile> profiles = new ArrayList<Profile>();
     int currentpos;
@@ -44,7 +51,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
     final int E = 1000;
     final int XU = 0;
     final int YU = 0;
-    private String currentID;
+    private String myID;
     private boolean lastIDDownloaded = false;
     private int nextFirstPos=0;
     private boolean reject=false;
@@ -59,22 +66,24 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
     JSONArray profileInfos = null;
 
-    FeedProfileDbHelper mDbHelper;
-    private int dbSize=0;
+    FeedProfileDbHelper mDbProfileHelper;
+    FeedMeetingDbHelper mDbMeetingHelper;
 
     ConnectionDetector cd;
-    Boolean isInternetPresent;
+    boolean isInternetPresent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_definitive_profile);
         currentpos = 0;
+        subject = getIntent().getStringExtra("subject");
 
-        mDbHelper = new FeedProfileDbHelper(getApplicationContext());
+        mDbProfileHelper = new FeedProfileDbHelper(getApplicationContext());
+        mDbMeetingHelper = new FeedMeetingDbHelper(getApplicationContext());
 
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        currentID = prefs.getString("ID","1");
+        myID = prefs.getString("ID","0");
 
         cd = new ConnectionDetector(getApplicationContext());
         isInternetPresent = cd.isConnectingToInternet();
@@ -83,59 +92,35 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
             ProfilesDownloader profilesDownloader = new ProfilesDownloader(nextFirstPos,nbdownload);
             profilesDownloader.execute();
         }
-        else {
-            Log.e("local profiles downloader ","called");
-            new ProfilesLocalDownLoader(nbdownload).execute();
-        }
     }
 
     public void nextProfile(View view) {
-        if (isInternetPresent){
-            if (profiles.size()!=0){
             currentpos = (currentpos + 1) % profiles.size();
             Log.d("Current pos : ", "" + currentpos);
-            update(currentpos);}
-        }
-        else {
-            currentpos = (currentpos + 1) % dbSize;
-            updateOffLine();
-        }
+            update(currentpos);
+
     }
 
     public void previousProfile(View view) {
-        if (isInternetPresent){
             currentpos = (currentpos - 1 + profiles.size()) % profiles.size();
             Log.d("Current pos : ", "" + currentpos);
             update(currentpos);
-        }
-        else {
-            currentpos = (currentpos - 1 + profiles.size()) % dbSize;
-            updateOffLine();
-        }
     }
 
     public void proposeMeeting(View view) {
         if (isInternetPresent){
-            profiles.get(currentpos).setState(1);
+            Profile profile = profiles.get(currentpos);
+            profile.setState(1);
 
             CreateMeeting CR = new CreateMeeting();
-            CR.ID1 = currentID;
+            CR.ID1 = myID;
             CR.ID2 = profiles.get(currentpos).getID();
-            CR.subject = "Subject" + profiles.get(currentpos).getFirst_Name();
+            CR.subject = subject;
             CR.message = "";
             CR.execute();
-
-            Button bP = (Button) findViewById(R.id.buttonProposeMeeting);
-            Button bR = (Button) findViewById(R.id.buttonReject);
-            Button bN = (Button) findViewById(R.id.neverEver);
-            TextView accept = (TextView) findViewById(R.id.textAccepted);
-            bP.setVisibility(View.GONE);
-            bR.setVisibility(View.GONE);
-            bN.setVisibility(View.GONE);
-            accept.setVisibility(View.VISIBLE);
         }
         else {
-            Toast.makeText(this, "You need to be connected to send invitations",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "You need to be connected to send invitations", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -159,73 +144,6 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         update(currentpos);
     }
 
-    public void updateOffLine(){
-        TextView name = (TextView) findViewById(R.id.profile_name);
-        TextView subject = (TextView) findViewById(R.id.profile_subject);
-        TextView grade = (TextView) findViewById(R.id.grade);
-        TextView company = (TextView) findViewById(R.id.company);
-        TextView years = (TextView) findViewById(R.id.years_experience);
-
-        Button next = (Button) findViewById(R.id.buttonNext);
-        Button previous = (Button) findViewById(R.id.buttonPrevious);
-
-        Button bP = (Button) findViewById(R.id.buttonProposeMeeting);
-        Button bR = (Button) findViewById(R.id.buttonReject);
-        Button bN = (Button) findViewById(R.id.neverEver);
-        TextView accept = (TextView) findViewById(R.id.textAccepted);
-
-        Log.e("has profile ",String.valueOf(currentpos)+" "+String.valueOf(dbSize)+" "+profiles.toString());
-        boolean has_profile = currentpos < dbSize && profiles.get(currentpos).isDownloaded();
-        int visibility = has_profile ? View.VISIBLE : View.GONE;
-
-        subject.setVisibility(visibility);
-        grade.setVisibility(visibility);
-        company.setVisibility(visibility);
-        years.setVisibility(visibility);
-        bP.setVisibility(visibility);
-        bR.setVisibility(visibility);
-        accept.setVisibility(View.GONE);
-        next.setVisibility(visibility);
-        previous.setVisibility(visibility);
-        bN.setVisibility(visibility);
-
-        if (!has_profile) {
-            lastProfileShown = -1;
-            name.setText("Plus de profiles disponibles");
-        } else {
-            Profile prof = profiles.get(currentpos);
-
-            if (currentpos != lastProfileShown ||reject) {
-                lastProfileShown = currentpos;
-                reject=false;
-                pictureShown = false;
-
-                name.setText(prof.getFirst_Name() + " " + prof.getLast_Name());
-                subject.setText(prof.getLast_Subject());
-                grade.setText(prof.get_Avg_Grade());
-                company.setText(prof.getCompany());
-                years.setText(prof.getExp_Years());
-
-                if (prof.getState() != 0) {
-                    bP.setVisibility(View.GONE);
-                    bR.setVisibility(View.GONE);
-                    accept.setVisibility(View.VISIBLE);
-                }
-
-            }
-
-            if (!pictureShown) {
-                Bitmap picture = prof.getPicture();
-                ImageView view = (ImageView) findViewById(R.id.profile_picture);
-
-                if (picture != null) {
-                    pictureShown = true;
-                    view.setImageBitmap(picture);
-                } else
-                    view.setImageResource(R.drawable.lil_wayne);
-            }
-        }
-    }
 
     public void update(int index) {
         if (index == currentpos) {
@@ -239,8 +157,6 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                 if (profiles.size()>0){
                     int wrapped_pos = (preload_pos + profiles.size()) % profiles.size();
                     profiles.get(wrapped_pos).downloadPicture();
-                }
-                else{
                 }
             }
 
@@ -319,14 +235,15 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         }
     }
 
-    private class CreateMeeting extends AsyncTask<Void, Void, Void>  {
+    private class CreateMeeting extends AsyncTask<Void, Void, Boolean>  {
         String ID1;
         String ID2;
         String subject;
         String message;
+        String IDm;
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Boolean doInBackground(Void... params) {
             try {
                 List<NameValuePair> params2 = new ArrayList<NameValuePair>();
                 params2.add(new BasicNameValuePair("SELECT_FUNCTION", "createMeeting"));
@@ -335,10 +252,76 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                 params2.add(new BasicNameValuePair("Subject", subject));
                 params2.add(new BasicNameValuePair("Message", message));
                 JSONObject json2 = jsonParser2.makeHttpRequest(url, "POST", params2);
+                Log.e("Create Meeting ",json2.toString());
+                if (json2.getString("success").equals("1")){
+                    IDm = json2.getString("ID");
+                    Profile profile = profiles.get(currentpos);
+                    // Gets the data repository in write mode
+                    SQLiteDatabase db = mDbProfileHelper.getWritableDatabase();
+                    // Create a new map of values, where column names are the keys
+                    ContentValues values = new ContentValues();
+                    values.put(FeedProfile.FeedEntry._ID,profile.getID());
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_FIRST_NAME, profile.getFirst_Name());
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_LAST_NAME, profile.getLast_Name());
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_LAST_SUBJECT, profile.getLast_Subject());
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_LOC_X, profile.getLoc_X());
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_LOC_Y, profile.getLoc_Y());
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_COMPANY, profile.getCompany());
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_EXP_YEARS, profile.getExp_Years());
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_SUM_GRADE, profile.getSum_Grade());
+                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_NUMBER_GRADE, profile.getNumber_Grade());
+
+// Insert the new row, returning the primary key value of the new row
+                    long newRowId;
+                    newRowId = db.insert(
+                            FeedProfile.FeedEntry.TABLE_NAME,
+                            null,
+                            values);
+                    Log.e("Profile added to requests sent ",String.valueOf(newRowId));
+
+                    SQLiteDatabase db2 = mDbMeetingHelper.getWritableDatabase();
+                    ContentValues values1 = new ContentValues();
+                    values1.put(FeedMeeting.FeedEntry._ID, IDm);
+                    values1.put(FeedMeeting.FeedEntry.COLUMN_NAME_ID1, ID1);
+                    values1.put(FeedMeeting.FeedEntry.COLUMN_NAME_ID2, ID2);
+                    values1.put(FeedMeeting.FeedEntry.COLUMN_NAME_SUBJECT, subject);
+                    values1.put(FeedMeeting.FeedEntry.COLUMN_NAME_STATE, "0");
+                    values1.put(FeedMeeting.FeedEntry.COLUMN_NAME_MESSAGE, "empty message");
+                    String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+                    values1.put(FeedMeeting.FeedEntry.COLUMN_NAME_DATE_REQUEST, time);
+                    values1.put(FeedMeeting.FeedEntry.COLUMN_NAME_TIME, time);
+
+                    long newMeetingRowId;
+                    newMeetingRowId = db2.insert(
+                            FeedMeeting.FeedEntry.TABLE_NAME,
+                            null,
+                            values1
+                    );
+                    Log.e("Meeting added to local DB ",String.valueOf(newMeetingRowId));
+                    return true;
+                }
             } catch (NullPointerException e) {
                 e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-            return null;
+            return false;
+        }
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (result){
+                Button bP = (Button) findViewById(R.id.buttonProposeMeeting);
+                Button bR = (Button) findViewById(R.id.buttonReject);
+                Button bN = (Button) findViewById(R.id.neverEver);
+                TextView accept = (TextView) findViewById(R.id.textAccepted);
+                bP.setVisibility(View.GONE);
+                bR.setVisibility(View.GONE);
+                bN.setVisibility(View.GONE);
+                accept.setVisibility(View.VISIBLE);
+            }
+            else {
+                Toast.makeText(getApplicationContext(),"Bad connection, try again later...", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -347,10 +330,9 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         protected Void doInBackground(Void... args) {
             Set<String> blockedIDs = prefs.getStringSet("blockedIDs", new HashSet<String>());
             // Creating service handler class instance
-            Log.e("ProfilesIDs","called "+new JSONArray(blockedIDs));
             List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("SELECT_FUNCTION", "getProfileIDs"));
-            params.add(new BasicNameValuePair("myID", currentID));
+            params.add(new BasicNameValuePair("SELECT_FUNCTION", "getProfilesID2"));
+            params.add(new BasicNameValuePair("myID", myID));
             params.add(new BasicNameValuePair("XU", String.valueOf(XU)));
             params.add(new BasicNameValuePair("YU", String.valueOf(YU)));
             params.add(new BasicNameValuePair("E", String.valueOf(E)));
@@ -360,8 +342,6 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
             // Making a request to url and getting response
 
             Log.d("Response IDs Found: ", "> " + json);
-
-            //if (jsonStr != null) {
             try {
                 profileInfos = new JSONArray(json);
                 if (profileInfos.length() > 0) {
@@ -378,71 +358,11 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
             return null;
         }
     }
 
-    private class ProfilesLocalDownLoader extends AsyncTask<Void,Void,Void>{
-
-        public ProfilesLocalDownLoader(int count){
-            nextFirstPos+=count;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-// Define a projection that specifies which columns from the database
-// you will actually use after this query.
-            String[] projection = {
-                    FeedProfile.FeedEntry._ID,
-                    FeedProfile.FeedEntry.COLUMN_NAME_FIRST_NAME,
-                    FeedProfile.FeedEntry.COLUMN_NAME_LAST_NAME,
-                    FeedProfile.FeedEntry.COLUMN_NAME_LAST_SUBJECT,
-                    FeedProfile.FeedEntry.COLUMN_NAME_LOC_X,
-                    FeedProfile.FeedEntry.COLUMN_NAME_LOC_Y,
-                    FeedProfile.FeedEntry.COLUMN_NAME_COMPANY,
-                    FeedProfile.FeedEntry.COLUMN_NAME_EXP_YEARS,
-                    FeedProfile.FeedEntry.COLUMN_NAME_SUM_GRADE,
-                    FeedProfile.FeedEntry.COLUMN_NAME_NUMBER_GRADE
-            };
-            Cursor c = db.query(
-                    FeedProfile.FeedEntry.TABLE_NAME,  // The table to query
-                    projection,                               // The columns to return
-                    "",                                // The columns for the WHERE clause
-                    null,                              // The values for the WHERE clause
-                    null,                                     // don't group the rows
-                    null,                                     // don't filter by row groups
-                    null                                 // The sort order
-            );
-            dbSize += c.getCount();
-            c.moveToFirst();
-            Log.d("countcursor", String.valueOf(c.getColumnCount()));
-            while (!c.isAfterLast()){
-                Log.d("rowread", String.valueOf(c.getString(0)));
-                Profile p = new Profile(true,
-                        c.getString(2),
-                        c.getString(1),
-                        c.getString(3),
-                        Integer.parseInt(c.getString(7)),
-                        Double.valueOf(c.getString(4)),
-                        Double.valueOf(c.getString(5)),
-                        c.getString(6),
-                        c.getString(0),
-                        Integer.parseInt(c.getString(8)),
-                        Integer.parseInt(c.getString(9)),
-                        0);
-                profiles.add(p);
-                c.moveToNext();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            updateOffLine();
-        }
-    }
 
     private class ProfilesDownloader extends AsyncTask<Void, Void, Void>  {
         int firstPos, count;
@@ -462,7 +382,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                 if (!prof.isDownloaded())
                     IDs.add(prof.getID());
             }
-            Log.e("ProfilesDownloader",new JSONArray(IDs).toString());
+            Log.e("ProfilesDownloader",IDs + " "+ new JSONArray(IDs).toString());
 
             // Creating service handler class instance
             List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -478,38 +398,12 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                 if(lastpos==profiles.size()-1){
                     lastIDDownloaded=true;
                 }
-                // Gets the data repository in write mode
-                SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
-                //Delete what was previously put in the DB
-                // Issue SQL statement.
-                db.delete(FeedProfile.FeedEntry.TABLE_NAME, null, null);
 
                 for (int pos = firstPos; pos <= lastpos; pos++) {
                     Profile prof = profiles.get(pos);
-                    // Create a new map of values, where column names are the keys
-                    ContentValues values = new ContentValues();
                     try {
                         JSONObject data = json.getJSONObject(prof.getID());
                         prof.setProfileFromJson(data);
-                        values.put(FeedProfile.FeedEntry._ID,prof.getID());
-                        values.put(FeedProfile.FeedEntry.COLUMN_NAME_FIRST_NAME, data.getString("First_Name"));
-                        values.put(FeedProfile.FeedEntry.COLUMN_NAME_LAST_NAME, data.getString("Last_Name"));
-                        values.put(FeedProfile.FeedEntry.COLUMN_NAME_LAST_SUBJECT, data.getString("Last_Subject"));
-                        values.put(FeedProfile.FeedEntry.COLUMN_NAME_LOC_X, data.getString("Loc_X"));
-                        values.put(FeedProfile.FeedEntry.COLUMN_NAME_LOC_Y, data.getString("Loc_Y"));
-                        values.put(FeedProfile.FeedEntry.COLUMN_NAME_COMPANY, data.getString("Company"));
-                        values.put(FeedProfile.FeedEntry.COLUMN_NAME_EXP_YEARS, data.getString("Exp_Years"));
-                        values.put(FeedProfile.FeedEntry.COLUMN_NAME_SUM_GRADE, data.getString("Sum_Grade"));
-                        values.put(FeedProfile.FeedEntry.COLUMN_NAME_NUMBER_GRADE, data.getString("Number_Grade"));
-
-// Insert the new row, returning the primary key value of the new row
-                        long newRowId;
-                        newRowId = db.insert(
-                                FeedProfile.FeedEntry.TABLE_NAME,
-                                null,
-                                values);
-                        Log.e("ProfilesDownloader",String.valueOf(newRowId));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -542,10 +436,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
     /**
@@ -559,9 +450,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_definitive_profile, container, false);
-
-            return rootView;
+            return inflater.inflate(R.layout.fragment_definitive_profile, container, false);
         }
     }
 }

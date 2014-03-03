@@ -1,9 +1,9 @@
-package sara.damien.app;
+package sara.damien.app.DB;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import sara.damien.app.FeedReaderContract.FeedEntry;
+import sara.damien.app.DB.FeedReaderContract.FeedEntry;
 
 /**
  * Created by Sara-Fleur on 3/1/14.

@@ -1,4 +1,4 @@
-package sara.damien.app;
+package sara.damien.app.DB;
 
 import android.provider.BaseColumns;
 

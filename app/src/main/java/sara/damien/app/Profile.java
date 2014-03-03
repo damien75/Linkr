@@ -91,6 +91,8 @@ public class Profile implements Parcelable {
     public Bitmap getPicture(){return picture;}
     public double getLoc_X(){return Loc_X;}
     public double getLoc_Y(){return Loc_Y;}
+    public int getSum_Grade(){return this.Sum_Grade;}
+    public int getNumber_Grade(){return this.Number_Grade;}
 
     public void setState (int i){this.State=i;}
 

@@ -21,7 +21,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import sara.damien.app.utils.JSONParser;
@@ -57,8 +56,6 @@ public class TopicActivity extends ActionBarActivity {
         topic.setHint(last_subject);
     }
 
-    Profile p;
-    HashMap<String,String> profile = new HashMap<String, String>();
     public void displayProfile (View view){
         /*Intent intent=new Intent(this,DisplayProfileActivity.class);
         Parcelable[] users = new Parcelable[profilestest.length];
@@ -69,7 +66,9 @@ public class TopicActivity extends ActionBarActivity {
         startActivity(intent);
         new ChooseSubject().execute();*/
 
+
         Intent i = new Intent(this,DefinitiveProfileActivity.class);
+        i.putExtra("subject",((EditText)findViewById(R.id.editTopic)).getText().toString());
         startActivity(i);
     }
 
@@ -136,24 +135,6 @@ public class TopicActivity extends ActionBarActivity {
             pDialog.dismiss();
         }
     }
-
-    JSONParser jsonParser2 = new JSONParser();
-
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_PROFILE_INFO = "Profile_Info";
-    private static final String TAG_LAST_NAME = "Last_Name";
-    private static final String TAG_FIRST_NAME = "First_Name";
-    private static final String TAG_LOC_X = "Loc_X";
-    private static final String TAG_LOC_Y = "Loc_Y";
-    private static final String TAG_COMPANY = "Company";
-    private static final String TAG_EXP_YEARS = "Exp_Years";
-    private static final String TAG_SUM_GRADE = "Sum_Grade";
-    private static final String TAG_NUMBER_GRADE = "Number_Grade";
-    private static final String ID = "3";
-    private Profile[] profilestest = new Profile[10];
-
-
-    JSONArray profileInfos = null;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
