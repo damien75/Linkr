@@ -18,20 +18,16 @@ import sara.damien.app.RequestsSent;
  * Created by Sara-Fleur on 3/4/14.
  */
 public class DbHelper extends SQLiteOpenHelper{
-
     // Logcat tag
     private static final String LOG = "DatabaseHelper";
-
     // Database Version
     private static final int DATABASE_VERSION = 1;
-
     // Database Name
     public static final String DATABASE_NAME = "localDB";
-
     // Table Names
     private static final String TABLE_PROFILE = "profile";
     private static final String TABLE_MEETING = "meeting";
-
+    private static final String TABLE_CHAT = "chat";
     // Profile column names
     public static final String COLUMN_ID = "ID";
     public static final String COLUMN_NAME_LAST_NAME = "Last_Name";
@@ -57,6 +53,14 @@ public class DbHelper extends SQLiteOpenHelper{
     public static final String COLUMN_NAME_DATE_MEETING = "Date_Meeting";
     public static final String COLUMN_NAME_TIME = "Time";
     public static final String COLUMN_NAME_VISIBILITY = "Visibility";
+
+    //Chat Table - column names
+    public static final String COLUMN_IDMSG = "IDmsg";
+    //public static final String COLUMN_NAME_ID1 = "ID1";
+    //public static final String COLUMN_NAME_ID2 = "ID2";
+    public static final String COLUMN_NAME_DATE = "Date";
+    //public static final String COLUMN_NAME_MESSAGE = "Message";
+    //public static final String COLUMN_NAME_VISIBILITY = "Visibility";
 
     private static final String TEXT_TYPE = " TEXT";
     private static final String COMMA_SEP = ",";
@@ -94,6 +98,15 @@ public class DbHelper extends SQLiteOpenHelper{
             COLUMN_NAME_VISIBILITY + TEXT_TYPE +
             " )";
 
+    public static final String CREATE_TABLE_CHAT =
+            "CREATE TABLE " + TABLE_CHAT + " (" +
+                    COLUMN_IDMSG + " INTEGER PRIMARY KEY," +
+                    COLUMN_NAME_ID1 + TEXT_TYPE + COMMA_SEP +
+                    COLUMN_NAME_ID2 + TEXT_TYPE + COMMA_SEP +
+                    COLUMN_NAME_DATE + TEXT_TYPE + COMMA_SEP +
+                    COLUMN_NAME_MESSAGE + TEXT_TYPE + COMMA_SEP  +
+                    COLUMN_NAME_VISIBILITY + TEXT_TYPE +
+                    " )";
 
     public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -104,6 +117,7 @@ public class DbHelper extends SQLiteOpenHelper{
         // creating required tables
         db.execSQL(CREATE_TABLE_PROFILE);
         db.execSQL(CREATE_TABLE_MEETING);
+        db.execSQL(CREATE_TABLE_CHAT);
     }
 
     @Override
@@ -111,6 +125,7 @@ public class DbHelper extends SQLiteOpenHelper{
         // on upgrade drop older tables
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEETING);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROFILE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHAT);
         // create new tables
         onCreate(db);
     }
@@ -185,4 +200,6 @@ public class DbHelper extends SQLiteOpenHelper{
         db.delete(TABLE_MEETING,selection,selectionArgs);
 
     }
+
+
 }
