@@ -147,7 +147,16 @@ public class DbHelper extends SQLiteOpenHelper{
         db.insert(TABLE_PROFILE, null, values);
     }
 
+    public boolean existIDM (String IDm){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT IDm FROM meeting WHERE IDm=?";
+        String[] tabargs = {IDm};
+        Cursor c = db.rawQuery(selectQuery, tabargs);
+        return (c.getCount()>0);
+    }
+
     public void insertLocalRequestSentMeeting (String IDm,String ID1, String ID2, String subject,String state,String message){
+        if (!existIDM(IDm)){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_IDM, IDm);
@@ -160,6 +169,7 @@ public class DbHelper extends SQLiteOpenHelper{
         values.put(COLUMN_NAME_DATE_REQUEST, time);
         values.put(COLUMN_NAME_TIME, time);
         db.insert(TABLE_MEETING,null,values);
+        }
     }
 
     public ArrayList<RequestsSent> getRequestSentMeeting(String myID){
@@ -178,10 +188,10 @@ public class DbHelper extends SQLiteOpenHelper{
         return request;
     }
 
-    public void updateSentRequest (String Date_Accept,String IDm){
+    public void updateSentRequest (String Date_Accept,String IDm,String myID,String ID2,String Subject,String Date_Request,String message){
         SQLiteDatabase db = this.getWritableDatabase();
-
         ContentValues values = new ContentValues();
+        if (existIDM(IDm)){
         values.put(COLUMN_NAME_DATE_ACCEPT,Date_Accept);
         values.put(COLUMN_NAME_STATE,"1");
 
@@ -190,6 +200,20 @@ public class DbHelper extends SQLiteOpenHelper{
         // updating row
         db.update(TABLE_MEETING, values, selection,
                selectionArgs);
+        }
+        else{
+            values.put(COLUMN_IDM, IDm);
+            values.put(COLUMN_NAME_ID1, myID);
+            values.put(COLUMN_NAME_ID2, ID2);
+            values.put(COLUMN_NAME_SUBJECT, Subject);
+            values.put(COLUMN_NAME_STATE, "1");
+            values.put(COLUMN_NAME_MESSAGE, message);
+            String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+            values.put(COLUMN_NAME_DATE_REQUEST, Date_Request);
+            values.put(COLUMN_NAME_TIME, time);
+            values.put(COLUMN_NAME_DATE_ACCEPT,Date_Accept);
+            db.insert(TABLE_MEETING,null,values);
+        }
     }
 
     public void deleteSentRequest (String IDm){

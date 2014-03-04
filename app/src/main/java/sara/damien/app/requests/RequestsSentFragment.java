@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ import sara.damien.app.utils.JSONParser;
 public class RequestsSentFragment extends ListFragment {
 
     ArrayList<RequestsSent> requests;
+    JSONArray meetings;
     RequestsSentAdapter adapter;
     EditText text;
     String IDm;
@@ -44,8 +46,6 @@ public class RequestsSentFragment extends ListFragment {
     JSONParser jsonParser;
     private static String url ="http://www.golinkr.net";
     String latestTimeStampSentRequests;
-    //FeedMeetingDbHelper mDbHelper;
-    //SQLiteDatabase db1;
     DbHelper mDbHelper;
 
     ConnectionDetector cd;
@@ -68,6 +68,8 @@ public class RequestsSentFragment extends ListFragment {
 
         requests = new ArrayList<RequestsSent>();
         if (isInternetPresent){
+            jsonParser = new JSONParser();
+            new GetRequestsSent().execute();
             new checkNewRequestsSent().execute();
         }
         else{
@@ -90,6 +92,54 @@ public class RequestsSentFragment extends ListFragment {
         protected void onPostExecute(Void text){
             adapter.notifyDataSetChanged();
         }
+    }
+
+    private class GetRequestsSent extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... args) {
+            // Creating service handler class instance
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("SELECT_FUNCTION","getSentRequests"));
+            params.add(new BasicNameValuePair("ID1", myID));
+            String jsonStr = jsonParser.plainHttpRequest(url,"POST",params);
+
+            // Making a request to url and getting response
+            //String jsonStr = json.toString();
+            Log.d("Response: ", "> " + jsonStr);
+
+            //if (jsonStr != null) {
+            try {
+                meetings = new JSONArray(jsonStr);
+                if (meetings.length()>0){
+                    for (int i = 0; i<meetings.length();i++){
+                        JSONObject c = meetings.getJSONObject(i);
+                        String first_name = c.getString("First_Name");
+                        String last_name = c.getString("Last_Name");
+                        String date_request = c.getString("Date_Request");
+                        String subject = c.getString("Subject");
+                        String idu = c.getString("ID");
+                        String idm = c.getString("IDm");
+                        String message = c.getString("Message");
+
+                        RequestsSent request = new RequestsSent(date_request,idm,idu,subject,message,first_name,last_name);
+                        requests.add(request);
+                        Log.d("prénom requete",requests.get(i).getFirst_Name());
+                        mDbHelper.insertLocalRequestSentMeeting(idm, myID, idu, subject, "0", message);
+                    }
+                }
+            }
+            catch (JSONException e){
+                e.printStackTrace();
+            }
+            return null;
+
+        }
+        @Override
+        protected void onPostExecute(Void result) {
+            adapter.notifyDataSetChanged();
+        }
+
     }
 
     private class checkNewRequestsSent extends AsyncTask<Void, String, Void>{
@@ -115,9 +165,13 @@ public class RequestsSentFragment extends ListFragment {
                         String State = request.getString("State");
                         String IDm = request.getString("IDm");
                         String Date_Accept = request.getString("Date_Accept");
+                        String ID2 = request.getString("ID");
+                        String Subject = request.getString("Subject");
+                        String Date_Request = request.getString("Date_Request");
+                        String Message = request.getString("Message");
 
                         if (State.equals("1")){
-                            mDbHelper.updateSentRequest(Date_Accept, IDm);
+                            mDbHelper.updateSentRequest(Date_Accept, IDm,myID,ID2,Subject,Date_Request,Message);
                         }
                         else{
                             mDbHelper.deleteSentRequest(IDm);
@@ -132,7 +186,7 @@ public class RequestsSentFragment extends ListFragment {
 
         @Override
         protected void onPostExecute(Void result){
-            new LocalRequestsCall().execute();
+            //new LocalRequestsCall().execute();
         }
     }
 }
