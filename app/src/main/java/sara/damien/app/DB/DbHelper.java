@@ -13,6 +13,7 @@ import java.util.Calendar;
 
 import sara.damien.app.Profile;
 import sara.damien.app.RequestsSent;
+import sara.damien.app.chat.Message;
 
 /**
  * Created by Sara-Fleur on 3/4/14.
@@ -225,5 +226,49 @@ public class DbHelper extends SQLiteOpenHelper{
 
     }
 
+    public void insertMessage (String IDmsg,String date,String myID,String currentID,String message){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_IDMSG,IDmsg);
+        values.put(COLUMN_NAME_DATE, date);
+        values.put(COLUMN_NAME_ID1, myID);
+        values.put(COLUMN_NAME_ID2, currentID);
+        values.put(COLUMN_NAME_MESSAGE, message);
+        values.put(COLUMN_NAME_VISIBILITY, "1");
+        db.insert(
+                TABLE_CHAT,
+                null,
+                values);
+    }
 
+    public ArrayList<Message> readAllLocalMessage (String myID){
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<Message> messages = new ArrayList<Message>();
+// Define a projection that specifies which columns from the database
+// you will actually use after this query.
+        String[] projection = {
+                COLUMN_IDMSG,
+                COLUMN_NAME_MESSAGE,
+                COLUMN_NAME_ID1,
+                COLUMN_NAME_DATE
+        };
+        String sortOrder = COLUMN_NAME_DATE ;
+
+        Cursor c = db.query(
+                TABLE_CHAT,  // The table to query
+                projection,                               // The columns to return
+                "",                                // The columns for the WHERE clause
+                null,                              // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                sortOrder                                 // The sort order
+        );
+        c.moveToFirst();
+        Log.d("countcursor",String.valueOf(c.getColumnCount()));
+        while (!c.isAfterLast()){
+            messages.add(new Message(c.getString(1), c.getString(2).equals(myID),true,c.getString(3)));
+            c.moveToNext();
+        }
+        return messages;
+    }
 }

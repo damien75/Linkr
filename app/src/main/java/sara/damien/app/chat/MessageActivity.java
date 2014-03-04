@@ -1,15 +1,11 @@
 package sara.damien.app.chat;
 
 import android.app.ListActivity;
-import android.content.ContentValues;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -26,8 +22,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import sara.damien.app.DB.FeedReaderContract.FeedEntry;
-import sara.damien.app.DB.FeedReaderDbHelper;
+import sara.damien.app.DB.DbHelper;
 import sara.damien.app.R;
 import sara.damien.app.utils.JSONParser;
 
@@ -46,7 +41,7 @@ public class MessageActivity extends ListActivity {
     JSONParser jsonParser;
     private static String url ="http://www.golinkr.net";
     String latestTimeStamp;
-    FeedReaderDbHelper mDbHelper;
+    DbHelper mDbHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,7 +54,7 @@ public class MessageActivity extends ListActivity {
 
         text = (EditText) this.findViewById(R.id.messageEditor);
 
-        mDbHelper = new FeedReaderDbHelper(getApplicationContext());
+        mDbHelper = new DbHelper(getApplicationContext());
 
         Bundle bundle = getIntent().getExtras();
         currentID = bundle.getString("IDu");
@@ -113,24 +108,7 @@ public class MessageActivity extends ListActivity {
                      String date = json.getString("date");
                      messages.get(messages.size()-1).setSent();
                      // Gets the data repository in write mode
-                     SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
-// Create a new map of values, where column names are the keys
-                     ContentValues values = new ContentValues();
-                     values.put(FeedEntry._ID,IDmsg);
-                     values.put(FeedEntry.COLUMN_NAME_DATE, date);
-                     values.put(FeedEntry.COLUMN_NAME_ID1, myID);
-                     values.put(FeedEntry.COLUMN_NAME_ID2, currentID);
-                     values.put(FeedEntry.COLUMN_NAME_MESSAGE, message);
-                     values.put(FeedEntry.COLUMN_NAME_VISIBILITY, "1");
-
-// Insert the new row, returning the primary key value of the new row
-                     long newRowId;
-                     newRowId = db.insert(
-                             FeedEntry.TABLE_NAME,
-                             null,
-                             values);
-                     Log.e("Message sent ",String.valueOf(newRowId));
+                     mDbHelper.insertMessage(IDmsg,date,myID, currentID, message);
                  }
                 else{
                      //TODO send message again
@@ -143,13 +121,7 @@ public class MessageActivity extends ListActivity {
 
         @Override
         protected void onPostExecute(Void text) {
-            /*if(messages.get(messages.size()-1).isStatusMessage)//check if there is any status message, now remove it.
-            {
-                messages.remove(messages.size()-1);
-            }
-
-            addNewMessage(new Message(text, false,true)); // add the orignal message from server.*/
-            notification();
+            adapter.notifyDataSetChanged();
         }
     }
 
@@ -157,38 +129,7 @@ public class MessageActivity extends ListActivity {
 
         @Override
         protected Void doInBackground(Void... args) {
-                    SQLiteDatabase db1 = mDbHelper.getReadableDatabase();
-
-// Define a projection that specifies which columns from the database
-// you will actually use after this query.
-                    String[] projection = {
-                            FeedEntry._ID,
-                            FeedEntry.COLUMN_NAME_MESSAGE,
-                            FeedEntry.COLUMN_NAME_ID1,
-                            FeedEntry.COLUMN_NAME_DATE
-                    };
-
-
-// How you want the results sorted in the resulting Cursor
-                    String sortOrder =
-                            FeedEntry.COLUMN_NAME_DATE ;
-
-                    Cursor c = db1.query(
-                            FeedEntry.TABLE_NAME,  // The table to query
-                            projection,                               // The columns to return
-                            "",                                // The columns for the WHERE clause
-                            null,                              // The values for the WHERE clause
-                            null,                                     // don't group the rows
-                            null,                                     // don't filter by row groups
-                            sortOrder                                 // The sort order
-                    );
-                    c.moveToFirst();
-            Log.d("countcursor",String.valueOf(c.getColumnCount()));
-                    while (!c.isAfterLast()){
-                        Log.d("rowread", String.valueOf(c.getString(0)));
-                        messages.add(new Message(c.getString(1), c.getString(2).equals(myID),true,c.getString(3)));
-                        c.moveToNext();
-                    }
+            messages.addAll(mDbHelper.readAllLocalMessage(myID));
             return null;
         }
 
@@ -218,24 +159,8 @@ public class MessageActivity extends ListActivity {
                         String messageText = message.getString("Message");
                         String messageID = message.getString("IDmsg");
                         this.publishProgress(messageText,messageTimeStamp);
-                        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
-// Create a new map of values, where column names are the keys
-                        ContentValues values = new ContentValues();
-                        values.put(FeedEntry._ID,Integer.valueOf(messageID));
-                        values.put(FeedEntry.COLUMN_NAME_DATE, messageTimeStamp);
-                        values.put(FeedEntry.COLUMN_NAME_ID1, currentID);
-                        values.put(FeedEntry.COLUMN_NAME_ID2, myID);
-                        values.put(FeedEntry.COLUMN_NAME_MESSAGE, messageText);
-                        values.put(FeedEntry.COLUMN_NAME_VISIBILITY, "1");
-
-// Insert the new row, returning the primary key value of the new row
-                        long newRowId;
-                        newRowId = db.insert(
-                                FeedEntry.TABLE_NAME,
-                                null,
-                                values);
-                        Log.e("New Message uploaded",String.valueOf(newRowId));
+                        mDbHelper.insertMessage(messageID,messageTimeStamp,currentID,myID,messageText);
                     }
                     latestTimeStamp = newMessages.getJSONObject(newMessages.length()-1).getString("Date");
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());

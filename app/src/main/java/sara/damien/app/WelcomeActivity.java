@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sara.damien.app.DB.DbHelper;
-import sara.damien.app.DB.FeedReaderDbHelper;
 import sara.damien.app.adapter.NavDrawerListAdapter;
 import sara.damien.app.chat.MessageActivity;
 import sara.damien.app.drawer.HomeFragment;
@@ -205,9 +204,7 @@ public class WelcomeActivity extends Activity {
                 editor.putBoolean("Connected", false);
                 editor.commit();
                 boolean b1 = deleteDatabase(DbHelper.DATABASE_NAME);
-                boolean b3 = deleteDatabase(FeedReaderDbHelper.DATABASE_NAME);
-                Log.e("Disconnection",(b1 ? "DB delete ok " : "DB delete no " ) +
-                        (b3 ? "Reader delete ok " : "Reader delete no "));
+                Log.e("Disconnection",(b1 ? "DB delete ok " : "DB delete no " ));
                 Intent i5 = new Intent(this,SplashScreenActivity.class);
                 startActivity(i5);
                 break;
