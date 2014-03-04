@@ -1,9 +1,7 @@
 package sara.damien.app;
 
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -27,17 +25,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import sara.damien.app.DB.FeedMeeting;
-import sara.damien.app.DB.FeedMeetingDbHelper;
-import sara.damien.app.DB.FeedProfile;
-import sara.damien.app.DB.FeedProfileDbHelper;
+import sara.damien.app.DB.DbHelper;
 import sara.damien.app.utils.ConnectionDetector;
 import sara.damien.app.utils.JSONParser;
 
@@ -66,8 +59,9 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
     JSONArray profileInfos = null;
 
-    FeedProfileDbHelper mDbProfileHelper;
-    FeedMeetingDbHelper mDbMeetingHelper;
+    //FeedProfileDbHelper mDbProfileHelper;
+    //FeedMeetingDbHelper mDbMeetingHelper;
+    DbHelper mDbHelper;
 
     ConnectionDetector cd;
     boolean isInternetPresent;
@@ -79,8 +73,9 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         currentpos = 0;
         subject = getIntent().getStringExtra("subject");
 
-        mDbProfileHelper = new FeedProfileDbHelper(getApplicationContext());
-        mDbMeetingHelper = new FeedMeetingDbHelper(getApplicationContext());
+        //mDbProfileHelper = new FeedProfileDbHelper(getApplicationContext());
+        //mDbMeetingHelper = new FeedMeetingDbHelper(getApplicationContext());
+        mDbHelper = new DbHelper(getApplicationContext());
 
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         myID = prefs.getString("ID","0");
@@ -252,52 +247,12 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                 params2.add(new BasicNameValuePair("Subject", subject));
                 params2.add(new BasicNameValuePair("Message", message));
                 JSONObject json2 = jsonParser2.makeHttpRequest(url, "POST", params2);
-                Log.e("Create Meeting ",json2.toString());
                 if (json2.getString("success").equals("1")){
                     IDm = json2.getString("ID");
                     Profile profile = profiles.get(currentpos);
-                    // Gets the data repository in write mode
-                    SQLiteDatabase db = mDbProfileHelper.getWritableDatabase();
-                    // Create a new map of values, where column names are the keys
-                    ContentValues values = new ContentValues();
-                    values.put(FeedProfile.FeedEntry._ID,profile.getID());
-                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_FIRST_NAME, profile.getFirst_Name());
-                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_LAST_NAME, profile.getLast_Name());
-                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_LAST_SUBJECT, profile.getLast_Subject());
-                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_LOC_X, profile.getLoc_X());
-                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_LOC_Y, profile.getLoc_Y());
-                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_COMPANY, profile.getCompany());
-                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_EXP_YEARS, profile.getExp_Years());
-                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_SUM_GRADE, profile.getSum_Grade());
-                    values.put(FeedProfile.FeedEntry.COLUMN_NAME_NUMBER_GRADE, profile.getNumber_Grade());
-
-// Insert the new row, returning the primary key value of the new row
-                    long newRowId;
-                    newRowId = db.insert(
-                            FeedProfile.FeedEntry.TABLE_NAME,
-                            null,
-                            values);
-                    Log.e("Profile added to requests sent ",String.valueOf(newRowId));
-
-                    SQLiteDatabase db2 = mDbMeetingHelper.getWritableDatabase();
-                    ContentValues values1 = new ContentValues();
-                    values1.put(FeedMeeting.FeedEntry._ID, IDm);
-                    values1.put(FeedMeeting.FeedEntry.COLUMN_NAME_ID1, ID1);
-                    values1.put(FeedMeeting.FeedEntry.COLUMN_NAME_ID2, ID2);
-                    values1.put(FeedMeeting.FeedEntry.COLUMN_NAME_SUBJECT, subject);
-                    values1.put(FeedMeeting.FeedEntry.COLUMN_NAME_STATE, "0");
-                    values1.put(FeedMeeting.FeedEntry.COLUMN_NAME_MESSAGE, "empty message");
-                    String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
-                    values1.put(FeedMeeting.FeedEntry.COLUMN_NAME_DATE_REQUEST, time);
-                    values1.put(FeedMeeting.FeedEntry.COLUMN_NAME_TIME, time);
-
-                    long newMeetingRowId;
-                    newMeetingRowId = db2.insert(
-                            FeedMeeting.FeedEntry.TABLE_NAME,
-                            null,
-                            values1
-                    );
-                    Log.e("Meeting added to local DB ",String.valueOf(newMeetingRowId));
+                    mDbHelper.insertLocalProfile(profile);
+                    mDbHelper.insertLocalRequestSentMeeting(IDm,ID1,ID2,subject,"0","no message");
+                    mDbHelper.getRequestSentMeeting(myID);
                     return true;
                 }
             } catch (NullPointerException e) {

@@ -22,4 +22,6 @@ public class FeedProfile {
         public static final String COLUMN_NAME_STATE = "State";
         public static final String COLUMN_NAME_PICTURE = "Picture";
     }
+
+
 }
