@@ -12,14 +12,15 @@ import android.widget.TextView;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import sara.damien.app.utils.JSONParser;
 import sara.damien.app.Profile;
 import sara.damien.app.R;
+import sara.damien.app.utils.JSONParser;
 
 public class SingleProfileRequestActivity extends ActionBarActivity {
     private String MeetingID;
@@ -31,6 +32,8 @@ public class SingleProfileRequestActivity extends ActionBarActivity {
     private boolean gpsPositionKnown=false;
     JSONParser jsonParser = new JSONParser();
     String url = "http://www.golinkr.net";
+    boolean meetingAccepted;
+    boolean meetingRefused;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +59,7 @@ public class SingleProfileRequestActivity extends ActionBarActivity {
         new acceptMeeting().execute();
     }
     public void refuseMeeting(View view){
-
+        new refuseMeeting().execute();
     }
 
     @Override
@@ -114,7 +117,7 @@ public class SingleProfileRequestActivity extends ActionBarActivity {
         }
     }
 
-    private double distance(double lat1, double lon1, double lat2, double lon2) {
+    /*private double distance(double lat1, double lon1, double lat2, double lon2) {
         double theta = lon1 - lon2;
         double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
         dist = Math.acos(dist);
@@ -127,6 +130,14 @@ public class SingleProfileRequestActivity extends ActionBarActivity {
     }
     private double rad2deg(double rad) {
         return (rad * 180 / Math.PI);
+    }*/
+    private double distance (double lat1, double lon1, double lat2, double lon2){
+        lat1 *= 6378.0;
+        lat2 *= 6378.0;
+        lon1 *= 6378.0;
+        lon2 *= 6378.0;
+        double d = (lat2-lat1)*(lat2-lat1)+(lon2-lon1)*(lon2-lon1);
+        return Math.round(Math.sqrt(d))/1000.0;
     }
 
     public class acceptMeeting extends AsyncTask<Void,Void,Void>{
@@ -137,13 +148,41 @@ public class SingleProfileRequestActivity extends ActionBarActivity {
             params.add(new BasicNameValuePair("SELECT_FUNCTION", "acceptProposition"));
             params.add(new BasicNameValuePair("IDm", MeetingID));
             JSONObject json = jsonParser.makeHttpRequest(url, "POST", params);
+            try {
+                meetingAccepted = json.getBoolean("success");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             return null;
         }
 
         @Override
-        protected void onPostExecute(Void result){
-            (findViewById(R.id.buttonProposeMeeting)).setVisibility(View.GONE);
-            (findViewById(R.id.textAccepted)).setVisibility(View.VISIBLE);
+        protected void onPostExecute(Void aVoid) {
+            finish();
+        }
+    }
+
+    public class refuseMeeting extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("SELECT_FUNCTION", "refuseProposition"));
+            params.add(new BasicNameValuePair("IDm", MeetingID));
+            JSONObject json = jsonParser.makeHttpRequest(url, "POST", params);
+            try {
+                meetingRefused = json.getBoolean("success");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            if (meetingRefused){
+                finish();
+            }
         }
     }
 }

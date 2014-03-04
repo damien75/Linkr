@@ -31,7 +31,6 @@ import java.util.List;
 
 import sara.damien.app.DB.DbHelper;
 import sara.damien.app.adapter.NavDrawerListAdapter;
-import sara.damien.app.chat.MessageActivity;
 import sara.damien.app.drawer.HomeFragment;
 import sara.damien.app.model.NavDrawerItem;
 import sara.damien.app.requests.SwipeActivity;
@@ -321,7 +320,7 @@ public class WelcomeActivity extends Activity {
     }
 
     public void openChat (View view){
-        Intent intent = new Intent(this, MessageActivity.class);
+        Intent intent = new Intent(this, SwipeActivity.class);
         startActivity(intent);
     }
     public void openProfile(View view){
