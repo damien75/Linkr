@@ -83,7 +83,6 @@ public class RequestsSentFragment extends ListFragment {
         @Override
         protected Void doInBackground(Void... args) {
             requests.addAll(mDbHelper.getRequestSentMeeting(myID));
-            latestTimeStampSentRequests = requests.get(0).getDate_Request();
             return null;
         }
 
