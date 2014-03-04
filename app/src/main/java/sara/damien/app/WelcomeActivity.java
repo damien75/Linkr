@@ -29,6 +29,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import sara.damien.app.DB.DbHelper;
+import sara.damien.app.DB.FeedMeetingDbHelper;
+import sara.damien.app.DB.FeedProfileDbHelper;
+import sara.damien.app.DB.FeedReaderDbHelper;
 import sara.damien.app.adapter.NavDrawerListAdapter;
 import sara.damien.app.chat.MessageActivity;
 import sara.damien.app.drawer.HomeFragment;
@@ -202,6 +206,14 @@ public class WelcomeActivity extends Activity {
                 editor.remove("blockedIDs");
                 editor.putBoolean("Connected", false);
                 editor.commit();
+                boolean b1 = deleteDatabase(DbHelper.DATABASE_NAME);
+                boolean b2 = deleteDatabase(FeedMeetingDbHelper.DATABASE_NAME);
+                boolean b3 = deleteDatabase(FeedReaderDbHelper.DATABASE_NAME);
+                boolean b4 = deleteDatabase(FeedProfileDbHelper.DATABASE_NAME);
+                Log.e("Disconnection",(b1 ? "DB delete ok " : "DB delete no " ) +
+                        (b2 ? "Meeting delete ok " : "Meeting delete no ") +
+                        (b3 ? "Reader delete ok " : "Reader delete no ") +
+                        (b4 ? "Profile delete ok " : "Profile delete no "));
                 Intent i5 = new Intent(this,SplashScreenActivity.class);
                 startActivity(i5);
                 break;
