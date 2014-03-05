@@ -1,5 +1,6 @@
 package sara.damien.app.chat;
 
+import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -7,7 +8,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.View;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -24,6 +28,7 @@ import java.util.TimerTask;
 
 import sara.damien.app.DB.DbHelper;
 import sara.damien.app.R;
+import sara.damien.app.utils.DateTimePicker;
 import sara.damien.app.utils.JSONParser;
 
 public class MessageActivity extends ListActivity {
@@ -87,6 +92,54 @@ public class MessageActivity extends ListActivity {
             sendMessage.message = newMessage;
             sendMessage.execute();
         }
+    }
+
+    public void button_click(View view){
+        // Create the dialog
+        final Dialog mDateTimeDialog = new Dialog(this);
+        // Inflate the root layout
+        final RelativeLayout mDateTimeDialogView = (RelativeLayout) getLayoutInflater().inflate(R.layout.datetimedialog, null);
+        // Grab widget instance
+        final DateTimePicker mDateTimePicker = (DateTimePicker) mDateTimeDialogView.findViewById(R.id.DateTimePicker);
+        //mDateTimePicker.setDateChangedListener(this);
+
+        // Update demo edittext when the "OK" button is clicked
+        ((Button) mDateTimeDialogView.findViewById(R.id.SetDateTime)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mDateTimePicker.clearFocus();
+                // TODO Auto-generated method stub
+                String result_string = mDateTimePicker.getMonth() + "/" + String.valueOf(mDateTimePicker.getDay()) + "/" + String.valueOf(mDateTimePicker.getYear())
+                        + "  " + String.valueOf(mDateTimePicker.getHour()) + ":" + String.valueOf(mDateTimePicker.getMinute());
+                //messageDatePicker.setText(result_string);
+                mDateTimeDialog.dismiss();
+            }
+        });
+
+        // Cancel the dialog when the "Cancel" button is clicked
+        ((Button) mDateTimeDialogView.findViewById(R.id.CancelDialog)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                mDateTimeDialog.cancel();
+            }
+        });
+
+        // Reset Date and Time pickers when the "Reset" button is clicked
+
+        ((Button) mDateTimeDialogView.findViewById(R.id.ResetDateTime)).setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                mDateTimePicker.reset();
+            }
+        });
+
+        // Setup TimePicker
+        // No title on the dialog window
+        mDateTimeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        // Set the dialog content view
+        mDateTimeDialog.setContentView(mDateTimeDialogView);
+        // Display the dialog
+        mDateTimeDialog.show();
     }
 
     private class SendMessage extends AsyncTask<Void, Void, Void>{
