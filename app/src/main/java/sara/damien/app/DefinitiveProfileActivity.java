@@ -211,6 +211,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                     if (prof.getState() != 0) {
                         bP.setVisibility(View.GONE);
                         bR.setVisibility(View.GONE);
+                        bN.setVisibility(View.GONE);
                         accept.setVisibility(View.VISIBLE);
                     }
 
