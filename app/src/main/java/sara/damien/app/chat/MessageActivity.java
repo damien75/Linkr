@@ -12,6 +12,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -101,6 +102,7 @@ public class MessageActivity extends ListActivity {
         final RelativeLayout mDateTimeDialogView = (RelativeLayout) getLayoutInflater().inflate(R.layout.datetimedialog, null);
         // Grab widget instance
         final DateTimePicker mDateTimePicker = (DateTimePicker) mDateTimeDialogView.findViewById(R.id.DateTimePicker);
+
         //mDateTimePicker.setDateChangedListener(this);
 
         // Update demo edittext when the "OK" button is clicked
@@ -110,7 +112,7 @@ public class MessageActivity extends ListActivity {
                 // TODO Auto-generated method stub
                 String result_string = mDateTimePicker.getMonth() + "/" + String.valueOf(mDateTimePicker.getDay()) + "/" + String.valueOf(mDateTimePicker.getYear())
                         + "  " + String.valueOf(mDateTimePicker.getHour()) + ":" + String.valueOf(mDateTimePicker.getMinute());
-                //messageDatePicker.setText(result_string);
+                ((TextView) findViewById(R.id.messageDatePicker)).setText(result_string);
                 mDateTimeDialog.dismiss();
             }
         });
