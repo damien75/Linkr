@@ -34,6 +34,8 @@
             android:paddingTop="5sp"
             android:text="Choose a date to meet..."
             android:textColor="#FFF" />
+
+
     </LinearLayout>
 
     <LinearLayout
