@@ -21,7 +21,7 @@
                 android:id="@+id/month_plus"
                 android:layout_width="40dp"
                 android:layout_height="28dp"
-                android:background="@drawable/image_button_up"/>
+                android:background="@drawable/ic_action_not_important"/>
             <EditText
                 android:id="@+id/month_display"
                 android:layout_width="45dp"
@@ -36,7 +36,7 @@
                 android:id="@+id/month_minus"
                 android:layout_width="40dp"
                 android:layout_height="28dp"
-                android:background="@drawable/image_button_down" />
+                android:background="@drawable/ic_action_not_important" />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/date_container"
@@ -49,7 +49,7 @@
                 android:id="@+id/date_plus"
                 android:layout_width="40dp"
                 android:layout_height="28dp"
-                android:background="@drawable/image_button_up" />
+                android:background="@drawable/ic_action_not_important" />
             <EditText
                 android:id="@+id/date_display"
                 android:layout_width="45dp"
@@ -63,7 +63,7 @@
                 android:id="@+id/date_minus"
                 android:layout_width="40dp"
                 android:layout_height="28dp"
-                android:background="@drawable/image_button_down"/>
+                android:background="@drawable/ic_action_not_important"/>
         </LinearLayout>
         <LinearLayout
             android:id="@+id/year_container"
@@ -76,7 +76,7 @@
                 android:id="@+id/year_plus"
                 android:layout_width="40dp"
                 android:layout_height="28dp"
-                android:background="@drawable/image_button_up" />
+                android:background="@drawable/ic_action_not_important" />
             <EditText
                 android:id="@+id/year_display"
                 android:layout_width="45dp"
@@ -90,7 +90,7 @@
                 android:id="@+id/year_minus"
                 android:layout_width="40dp"
                 android:layout_height="28dp"
-                android:background="@drawable/image_button_down" />
+                android:background="@drawable/ic_action_not_important" />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/hour_container"
@@ -106,7 +106,7 @@
                 android:id="@+id/hour_plus"
                 android:layout_width="40dp"
                 android:layout_height="28dp"
-                android:background="@drawable/image_button_up" />
+                android:background="@drawable/ic_action_not_important" />
             <EditText
                 android:id="@+id/hour_display"
                 android:layout_width="45dp"
@@ -121,7 +121,7 @@
                 android:id="@+id/hour_minus"
                 android:layout_width="40dp"
                 android:layout_height="28dp"
-                android:background="@drawable/image_button_down"/>
+                android:background="@drawable/ic_action_not_important"/>
         </LinearLayout>
         <LinearLayout
             android:id="@+id/min_container"
@@ -134,7 +134,7 @@
                 android:id="@+id/min_plus"
                 android:layout_width="40dp"
                 android:layout_height="28dp"
-                android:background="@drawable/image_button_up" />
+                android:background="@drawable/ic_action_not_important" />
             <EditText
                 android:id="@+id/min_display"
                 android:layout_width="45dp"
@@ -148,7 +148,7 @@
                 android:id="@+id/min_minus"
                 android:layout_width="40dp"
                 android:layout_height="28dp"
-                android:background="@drawable/image_button_down"/>
+                android:background="@drawable/ic_action_not_important"/>
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
