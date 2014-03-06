@@ -111,7 +111,7 @@ public class SingleProfileRequestActivity extends ActionBarActivity {
             double lat2 = latitude;
 
             if(gpsPositionKnown){
-                double d = Math.round(distance(lat1,longi1,lat2,longi2)/1000.0);
+                double d = distance(lat1,longi1,lat2,longi2);
                 distance.setText(distance.getText() + " " + String.valueOf(d)+" km");
             }
         }
@@ -132,12 +132,10 @@ public class SingleProfileRequestActivity extends ActionBarActivity {
         return (rad * 180 / Math.PI);
     }*/
     private double distance (double lat1, double lon1, double lat2, double lon2){
-        lat1 *= 6378.0;
-        lat2 *= 6378.0;
-        lon1 *= 6378.0;
-        lon2 *= 6378.0;
-        double d = (lat2-lat1)*(lat2-lat1)+(lon2-lon1)*(lon2-lon1);
-        return Math.round(Math.sqrt(d))/1000.0;
+        double deltalat = Math.PI/180.0*6378.0*(lat2-lat1);
+        double deltalon = Math.PI/180.0*6378.0*(lon2-lon1);
+        double d = deltalat*deltalat+deltalon*deltalon;
+        return Math.sqrt(d);
     }
 
     public class acceptMeeting extends AsyncTask<Void,Void,Void>{
