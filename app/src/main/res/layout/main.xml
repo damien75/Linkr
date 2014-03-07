@@ -5,7 +5,7 @@
     android:background="@color/listViewBg"
     android:orientation="vertical" >
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/up_date_pick"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -15,7 +15,7 @@
         <TextView
             android:id="@+id/messageDatePicker"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_margin="5sp"
             android:layout_weight="1"
             android:text="Pick a date ! "
@@ -24,10 +24,11 @@
 
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_margin="5sp"
             android:background="@drawable/send_button"
             android:onClick="button_click"
+            android:gravity="right"
             android:paddingBottom="5sp"
             android:paddingLeft="15sp"
             android:paddingRight="15sp"
@@ -36,7 +37,7 @@
             android:textColor="#FFF" />
 
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/bottom_write_bar"
