@@ -19,6 +19,11 @@ switch($_POST["SELECT_FUNCTION"])
             getProfilePicture($_POST["ID"]);
         }
     break;
+    case 'insertProfilePicture';
+        if (isset($_POST["Source"]) &&isset($_POST["Target"])){
+            getProfilePicture($_POST["Source"],$_POST["Target"]);
+        }
+    break;
     case 'submitSubject';
         if (isset($_POST["ID"])&&isset($_POST["subject"])){
             submitSubject($_POST["ID"],$_POST["subject"]);

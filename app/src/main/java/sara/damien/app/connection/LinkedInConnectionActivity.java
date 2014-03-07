@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -28,6 +29,7 @@ import org.scribe.model.Verifier;
 import org.scribe.oauth.OAuthService;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import sara.damien.app.R;
@@ -82,11 +84,15 @@ public class LinkedInConnectionActivity extends Activity {
         }
 
         public String getProfileInfo (){
-            String url2 = "https://api.linkedin.com/v1/people/~?format=json";
-            OAuthRequest request = new OAuthRequest(Verb.GET, url2);
+            //String url2 = "https://api.linkedin.com/v1/people/~?format=json";
+            String url = "https://api.linkedin.com/v1/people/~:(id,first-name,last-name,headline,picture-url,location,industry," +
+                    "member-url-resources,picture-urls::(original),current-status-timestamp,num-recommenders,num-connections," +
+                    "positions:(id,title,start-date,end-date,is-current,company:(id,name,type,size,industry,ticker))," +
+                    "educations:(id,school-name,field-of-study,start-date,end-date,degree))?format=json";
+            OAuthRequest request = new OAuthRequest(Verb.GET, url);
             service.signRequest(accessToken, request); // the access token from step 4
             Response response = request.send();
-
+            Log.e("picture",response.getBody());
             return response.getBody();
         }
     }
@@ -140,8 +146,12 @@ public class LinkedInConnectionActivity extends Activity {
         String firstName;
         String lastName;
         String headline;
-        String url;
         String id;
+        String pictureURL;
+        String countrycode;
+        String origin;
+        String industry;
+        int experience;
         public LinkedInSecondStep (LinkedInAuth ln){
             lnauth=ln;
         }
@@ -155,11 +165,21 @@ public class LinkedInConnectionActivity extends Activity {
                 firstName=jsonObject.getString("firstName");
                 lastName=jsonObject.getString("lastName");
                 headline=jsonObject.getString("headline");
-                JSONObject standardProfileRequest = jsonObject.getJSONObject("siteStandardProfileRequest");
-                url=standardProfileRequest.getString("url");
-                int begin = url.indexOf("=");
-                int end =url.indexOf("&");
-                id=url.substring(begin+1,end);
+                pictureURL = jsonObject.getJSONObject("pictureUrls").getJSONArray("values").get(0).toString();
+                JSONObject positions = jsonObject.getJSONObject("positions");
+                int numberofpositions = positions.getInt("_total");
+                int firstposition = Calendar.getInstance().get(Calendar.YEAR);
+                for (int i = 0; i<numberofpositions; i++){
+                    int position = positions.getJSONArray("values").getJSONObject(i).getJSONObject("startDate").getInt("year");
+                    if(position<firstposition){
+                        firstposition=position;
+                    }
+                }
+                experience = Calendar.getInstance().get(Calendar.YEAR) - firstposition;
+                id=jsonObject.getString("id");
+                countrycode = "";//jsonObject.getJSONObject("country").getString("code");
+                origin = "";//jsonObject.getString("name");
+                industry = jsonObject.getString("industry");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -169,10 +189,19 @@ public class LinkedInConnectionActivity extends Activity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            insertProfilePicture insertProfilePicture = new insertProfilePicture();
+            insertProfilePicture.source = pictureURL;
+            insertProfilePicture.target = id;
+            insertProfilePicture.execute();
             searchID searchID = new searchID();
             searchID.idl=id;
             searchID.first_name=firstName;
             searchID.last_name=lastName;
+            searchID.headline=headline;
+            searchID.countrycode=countrycode;
+            searchID.origin=origin;
+            searchID.industry=industry;
+            searchID.experience=experience;
             searchID.execute();
         }
     }
@@ -182,6 +211,11 @@ public class LinkedInConnectionActivity extends Activity {
         private int userID;
         private String first_name;
         private String last_name;
+        String headline;
+        String countrycode;
+        String origin;
+        String industry;
+        int experience;
         JSONObject json;
 
         @Override
@@ -231,6 +265,11 @@ public class LinkedInConnectionActivity extends Activity {
                             createProfile.idl= idl;
                             createProfile.first_name=first_name;
                             createProfile.last_name=last_name;
+                            createProfile.headline=headline;
+                            createProfile.countrycode=countrycode;
+                            createProfile.origin=origin;
+                            createProfile.industry=industry;
+                            createProfile.experience=experience;
                             createProfile.execute();
                         }
                     } catch (JSONException e) {
@@ -247,6 +286,11 @@ public class LinkedInConnectionActivity extends Activity {
         private String userID;
         private String first_name;
         private String last_name;
+        String headline;
+        String countrycode;
+        String origin;
+        String industry;
+        int experience;
         JSONObject json;
 
         @Override
@@ -267,8 +311,9 @@ public class LinkedInConnectionActivity extends Activity {
                 params.add(new BasicNameValuePair("IDL", idl));
                 params.add(new BasicNameValuePair("Last_Name",last_name));
                 params.add(new BasicNameValuePair("First_Name",first_name));
-                params.add(new BasicNameValuePair("Company","pipo"));
-                params.add(new BasicNameValuePair("Exp_Years","1000"));
+                params.add(new BasicNameValuePair("Company",industry));
+                params.add(new BasicNameValuePair("Exp_Years",String.valueOf(experience)));
+                params.add(new BasicNameValuePair("Picture",idl));
                 json = jsonParser.makeHttpRequest("http://www.golinkr.net","POST",params);
             }
             catch (Exception e){
@@ -311,6 +356,23 @@ public class LinkedInConnectionActivity extends Activity {
                 }
 
             });
+        }
+    }
+
+    public class insertProfilePicture extends AsyncTask<Void,Void,Void>{
+        String source;
+        String target;
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            JSONParser jsonParser = new JSONParser();
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("SELECT_FUNCTION","insertProfilePicture"));
+            params.add(new BasicNameValuePair("Source", source));
+            params.add(new BasicNameValuePair("Target",target));
+            Log.e("insertion ",source + " " + target);
+            String json = jsonParser.plainHttpRequest("http://www.golinkr.net", "POST", params);
+            return null;
         }
     }
 
