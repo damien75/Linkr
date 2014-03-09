@@ -23,17 +23,62 @@
             android:textColor="@color/textFieldColor" />
 
         <Button
+            android:id="@+id/choose_date_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5sp"
             android:background="@drawable/send_button"
             android:onClick="button_click"
-            android:gravity="right"
+            android:layout_alignParentRight="true"
             android:paddingBottom="5sp"
             android:paddingLeft="15sp"
             android:paddingRight="15sp"
             android:paddingTop="5sp"
             android:text="Choose a date to meet..."
+            android:textColor="#FFF" />
+        <Button
+            android:id="@+id/change_date_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5sp"
+            android:background="@drawable/send_button"
+            android:onClick="button_click"
+            android:layout_alignParentRight="true"
+            android:paddingBottom="5sp"
+            android:paddingLeft="15sp"
+            android:paddingRight="15sp"
+            android:paddingTop="5sp"
+            android:text="Change"
+            android:textColor="#FFF" />
+
+        <Button
+            android:id="@+id/accept_date_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5sp"
+            android:background="@drawable/send_button"
+            android:onClick="button_click"
+            android:layout_toLeftOf="@id/refuse_date_button"
+            android:paddingBottom="5sp"
+            android:paddingLeft="15sp"
+            android:paddingRight="15sp"
+            android:paddingTop="5sp"
+            android:text="Accept"
+            android:textColor="#FFF" />
+
+        <Button
+            android:id="@+id/refuse_date_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5sp"
+            android:background="@drawable/send_button"
+            android:onClick="button_click"
+            android:layout_alignParentRight="true"
+            android:paddingBottom="5sp"
+            android:paddingLeft="15sp"
+            android:paddingRight="15sp"
+            android:paddingTop="5sp"
+            android:text="Refuse"
             android:textColor="#FFF" />
 
 

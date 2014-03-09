@@ -297,7 +297,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
             // Making a request to url and getting response
 
-            Log.d("Response IDs Found: ", "> " + json);
+            Log.d("Response IDs Found: ", "> " + json+params.toString());
             try {
                 profileInfos = new JSONArray(json);
                 if (profileInfos.length() > 0) {

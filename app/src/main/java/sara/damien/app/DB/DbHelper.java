@@ -21,6 +21,7 @@ import sara.damien.app.chat.Message;
  */
 public class DbHelper extends SQLiteOpenHelper{
     // Logcat tag
+    //Les loulous :)
     private static final String LOG = "DatabaseHelper";
     // Database Version
     private static final int DATABASE_VERSION = 1;
