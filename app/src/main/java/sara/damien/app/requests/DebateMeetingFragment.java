@@ -47,6 +47,8 @@ public class DebateMeetingFragment extends ListFragment {
     private static final String TAG_SUBJECT = "Subject";
     private static final String TAG_DATE_ACCEPT = "Date_Accept";
     private static final String TAG_IDm = "IDm";
+    private static final String TAG_STATE = "State";
+    private static final String TAG_DATE_MEETING = "Date_Meeting";
     private static String currentID;
 
 
@@ -61,6 +63,10 @@ public class DebateMeetingFragment extends ListFragment {
         String First_Name = meeting.get(TAG_FIRST_NAME);
         String Last_Name = meeting.get(TAG_LAST_NAME);
         String subject = meeting.get(TAG_SUBJECT);
+        String State = meeting.get(TAG_STATE);
+        String Date_Meeting = meeting.get(TAG_DATE_MEETING);
+        String MyStatus = meeting.get(TAG_MYSTATUS);
+
         Intent i = new Intent(getActivity(),MessageActivity.class);
         Bundle b = new Bundle();
         b.putString("IDu",IDu);
@@ -68,6 +74,9 @@ public class DebateMeetingFragment extends ListFragment {
         b.putString("Subject",subject);
         b.putString("First_Name",First_Name);
         b.putString("Last_Name",Last_Name);
+        b.putString("State",State);
+        b.putString("Date_Meeting",Date_Meeting);
+        b.putString("MyStatus",MyStatus);
         i.putExtras(b);
         startActivity(i);
     }
@@ -107,7 +116,7 @@ public class DebateMeetingFragment extends ListFragment {
 
             // Making a request to url and getting response
             //String jsonStr = json.toString();
-            Log.d("Response: ", "> " + jsonStr);
+            Log.d("Response chat ",  jsonStr);
 
             //if (jsonStr != null) {
             try {
@@ -123,6 +132,8 @@ public class DebateMeetingFragment extends ListFragment {
                         String subject = c.getString(TAG_SUBJECT);
                         String idm = c.getString(TAG_IDm);
                         String mystatus = c.getString(TAG_MYSTATUS);
+                        String state =c.getString(TAG_STATE);
+                        String date_meeting = c.getString(TAG_DATE_MEETING);
 
                         HashMap<String,String> map = new HashMap<String, String>();
                         map.put(TAG_NAME,name);
@@ -134,6 +145,8 @@ public class DebateMeetingFragment extends ListFragment {
                         map.put(TAG_MYSTATUS,mystatus);
                         map.put(TAG_DATE_ACCEPT,date_accept);
                         map.put(TAG_SUBJECT,subject);
+                        map.put(TAG_DATE_MEETING,date_meeting);
+                        map.put(TAG_STATE,state);
                         MeetingList.add(map);
                     }
                 }

@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -18,17 +17,13 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import sara.damien.app.Common;
-import sara.damien.app.DB.DbHelper;
 import sara.damien.app.R;
 import sara.damien.app.utils.DateTimePicker;
 import sara.damien.app.utils.JSONParser;
@@ -44,6 +39,9 @@ public class MessageActivity extends ListActivity {
     String First_Name;
     String Last_Name;
     String Subject;
+    String State;
+    String MyStatus;
+    String Date_Meeting;
     JSONParser jsonParser;
     String latestTimeStamp;
 
@@ -62,10 +60,13 @@ public class MessageActivity extends ListActivity {
         First_Name = bundle.getString("First_Name");
         Last_Name = bundle.getString("Last_Name");
         Subject = bundle.getString("Subject");
+        State = bundle.getString("State");
+        Date_Meeting = bundle.getString("Date_Meeting");
+        MyStatus = bundle.getString("MyStatus");
 
         sender = First_Name+" "+Last_Name;
         this.setTitle(sender);
-
+        printDate();
         messages = new ArrayList<Message>();
 
         LocalCall lc = new LocalCall();
@@ -76,6 +77,32 @@ public class MessageActivity extends ListActivity {
         callCheckNewMessages();
 
     }
+
+    public void printDate(){
+        Button refuse = (Button) findViewById (R.id.refuse_date_button);
+        Button accept = (Button) findViewById (R.id.accept_date_button);
+        Button choose = (Button) findViewById (R.id.choose_date_button);
+        Button change = (Button) findViewById (R.id.change_date_button);
+
+        TextView info = (TextView) findViewById (R.id.messageDatePicker);
+
+        refuse.setVisibility(View.GONE);
+        accept.setVisibility(View.GONE);
+        choose.setVisibility(View.GONE);
+        change.setVisibility(View.GONE);
+
+        if (State.equals("1")) {
+            choose.setVisibility(View.VISIBLE);
+        } else if (State.equals("2")) {
+            change.setVisibility(View.VISIBLE);
+        } else if ((State.equals("3")&&MyStatus.equals("2"))||(State.equals("4")&&MyStatus.equals("1"))) {
+            accept.setVisibility(View.VISIBLE);
+            refuse.setVisibility(View.VISIBLE);
+        } else if ((State.equals("3")&&MyStatus.equals("1"))||(State.equals("4")&&MyStatus.equals("2"))) {
+            change.setVisibility(View.VISIBLE);
+        }
+    }
+
     public void sendMessage(View v){
         String message_text = text.getText().toString().trim(); //TODO: Disable send button unless getText() != ""
 
