@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 /**
  * Created by Sara-Fleur on 3/3/14.
+ * More line-ending testing
  */
 public class RequestsSentAdapter extends BaseAdapter{
     private Context mContext;
