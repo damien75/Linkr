@@ -245,15 +245,15 @@ public class LinkedInConnectionActivity extends Activity {
         protected void onPostExecute(Void result) {
             pDialog.dismiss();
             runOnUiThread(new Runnable() {
-                public void run() {
+                public void run() { //TODO: RunOnUIThread unneeded
                     String message ="";
                     try {
                         if (json.getInt("success")==1){
                             userID = json.getInt("ID");
                             Toast.makeText(LinkedInConnectionActivity.this, "You have been connected with an already known profile with id: "+idl, Toast.LENGTH_LONG).show();
-                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()); //TODO: Use Common.getPrefs
                             SharedPreferences.Editor editor = prefs.edit();
-                            editor.putBoolean("Connected", true);
+                            editor.putBoolean("Connected", true); //TODO: Add setting names into a separate enumeration/static class instead of copying strings around
                             editor.putInt("ID",userID);
                             editor.commit();
                             Intent i = new Intent(LinkedInConnectionActivity.this, WelcomeActivity.class);

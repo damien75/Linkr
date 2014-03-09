@@ -13,20 +13,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import sara.damien.app.Common;
 import sara.damien.app.R;
 import sara.damien.app.WelcomeActivity;
 import sara.damien.app.connection.ConnectionTypeActivity;
 
 public class SplashScreenActivity extends Activity {
-
     private static int SPLASH_SCREEN_TIMEOUT = 500;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        if (prefs.getBoolean("Connected",false)) {
+
+        Common.Init(getApplicationContext());
+
+        if (Common.getPrefs().getBoolean("Connected", false)) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {

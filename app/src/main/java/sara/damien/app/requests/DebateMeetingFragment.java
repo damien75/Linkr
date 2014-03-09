@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import sara.damien.app.Common;
 import sara.damien.app.chat.MessageActivity;
 import sara.damien.app.utils.JSONParser;
 import sara.damien.app.R;
@@ -36,7 +37,7 @@ import sara.damien.app.R;
 public class DebateMeetingFragment extends ListFragment {
     private static String url ="http://www.golinkr.net";
     ProgressDialog pDialog;
-    JSONParser jsonParser = new JSONParser();
+    JSONParser jsonParser = new JSONParser(); //TODO: Why not store profiles as blobs?
 
     private static final String TAG_LAST_NAME = "Last_Name";
     private static final String TAG_FIRST_NAME = "First_Name";
@@ -78,7 +79,7 @@ public class DebateMeetingFragment extends ListFragment {
         View rootView = inflater.inflate(R.layout.fragment_debate_meeting, container, false);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-        currentID = prefs.getString("ID","0");
+        currentID = prefs.getString("ID","0"); //TODO: replace with getID
 
         MeetingList = new ArrayList<HashMap<String, String>>();
         new GetMeetings().execute();
@@ -111,13 +112,13 @@ public class DebateMeetingFragment extends ListFragment {
             //if (jsonStr != null) {
             try {
                 meetings= new JSONArray(jsonStr);
-                if (meetings.length()>0){
+                if (meetings.length()>0){  //FIXME: Pas besoin du if
                     for (int i = 0; i<meetings.length();i++){
                         JSONObject c = meetings.getJSONObject(i);
                         String idu = c.getString(TAG_ID);
                         String first_name = c.getString(TAG_FIRST_NAME);
                         String last_name = c.getString(TAG_LAST_NAME);
-                        String name= first_name+ " " + last_name;
+                        String name= first_name + " " + last_name + (Common.isDebugging() ? " - " + idu : "");
                         String date_accept = c.getString(TAG_DATE_ACCEPT);
                         String subject = c.getString(TAG_SUBJECT);
                         String idm = c.getString(TAG_IDm);
@@ -149,7 +150,7 @@ public class DebateMeetingFragment extends ListFragment {
             pDialog.dismiss();
             ListAdapter adapter = new SimpleAdapter(
                     getActivity(), MeetingList,
-                    R.layout.list_itemrequest,
+                    R.layout.list_item_request,
                     new String[]{TAG_NAME, TAG_SUBJECT,  TAG_DATE_ACCEPT},
                     new int[]{R.id.name, R.id.subject, R.id.meeting_date});
             setListAdapter(adapter);

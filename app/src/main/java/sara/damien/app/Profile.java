@@ -77,7 +77,7 @@ public class Profile implements Parcelable {
         return this.First_Name;
     }
     public String getLast_Name(){
-        return this.Last_Name;
+        return Common.isDebugging() ? this.Last_Name + " - " + this.ID : this.Last_Name;
     }
     public String get_Avg_Grade(){
         double avg = (double)this.Sum_Grade/((double)this.Number_Grade);

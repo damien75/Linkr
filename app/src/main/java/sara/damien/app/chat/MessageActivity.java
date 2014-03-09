@@ -27,40 +27,34 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import sara.damien.app.Common;
 import sara.damien.app.DB.DbHelper;
 import sara.damien.app.R;
 import sara.damien.app.utils.DateTimePicker;
 import sara.damien.app.utils.JSONParser;
+import sara.damien.app.utils.Utilities;
 
 public class MessageActivity extends ListActivity {
-
     ArrayList<Message> messages;
     MessageAdapter adapter;
     EditText text;
     static String sender;
-    String IDm;
+    String IDm; //TODO: Shouldn't we pass a full profile, instead of just small bits?
     String currentID;
-    String myID;
     String First_Name;
     String Last_Name;
     String Subject;
     JSONParser jsonParser;
-    private static String url ="http://www.golinkr.net";
     String latestTimeStamp;
-    DbHelper mDbHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        myID = prefs.getString("ID","0");
-        latestTimeStamp = prefs.getString("TimeStamp", "2014-02-28 16:27:40");
+        latestTimeStamp = Common.getPrefs().getString("TimeStamp", "2014-02-28 16:27:40");
 
         text = (EditText) this.findViewById(R.id.messageEditor);
-
-        mDbHelper = new DbHelper(getApplicationContext());
 
         Bundle bundle = getIntent().getExtras();
         currentID = bundle.getString("IDu");
@@ -83,15 +77,13 @@ public class MessageActivity extends ListActivity {
 
     }
     public void sendMessage(View v){
-        String newMessage = text.getText().toString().trim();
-        if(newMessage.length() > 0){
+        String message_text = text.getText().toString().trim(); //TODO: Disable send button unless getText() != ""
+
+        if (!message_text.isEmpty()){
             text.setText("");
-            //TODO ajouter qqch pour dire que le message n'a pas encore été envoyé
-            String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
-            addNewMessage(new Message(newMessage, true, false, timeStamp));
-            SendMessage sendMessage = new SendMessage();
-            sendMessage.message = newMessage;
-            sendMessage.execute();
+            Message message = new Message(message_text, currentID);
+            addNewMessage(message);
+            message.send(adapter);
         }
     }
 
@@ -144,47 +136,11 @@ public class MessageActivity extends ListActivity {
         mDateTimeDialog.show();
     }
 
-    private class SendMessage extends AsyncTask<Void, Void, Void>{
-        private String message;
-        @Override
-        protected Void doInBackground(Void... args) {
-            jsonParser = new JSONParser();
-            List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("SELECT_FUNCTION", "addMessage"));
-            params.add(new BasicNameValuePair("ID1", myID));
-            params.add(new BasicNameValuePair("ID2", currentID));
-            params.add(new BasicNameValuePair("Message",message));
-            JSONObject json = jsonParser.makeHttpRequest(url,"POST",params);
-
-            try {
-                 boolean isSent = json.getBoolean("success");
-                 if (isSent){
-                     String IDmsg = json.getString("lastID");
-                     String date = json.getString("date");
-                     messages.get(messages.size()-1).setSent();
-                     // Gets the data repository in write mode
-                     mDbHelper.insertMessage(IDmsg,date,myID, currentID, message);
-                 }
-                else{
-                     //TODO send message again
-                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void text) {
-            adapter.notifyDataSetChanged();
-        }
-    }
-
     private class LocalCall extends AsyncTask<Void, Void, Void>{
 
         @Override
         protected Void doInBackground(Void... args) {
-            messages.addAll(mDbHelper.readAllLocalMessage(myID));
+            messages.addAll(Common.getDB().readAllLocalMessage());
             return null;
         }
 
@@ -194,33 +150,27 @@ public class MessageActivity extends ListActivity {
         }
     }
 
-    private class checkNewMessage extends AsyncTask<Void, String, Void>{
-
+    private class checkNewMessage extends AsyncTask<Void, Message, Void>{
         @Override
         protected Void doInBackground(Void... voids) {
             jsonParser = new JSONParser();
             List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("SELECT_FUNCTION", "getLastMessage"));
+            params.add(new BasicNameValuePair("SELECT_FUNCTION", "getLastMessage")); //FIXME: Since only the last message is returned, receiving multiple messages at once seems impossible.
             params.add(new BasicNameValuePair("ID1", currentID));
-            params.add(new BasicNameValuePair("ID2", myID));
+            params.add(new BasicNameValuePair("ID2", Common.getMyID()));
             params.add(new BasicNameValuePair("Date",latestTimeStamp));
-            String json = jsonParser.plainHttpRequest(url,"POST",params);
+            String json = jsonParser.plainHttpRequest(Utilities.API_URL,"POST",params);
             try{
                 JSONArray newMessages = new JSONArray(json);
                 if (newMessages.length()>0){
-                    for (int i=0; i<newMessages.length(); i++){
-                        JSONObject message = newMessages.getJSONObject(i);
-                        String messageTimeStamp = message.getString("Date");
-                        String messageText = message.getString("Message");
-                        String messageID = message.getString("IDmsg");
-                        this.publishProgress(messageText,messageTimeStamp);
-
-                        mDbHelper.insertMessage(messageID,messageTimeStamp,currentID,myID,messageText);
+                    for (int i=0; i<newMessages.length(); i++) {
+                        Message message = Message.fromJSONMessage(Common.getMyID(), currentID, newMessages.getJSONObject(i));
+                        this.publishProgress(message);
+                        Common.getDB().insertMessage(message);
                     }
                     latestTimeStamp = newMessages.getJSONObject(newMessages.length()-1).getString("Date");
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putString("TimeStamp",latestTimeStamp);
+                    SharedPreferences.Editor editor = Common.getPrefs().edit();
+                    editor.putString("TimeStamp", latestTimeStamp);
                     editor.commit();
                 }
             }
@@ -231,8 +181,9 @@ public class MessageActivity extends ListActivity {
         }
 
         @Override
-        public void onProgressUpdate(String... v) {
-            addNewMessage(new Message(v[0],false,true,v[1]));
+        public void onProgressUpdate(Message... newMessages) {
+            for (Message msg : newMessages)
+                addNewMessage(msg);
         }
     }
 

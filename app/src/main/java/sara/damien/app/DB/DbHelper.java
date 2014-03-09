@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import sara.damien.app.Common;
 import sara.damien.app.Profile;
 import sara.damien.app.RequestsSent;
 import sara.damien.app.chat.Message;
@@ -226,14 +227,14 @@ public class DbHelper extends SQLiteOpenHelper{
 
     }
 
-    public void insertMessage (String IDmsg,String date,String myID,String currentID,String message){
+    public void insertMessage (Message message) { //TODO: Shouldn't DB calls be synchronized?
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_IDMSG,IDmsg);
-        values.put(COLUMN_NAME_DATE, date);
-        values.put(COLUMN_NAME_ID1, myID);
-        values.put(COLUMN_NAME_ID2, currentID);
-        values.put(COLUMN_NAME_MESSAGE, message);
+        values.put(COLUMN_IDMSG, message.getID());
+        values.put(COLUMN_NAME_DATE, message.getTime());
+        values.put(COLUMN_NAME_ID1, Common.getMyID());
+        values.put(COLUMN_NAME_ID2, message.getRecipient());
+        values.put(COLUMN_NAME_MESSAGE, message.getMessage());
         values.put(COLUMN_NAME_VISIBILITY, "1");
         db.insert(
                 TABLE_CHAT,
@@ -241,7 +242,7 @@ public class DbHelper extends SQLiteOpenHelper{
                 values);
     }
 
-    public ArrayList<Message> readAllLocalMessage (String myID){
+    public ArrayList<Message> readAllLocalMessage (){ //FIXME: This doesn't filter messages.
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<Message> messages = new ArrayList<Message>();
 // Define a projection that specifies which columns from the database
@@ -250,6 +251,7 @@ public class DbHelper extends SQLiteOpenHelper{
                 COLUMN_IDMSG,
                 COLUMN_NAME_MESSAGE,
                 COLUMN_NAME_ID1,
+                COLUMN_NAME_ID2,
                 COLUMN_NAME_DATE
         };
         String sortOrder = COLUMN_NAME_DATE ;
@@ -266,7 +268,8 @@ public class DbHelper extends SQLiteOpenHelper{
         c.moveToFirst();
         Log.d("countcursor",String.valueOf(c.getColumnCount()));
         while (!c.isAfterLast()){
-            messages.add(new Message(c.getString(1), c.getString(2).equals(myID),true,c.getString(3)));
+            Message msg = new Message(c.getString(c.getColumnIndex(COLUMN_IDMSG)), c.getString(c.getColumnIndex(COLUMN_NAME_MESSAGE)), c.getString(c.getColumnIndex(COLUMN_NAME_ID1)), c.getString(c.getColumnIndex(COLUMN_NAME_ID2)), c.getString(c.getColumnIndex(COLUMN_NAME_DATE)), false, true); //FIXME: Still assumes that serialized messages have indeed been sent
+            messages.add(msg);
             c.moveToNext();
         }
         return messages;

@@ -198,8 +198,7 @@ public class WelcomeActivity extends Activity {
                 //fragment = new WhatsHotFragment();
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 SharedPreferences.Editor editor = prefs.edit();
-                editor.remove("Connected");
-                editor.remove("blockedIDs");
+                editor.clear();
                 editor.putBoolean("Connected", false);
                 editor.commit();
                 boolean b1 = deleteDatabase(DbHelper.DATABASE_NAME);

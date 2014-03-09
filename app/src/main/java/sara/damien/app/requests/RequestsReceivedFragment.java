@@ -142,7 +142,7 @@ public class RequestsReceivedFragment extends ListFragment {
             pDialog.dismiss();
             ListAdapter adapter = new SimpleAdapter(
                     getActivity(), MeetingList,
-                    R.layout.list_itemrequest,
+                    R.layout.list_item_request,
                     new String[]{TAG_NAME, TAG_SUBJECT, TAG_STATE, TAG_DATE},
                     new int[]{R.id.name, R.id.subject, R.id.state, R.id.meeting_date});
             setListAdapter(adapter);
