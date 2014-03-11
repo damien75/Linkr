@@ -42,6 +42,7 @@ public class MessageActivity extends ListActivity {
     String State;
     String MyStatus;
     String Date_Meeting;
+    String dateTimeStampFormat;
     JSONParser jsonParser;
     String latestTimeStamp;
 
@@ -132,6 +133,8 @@ public class MessageActivity extends ListActivity {
                 String result_string = mDateTimePicker.getMonth() + "/" + String.valueOf(mDateTimePicker.getDay()) + "/" + String.valueOf(mDateTimePicker.getYear())
                         + "  " + String.valueOf(mDateTimePicker.getHour()) + ":" + String.valueOf(mDateTimePicker.getMinute());
                 ((TextView) findViewById(R.id.messageDatePicker)).setText(result_string);
+                dateTimeStampFormat = mDateTimePicker.getYear()+"-"+mDateTimePicker.getMonth()+"-"+mDateTimePicker.getDay()+" "+mDateTimePicker.getHour()+":"+mDateTimePicker.getMinute()+":00";
+                ((TextView) findViewById(R.id.messageDatePicker)).setText(dateTimeStampFormat);
                 mDateTimeDialog.dismiss();
             }
         });
