@@ -226,6 +226,7 @@ public class Profile implements Parcelable {
 
     public void setFromLinkrJSON(JSONObject json) {
         try {
+            this.downloaded = true;
             //FIXME Missing: ID, linkedInID, headline, pictureURL, industry;
             this.Last_Name = json.getString("Last_Name");
             this.First_Name = json.getString("First_Name");
