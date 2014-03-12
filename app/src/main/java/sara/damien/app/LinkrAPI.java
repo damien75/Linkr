@@ -1,7 +1,4 @@
 package sara.damien.app;
-import android.content.SharedPreferences;
-import android.util.Log;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
@@ -10,14 +7,37 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import sara.damien.app.chat.Message;
 import sara.damien.app.utils.JSONParser;
-import sara.damien.app.utils.Utilities;
 
 public class LinkrAPI {
     private static String API_URL = "http://www.golinkr.net"; //TODO: Check for other occurences
+
+    //DataBase Profile
+    public static final String TAG_ID = "ID";
+    public static final String TAG_LAST_NAME = "Last_Name";
+    public static final String TAG_FIRST_NAME = "First_Name";
+
+    //DataBase Meeting
+    public static final String TAG_MEETING_ID = "IDm";
+    public static final String TAG_ID1 = "ID1";
+    public static final String TAG_ID2 = "ID2";
+    public static final String TAG_SUBJECT = "Subject";
+    public static final String TAG_DATE_ACCEPT = "Date_Accept";
+    public static final String TAG_DATE_REQUEST = "Date_Request";
+    public static final String TAG_DATE_MEETING = "Date_Meeting";
+    public static final String TAG_STATE = "State";
+
+    //DataBase Chat
+    public static final String TAG_MSG_ID = "IDmsg";
+    public static final String TAG_FROM_ID = "ID1";
+    public static final String TAG_TO_ID = "ID2";
+
+    public static final String TAG_MYSTATUS = "MyStatus";
+
+
+
 
 
     //LATER: Implement this method as an iterator

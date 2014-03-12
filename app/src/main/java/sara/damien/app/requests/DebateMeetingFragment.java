@@ -31,6 +31,7 @@ import java.util.List;
 
 import sara.damien.app.BundleParameters;
 import sara.damien.app.Common;
+import sara.damien.app.LinkrAPI;
 import sara.damien.app.Meeting;
 import sara.damien.app.Profile;
 import sara.damien.app.R;
@@ -42,16 +43,6 @@ public class DebateMeetingFragment extends ListFragment {
     ProgressDialog pDialog;
     JSONParser jsonParser = new JSONParser(); //TODO: Why not store profiles as blobs?
 
-    private static final String TAG_LAST_NAME = "Last_Name";
-    private static final String TAG_FIRST_NAME = "First_Name";
-    private static final String TAG_ID = "ID";
-    private static final String TAG_MYSTATUS = "MyStatus";
-    private static final String TAG_NAME = "Name";
-    private static final String TAG_SUBJECT = "Subject";
-    private static final String TAG_DATE_ACCEPT = "Date_Accept";
-    private static final String TAG_IDm = "IDm";
-    private static final String TAG_STATE = "State";
-    private static final String TAG_DATE_MEETING = "Date_Meeting";
     private static String currentID;
 
 
@@ -61,28 +52,20 @@ public class DebateMeetingFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id){
         HashMap<String,String>meeting = MeetingList.get(position);
-        String MeetingID = meeting.get(TAG_IDm);
-        String IDu = meeting.get(TAG_ID);
-        String First_Name = meeting.get(TAG_FIRST_NAME);
-        String Last_Name = meeting.get(TAG_LAST_NAME);
-        String subject = meeting.get(TAG_SUBJECT);
-        String State = meeting.get(TAG_STATE);
-        String Date_Meeting = meeting.get(TAG_DATE_MEETING);
-        String MyStatus = meeting.get(TAG_MYSTATUS);
+        String MeetingID = meeting.get(LinkrAPI.TAG_MEETING_ID);
+        String IDu = meeting.get(LinkrAPI.TAG_ID);
+        String First_Name = meeting.get(LinkrAPI.TAG_FIRST_NAME);
+        String Last_Name = meeting.get(LinkrAPI.TAG_LAST_NAME);
+        String subject = meeting.get(LinkrAPI.TAG_SUBJECT);
+        String State = meeting.get(LinkrAPI.TAG_STATE);
+        String Date_Meeting = meeting.get(LinkrAPI.TAG_DATE_MEETING);
+        String MyStatus = meeting.get(LinkrAPI.TAG_MYSTATUS);
 
         Intent i = new Intent(getActivity(),MessageActivity.class);
 //TODO : revoir le read parcelable, ameliorer la classe meeting pour ne pas avoir les put string
         Bundle b = new Bundle();
-        b.putString("IDu",IDu);
-        b.putString("IDm",MeetingID);
-        b.putString("Subject",subject);
-        b.putString("First_Name",First_Name);
-        b.putString("Last_Name",Last_Name);
-        b.putString("State",State);
-        b.putString("Date_Meeting",Date_Meeting);
-        b.putString("MyStatus",MyStatus);
-        Profile p = new Profile(true,Last_Name,First_Name,"essai",10,0,0,"Thlassa",IDu,1,1);
-        Meeting m = new Meeting(p);
+        Profile otherParticipant = new Profile(true,Last_Name,First_Name,"essai",10,0,0,"Thlassa",IDu,1,1);
+        Meeting m = new Meeting(otherParticipant, MeetingID, subject,State, MyStatus, null, null, Date_Meeting);
         b.putParcelable(BundleParameters.MEETING_KEY,m);
         i.putExtras(b);
         startActivity(i);
@@ -131,29 +114,30 @@ public class DebateMeetingFragment extends ListFragment {
                 if (meetings.length()>0){  //FIXME: Pas besoin du if
                     for (int i = 0; i<meetings.length();i++){
                         JSONObject c = meetings.getJSONObject(i);
-                        String idu = c.getString(TAG_ID);
-                        String first_name = c.getString(TAG_FIRST_NAME);
-                        String last_name = c.getString(TAG_LAST_NAME);
+                        String idu = c.getString(LinkrAPI.TAG_ID);
+                        String first_name = c.getString(LinkrAPI.TAG_FIRST_NAME);
+                        String last_name = c.getString(LinkrAPI.TAG_LAST_NAME);
                         String name= first_name + " " + last_name + (Common.isDebugging() ? " - " + idu : "");
-                        String date_accept = c.getString(TAG_DATE_ACCEPT);
-                        String subject = c.getString(TAG_SUBJECT);
-                        String idm = c.getString(TAG_IDm);
-                        String mystatus = c.getString(TAG_MYSTATUS);
-                        String state =c.getString(TAG_STATE);
-                        String date_meeting = c.getString(TAG_DATE_MEETING);
+                        String date_accept = c.getString(LinkrAPI.TAG_DATE_ACCEPT);
+                        String subject = c.getString(LinkrAPI.TAG_SUBJECT);
+                        String idm = c.getString(LinkrAPI.TAG_MEETING_ID);
+                        String mystatus = c.getString(LinkrAPI.TAG_MYSTATUS);
+                        String state =c.getString(LinkrAPI.TAG_STATE);
+                        String date_meeting = c.getString(LinkrAPI.TAG_DATE_MEETING);
 
                         HashMap<String,String> map = new HashMap<String, String>();
-                        map.put(TAG_NAME,name);
-                        map.put(TAG_FIRST_NAME,first_name);
-                        map.put(TAG_LAST_NAME,last_name);
-                        map.put(TAG_SUBJECT,subject);
-                        map.put(TAG_ID,idu);
-                        map.put(TAG_IDm,idm);
-                        map.put(TAG_MYSTATUS,mystatus);
-                        map.put(TAG_DATE_ACCEPT,date_accept);
-                        map.put(TAG_SUBJECT,subject);
-                        map.put(TAG_DATE_MEETING,date_meeting);
-                        map.put(TAG_STATE,state);
+                        //TODO check : est-ce que name est utilisé quelque part ?
+                        map.put("Name",name);
+                        map.put(LinkrAPI.TAG_FIRST_NAME,first_name);
+                        map.put(LinkrAPI.TAG_LAST_NAME,last_name);
+                        map.put(LinkrAPI.TAG_SUBJECT,subject);
+                        map.put(LinkrAPI.TAG_ID,idu);
+                        map.put(LinkrAPI.TAG_MEETING_ID,idm);
+                        map.put(LinkrAPI.TAG_MYSTATUS,mystatus);
+                        map.put(LinkrAPI.TAG_DATE_ACCEPT,date_accept);
+                        map.put(LinkrAPI.TAG_SUBJECT,subject);
+                        map.put(LinkrAPI.TAG_DATE_MEETING,date_meeting);
+                        map.put(LinkrAPI.TAG_STATE,state);
                         MeetingList.add(map);
                     }
                 }
@@ -171,7 +155,7 @@ public class DebateMeetingFragment extends ListFragment {
             ListAdapter adapter = new SimpleAdapter(
                     getActivity(), MeetingList,
                     R.layout.list_item_request,
-                    new String[]{TAG_NAME, TAG_SUBJECT,  TAG_DATE_ACCEPT},
+                    new String[]{"Name", LinkrAPI.TAG_SUBJECT,  LinkrAPI.TAG_DATE_ACCEPT},
                     new int[]{R.id.name, R.id.subject, R.id.meeting_date});
             setListAdapter(adapter);
         }
