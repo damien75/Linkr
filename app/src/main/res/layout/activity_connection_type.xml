@@ -22,7 +22,7 @@
         android:layout_centerHorizontal="true"
         android:text="Sign in admin"
         android:background="#ff2814"
-        android:onClick="adminSignIn"/>
+        android:onClick="adminSignInBtn_Click"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
         android:text="Sign in with LinkedIn"
         android:id="@+id/linkedinconnect"
         android:background="#4d63ff"
-        android:onClick="linkedInSignIn"/>
+        android:onClick="linkedInSignInBtn_Click"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,6 +40,6 @@
         android:layout_marginTop="50dp"
         android:text="Sign in manually"
         android:background="#18ff41"
-        android:onClick="manualSignIn"/>
+        android:onClick="manualSignInBtn_Click"/>
 
 </RelativeLayout>

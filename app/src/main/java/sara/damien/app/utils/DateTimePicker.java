@@ -375,6 +375,9 @@ public class DateTimePicker extends RelativeLayout {
         }
     };
 
+    public String getDateString() { //TODO: Check
+        return String.format("%02d/%02d/%d %02d:%02d", getMonth(), getDay(), getYear(), getHour(), getMinute());
+    }
 
     class InputFilterMinMax implements InputFilter {
 
@@ -503,8 +506,8 @@ public class DateTimePicker extends RelativeLayout {
         return Integer.parseInt(date_display.getText().toString());
     }
 
-    public String getMonth() {
-        return month_display.getText().toString();
+    public int getMonth() {
+        return Integer.parseInt(month_display.getText().toString());
     }
 
     public int getHour() {

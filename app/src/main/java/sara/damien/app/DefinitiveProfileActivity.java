@@ -84,16 +84,15 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         isInternetPresent = cd.isConnectingToInternet();
         if(isInternetPresent){
             new ProfileIDsFinder().execute();
-            ProfilesDownloader profilesDownloader = new ProfilesDownloader(nextFirstPos,nbdownload);
+            ProfilesDownloader profilesDownloader = new ProfilesDownloader(nextFirstPos, nbdownload);
             profilesDownloader.execute();
         }
     }
 
-    public void nextProfile(View view) {
-            currentpos = (currentpos + 1) % profiles.size();
-            Log.d("Current pos : ", "" + currentpos);
-            update(currentpos);
-
+    public void nextProfile(View view) { //TODO: Check if we already have profiles
+        currentpos = (currentpos + 1) % profiles.size();
+        Log.d("Current pos : ", "" + currentpos);
+        update(currentpos);
     }
 
     public void previousProfile(View view) {
@@ -206,7 +205,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                     subject.setText(prof.getLast_Subject());
                     grade.setText(prof.get_Avg_Grade());
                     company.setText(prof.getCompany());
-                    years.setText(prof.getExp_Years());
+                    years.setText(prof.getYearsOfExperience());
 
                     if (prof.getState() != 0) {
                         bP.setVisibility(View.GONE);
@@ -214,7 +213,6 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                         bN.setVisibility(View.GONE);
                         accept.setVisibility(View.VISIBLE);
                     }
-
                 }
 
                 if (!pictureShown) {
@@ -359,7 +357,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                     Profile prof = profiles.get(pos);
                     try {
                         JSONObject data = json.getJSONObject(prof.getID());
-                        prof.setProfileFromJson(data);
+                        prof.setFromLinkrJSON(data);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

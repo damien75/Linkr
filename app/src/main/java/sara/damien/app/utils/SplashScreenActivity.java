@@ -28,7 +28,7 @@ public class SplashScreenActivity extends Activity {
 
         Common.Init(getApplicationContext());
 
-        if (Common.getPrefs().getBoolean("Connected", false)) {
+        if (Common.getPrefs().getConnected()) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {

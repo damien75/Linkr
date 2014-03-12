@@ -91,7 +91,7 @@ public class SingleProfileRequestActivity extends ActionBarActivity {
             params.add(new BasicNameValuePair("SELECT_FUNCTION", "getProfile"));
             params.add(new BasicNameValuePair("ID", IDu));
             JSONObject json = jsonParser.makeHttpRequest(url, "POST", params);
-            requestedProfile.setProfileFromJson(json);
+            requestedProfile.setFromLinkrJSON(json);
             return null;
         }
 
@@ -103,7 +103,7 @@ public class SingleProfileRequestActivity extends ActionBarActivity {
             TextView company = (TextView) findViewById(R.id.company);
             company.setText(company.getText() + " " + requestedProfile.getCompany());
             TextView years = (TextView) findViewById(R.id.years_experience);
-            years.setText(years.getText() + " " + requestedProfile.getExp_Years());
+            years.setText(years.getText() + " " + requestedProfile.getYearsOfExperience());
             TextView distance = (TextView)findViewById(R.id.profile_position);
             double longi1 = requestedProfile.getLoc_X();
             double lat1 = requestedProfile.getLoc_Y();

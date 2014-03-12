@@ -132,7 +132,7 @@ public class DbHelper extends SQLiteOpenHelper{
         onCreate(db);
     }
 
-    public void insertLocalProfile (Profile profile){
+    public void insertLocalProfile (Profile profile){ //TODO: Why not store profiles as blobs?
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_ID,profile.getID());
@@ -142,7 +142,7 @@ public class DbHelper extends SQLiteOpenHelper{
         values.put(COLUMN_NAME_LOC_X, profile.getLoc_X());
         values.put(COLUMN_NAME_LOC_Y, profile.getLoc_Y());
         values.put(COLUMN_NAME_COMPANY, profile.getCompany());
-        values.put(COLUMN_NAME_EXP_YEARS, profile.getExp_Years());
+        values.put(COLUMN_NAME_EXP_YEARS, profile.getYearsOfExperience());
         values.put(COLUMN_NAME_SUM_GRADE, profile.getSum_Grade());
         values.put(COLUMN_NAME_NUMBER_GRADE, profile.getNumber_Grade());
 
@@ -224,7 +224,6 @@ public class DbHelper extends SQLiteOpenHelper{
         String[] selectionArgs = new String[] {IDm};
 
         db.delete(TABLE_MEETING,selection,selectionArgs);
-
     }
 
     public void insertMessage (Message message) { //TODO: Shouldn't DB calls be synchronized?
@@ -232,9 +231,9 @@ public class DbHelper extends SQLiteOpenHelper{
         ContentValues values = new ContentValues();
         values.put(COLUMN_IDMSG, message.getID());
         values.put(COLUMN_NAME_DATE, message.getTime());
-        values.put(COLUMN_NAME_ID1, Common.getMyID());
+        values.put(COLUMN_NAME_ID1, message.getSender());
         values.put(COLUMN_NAME_ID2, message.getRecipient());
-        values.put(COLUMN_NAME_MESSAGE, message.getMessage());
+        values.put(COLUMN_NAME_MESSAGE, message.getContent());
         values.put(COLUMN_NAME_VISIBILITY, "1");
         db.insert(
                 TABLE_CHAT,
@@ -268,7 +267,7 @@ public class DbHelper extends SQLiteOpenHelper{
         c.moveToFirst();
         Log.d("countcursor",String.valueOf(c.getColumnCount()));
         while (!c.isAfterLast()){
-            Message msg = new Message(c.getString(c.getColumnIndex(COLUMN_IDMSG)), c.getString(c.getColumnIndex(COLUMN_NAME_MESSAGE)), c.getString(c.getColumnIndex(COLUMN_NAME_ID1)), c.getString(c.getColumnIndex(COLUMN_NAME_ID2)), c.getString(c.getColumnIndex(COLUMN_NAME_DATE)), false, true); //FIXME: Still assumes that serialized messages have indeed been sent
+            Message msg = new Message(c.getString(c.getColumnIndex(COLUMN_IDMSG)), c.getString(c.getColumnIndex(COLUMN_NAME_MESSAGE)), c.getString(c.getColumnIndex(COLUMN_NAME_ID1)), c.getString(c.getColumnIndex(COLUMN_NAME_ID2)), c.getString(c.getColumnIndex(COLUMN_NAME_DATE)), true); //FIXME: Still assumes that serialized messages have indeed been sent
             messages.add(msg);
             c.moveToNext();
         }

@@ -87,7 +87,6 @@ public class RequestsReceivedFragment extends ListFragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            // Showing progress dialog
             pDialog = new ProgressDialog(getActivity());
             pDialog.setMessage("Please wait...");
             pDialog.setCancelable(false);

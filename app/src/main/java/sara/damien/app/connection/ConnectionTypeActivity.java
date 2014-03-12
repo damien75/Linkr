@@ -10,41 +10,36 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import sara.damien.app.Common;
 import sara.damien.app.R;
 import sara.damien.app.WelcomeActivity;
 
 public class ConnectionTypeActivity extends ActionBarActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connection_type);
     }
-    public void adminSignIn (View view){
+
+    public void adminSignInBtn_Click(View view) {
         Intent i = new Intent(this, WelcomeActivity.class);
-        //int id = Integer.parseInt(((EditText)findViewById(R.id.editID)).getText().toString());
+
         String id = ((EditText)findViewById(R.id.editID)).getText().toString();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("Connected", true);
-        editor.putString("ID",id);
-        editor.commit();
+        Common.getPrefs().setConnected(true);
+        Common.getPrefs().setID(id);
         startActivity(i);
     }
 
-    public void linkedInSignIn (View view){
-        Intent i = new Intent(this, LinkedInConnectionActivity.class);
-        startActivity(i);
+    public void linkedInSignInBtn_Click(View view){
+        startActivity( new Intent(this, LinkedInConnectionActivity.class));
     }
 
-    public void manualSignIn (View view){
-        Intent i = new Intent(this, RegisterManuallyActivity.class);
-        startActivity(i);
+    public void manualSignInBtn_Click(View view){
+        startActivity(new Intent(this, RegisterManuallyActivity.class));
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.connection_type, menu);
         return true;
@@ -52,14 +47,7 @@ public class ConnectionTypeActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return (item.getItemId() == R.id.action_settings)  || super.onOptionsItemSelected(item);
     }
 
 }
