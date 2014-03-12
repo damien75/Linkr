@@ -73,7 +73,7 @@ public class MessageActivity extends ListActivity {
         ((Button) mDateTimeDialogView.findViewById(R.id.SetDateTime)).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 ((TextView) findViewById(R.id.messageDatePicker)).setText(mDateTimePicker.getDateString());
-                mDateTimePicker.clearFocus(); //TODO: Est-ce que clearFocus est nÃ©cessaire ?
+                mDateTimePicker.clearFocus(); //TODO: Est-ce que clearFocus est nécessaire ?
                 mDateTimeDialog.dismiss();
             }
         });
