@@ -40,6 +40,7 @@ public class MessageActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
+        //TODO ; problem lors du refresh de l'activity: persist : special pour toi Clement !
         latestTimeStamp = Common.getPrefs().getLastMessageTimeStamp();
         messages = Collections.synchronizedList(new ArrayList<Message>());
 
@@ -73,7 +74,7 @@ public class MessageActivity extends ListActivity {
         ((Button) mDateTimeDialogView.findViewById(R.id.SetDateTime)).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 ((TextView) findViewById(R.id.messageDatePicker)).setText(mDateTimePicker.getDateString());
-                mDateTimePicker.clearFocus(); //TODO: Est-ce que clearFocus est nécessaire ?
+                mDateTimePicker.clearFocus(); //TODO: Est-ce que clearFocus est nï¿½cessaire ?
                 mDateTimeDialog.dismiss();
             }
         });

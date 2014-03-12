@@ -240,6 +240,7 @@ public class DateTimePicker extends RelativeLayout {
             try {
                 cal.add(Calendar.MONTH, 1);
 
+
                 month_display.setText(months[cal.get(Calendar.MONTH)]);
                 year_display.setText(String.valueOf(cal.get(Calendar.YEAR)));
                 date_display.setText(String.valueOf(cal

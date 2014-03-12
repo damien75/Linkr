@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import sara.damien.app.R;
@@ -88,6 +87,9 @@ public class MessageAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) { //TODO: Check
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+        //tring ID = mMessages.get(position).getID();
+        return position;
+        //return Long.valueOf(mMessages.get(position).getID());
     }
 }

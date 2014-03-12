@@ -29,10 +29,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import sara.damien.app.BundleParameters;
 import sara.damien.app.Common;
+import sara.damien.app.Meeting;
+import sara.damien.app.Profile;
+import sara.damien.app.R;
 import sara.damien.app.chat.MessageActivity;
 import sara.damien.app.utils.JSONParser;
-import sara.damien.app.R;
 
 public class DebateMeetingFragment extends ListFragment {
     private static String url ="http://www.golinkr.net";
@@ -68,6 +71,7 @@ public class DebateMeetingFragment extends ListFragment {
         String MyStatus = meeting.get(TAG_MYSTATUS);
 
         Intent i = new Intent(getActivity(),MessageActivity.class);
+//TODO : revoir le read parcelable, ameliorer la classe meeting pour ne pas avoir les put string
         Bundle b = new Bundle();
         b.putString("IDu",IDu);
         b.putString("IDm",MeetingID);
@@ -77,6 +81,9 @@ public class DebateMeetingFragment extends ListFragment {
         b.putString("State",State);
         b.putString("Date_Meeting",Date_Meeting);
         b.putString("MyStatus",MyStatus);
+        Profile p = new Profile(true,Last_Name,First_Name,"essai",10,0,0,"Thlassa",IDu,1,1);
+        Meeting m = new Meeting(p);
+        b.putParcelable(BundleParameters.MEETING_KEY,m);
         i.putExtras(b);
         startActivity(i);
     }

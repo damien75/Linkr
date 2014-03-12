@@ -1,11 +1,14 @@
 package sara.damien.app;
 
-import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Meeting implements Parcelable {
     private Profile otherParticipant;
+
+    public Meeting (Profile p){
+        this.otherParticipant = p;
+    }
 
     public Profile getOtherParticipant() {
         return otherParticipant;
@@ -20,8 +23,8 @@ public class Meeting implements Parcelable {
     }
 
     public static Meeting readFromParcel(Parcel parcel) {
-        Meeting meeting = new Meeting();
-        meeting.otherParticipant = parcel.readParcelable(Profile.class.getClassLoader());
+        Meeting meeting = new Meeting((Profile) parcel.readParcelable(Profile.class.getClassLoader()));
+        //meeting.otherParticipant = parcel.readParcelable(Profile.class.getClassLoader());
         return meeting;
     }
 
