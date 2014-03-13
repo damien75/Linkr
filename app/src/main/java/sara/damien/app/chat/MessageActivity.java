@@ -60,6 +60,7 @@ public class MessageActivity extends ListActivity {
 
             if (!message_text.isEmpty()){
                 text.setText("");
+                //TODO : ajouter les messages à la base locale même s'ils ne sont pas encore envoyés
                 Message message = new Message(message_text, meeting.getOtherParticipant().getID());
                 addNewMessage(message);
                 message.send(adapter);
@@ -100,7 +101,7 @@ public class MessageActivity extends ListActivity {
     private class LocalMessagesLoader extends AsyncTask<Void, Void, Void>{
         @Override
         protected Void doInBackground(Void... args) {
-            messages.addAll(Common.getDB().readAllLocalMessage());
+            messages.addAll(Common.getDB().readAllLocalMessage(meeting.getOtherParticipant().getID()));
             return null;
         }
 

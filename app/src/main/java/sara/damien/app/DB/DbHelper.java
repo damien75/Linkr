@@ -11,7 +11,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import sara.damien.app.Common;
 import sara.damien.app.Profile;
 import sara.damien.app.RequestsSent;
 import sara.damien.app.chat.Message;
@@ -63,8 +62,10 @@ public class DbHelper extends SQLiteOpenHelper{
     public static final String COLUMN_NAME_DATE = "Date";
     //public static final String COLUMN_NAME_MESSAGE = "Message";
     //public static final String COLUMN_NAME_VISIBILITY = "Visibility";
+    public static final String COLUMN_NAME_IS_SENT = "isSent";
 
     private static final String TEXT_TYPE = " TEXT";
+    private static final String BIT_TYPE = "BIT";
     private static final String COMMA_SEP = ",";
 
     // Table Create Statements
@@ -107,7 +108,8 @@ public class DbHelper extends SQLiteOpenHelper{
                     COLUMN_NAME_ID2 + TEXT_TYPE + COMMA_SEP +
                     COLUMN_NAME_DATE + TEXT_TYPE + COMMA_SEP +
                     COLUMN_NAME_MESSAGE + TEXT_TYPE + COMMA_SEP  +
-                    COLUMN_NAME_VISIBILITY + TEXT_TYPE +
+                    COLUMN_NAME_VISIBILITY + TEXT_TYPE + COMMA_SEP +
+                    COLUMN_NAME_IS_SENT + TEXT_TYPE +
                     " )";
 
     public DbHelper(Context context) {
@@ -235,13 +237,14 @@ public class DbHelper extends SQLiteOpenHelper{
         values.put(COLUMN_NAME_ID2, message.getRecipient());
         values.put(COLUMN_NAME_MESSAGE, message.getContent());
         values.put(COLUMN_NAME_VISIBILITY, "1");
+        values.put(COLUMN_NAME_IS_SENT,message.isSent());
         db.insert(
                 TABLE_CHAT,
                 null,
                 values);
     }
 
-    public ArrayList<Message> readAllLocalMessage (){ //FIXME: This doesn't filter messages.
+    public ArrayList<Message> readAllLocalMessage (String chateeID){
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<Message> messages = new ArrayList<Message>();
 // Define a projection that specifies which columns from the database
@@ -251,15 +254,18 @@ public class DbHelper extends SQLiteOpenHelper{
                 COLUMN_NAME_MESSAGE,
                 COLUMN_NAME_ID1,
                 COLUMN_NAME_ID2,
-                COLUMN_NAME_DATE
+                COLUMN_NAME_DATE,
+                COLUMN_NAME_IS_SENT
         };
         String sortOrder = COLUMN_NAME_DATE ;
+        String selection = COLUMN_NAME_ID2+" = ? OR " + COLUMN_NAME_ID1+" = ?";
+        String[] selectionArgs = new String[] {chateeID,chateeID};
 
         Cursor c = db.query(
                 TABLE_CHAT,  // The table to query
                 projection,                               // The columns to return
-                "",                                // The columns for the WHERE clause
-                null,                              // The values for the WHERE clause
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                              // The values for the WHERE clause
                 null,                                     // don't group the rows
                 null,                                     // don't filter by row groups
                 sortOrder                                 // The sort order
@@ -267,7 +273,8 @@ public class DbHelper extends SQLiteOpenHelper{
         c.moveToFirst();
         Log.d("countcursor",String.valueOf(c.getColumnCount()));
         while (!c.isAfterLast()){
-            Message msg = new Message(c.getString(c.getColumnIndex(COLUMN_IDMSG)), c.getString(c.getColumnIndex(COLUMN_NAME_MESSAGE)), c.getString(c.getColumnIndex(COLUMN_NAME_ID1)), c.getString(c.getColumnIndex(COLUMN_NAME_ID2)), c.getString(c.getColumnIndex(COLUMN_NAME_DATE)), true); //FIXME: Still assumes that serialized messages have indeed been sent
+            boolean isSent = c.getString(c.getColumnIndex(COLUMN_NAME_IS_SENT)).equals("1");
+            Message msg = new Message(c.getString(c.getColumnIndex(COLUMN_IDMSG)), c.getString(c.getColumnIndex(COLUMN_NAME_MESSAGE)), c.getString(c.getColumnIndex(COLUMN_NAME_ID1)), c.getString(c.getColumnIndex(COLUMN_NAME_ID2)), c.getString(c.getColumnIndex(COLUMN_NAME_DATE)), isSent);
             messages.add(msg);
             c.moveToNext();
         }
