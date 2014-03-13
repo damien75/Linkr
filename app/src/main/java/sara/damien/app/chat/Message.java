@@ -52,6 +52,10 @@ public class Message {
 
     public void setID(String ID) { this.ID = ID; }
 
+    public void setTime(String time) {
+        this.time = time;
+    }
+
     public boolean isSent() { return this.isSent; }
 
     public void setSent(boolean isSent) { this.isSent = isSent; }
@@ -64,8 +68,12 @@ public class Message {
 
     public String getRecipient() { return this.recipient; }
 
-    public static Message fromJSONMessage(String from, String to, JSONObject jsonMessage) throws JSONException {
-        return new Message(jsonMessage.getString("IDmsg"), jsonMessage.getString("Message"), from, to, jsonMessage.getString("Date"), true);
+    public static Message fromJSONMessage(JSONObject jsonMessage) throws JSONException {
+        return new Message(jsonMessage.getString("IDmsg"),
+                jsonMessage.getString("Message"),
+                jsonMessage.getString("from"),
+                jsonMessage.getString("to"),
+                jsonMessage.getString("timeStamp"), true);
     }
 
     public List<NameValuePair> serializeForLinkr() {
