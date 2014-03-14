@@ -28,7 +28,9 @@ import sara.damien.app.utils.DateTimePicker;
 //LATER: Get a better chat implementation
 public class MessageActivity extends ListActivity {
     List<Message> messages;
-    String latestTimeStamp;
+    public static String timeStampReceived;
+    public static String timeStampSent;
+    private String chateeID;
 
     Meeting meeting;
 
@@ -41,12 +43,14 @@ public class MessageActivity extends ListActivity {
         setContentView(R.layout.main);
 
         //TODO ; problem lors du refresh de l'activity: persist : special pour toi Clement !
-        latestTimeStamp = Common.getPrefs().getLastMessageTimeStamp();
         messages = Collections.synchronizedList(new ArrayList<Message>());
 
         Bundle bundle = getIntent().getExtras();
         meeting = bundle.getParcelable(BundleParameters.MEETING_KEY);
         this.setTitle(meeting.getOtherParticipant().getName());
+        chateeID = meeting.getOtherParticipant().getID();
+        timeStampReceived = Common.getPrefs().getLastReceivedMessageTimeStamp(chateeID);
+        timeStampSent = Common.getPrefs().getLastSentMessageTimeStamp(chateeID);
 
         text = (EditText) this.findViewById(R.id.messageEditor);
         adapter = new MessageAdapter(this, messages);
@@ -60,7 +64,8 @@ public class MessageActivity extends ListActivity {
 
             if (!message_text.isEmpty()){
                 text.setText("");
-                Message message = new Message(message_text, meeting.getOtherParticipant().getID());
+                //TODO : ajouter les messages à la base locale même s'ils ne sont pas encore envoyés
+                Message message = new Message(message_text, chateeID);
                 addNewMessage(message);
                 message.send(adapter);
         }
@@ -100,7 +105,7 @@ public class MessageActivity extends ListActivity {
     private class LocalMessagesLoader extends AsyncTask<Void, Void, Void>{
         @Override
         protected Void doInBackground(Void... args) {
-            messages.addAll(Common.getDB().readAllLocalMessage());
+            messages.addAll(Common.getDB().readAllLocalMessage(chateeID));
             return null;
         }
 
@@ -113,7 +118,7 @@ public class MessageActivity extends ListActivity {
     private class checkNewMessage extends AsyncTask<Void, Message, Void>{
         @Override
         protected Void doInBackground(Void... voids) {
-            List<Message> messages = LinkrAPI.getNewMessages(meeting.getOtherParticipant().getID(), latestTimeStamp);
+            List<Message> messages = LinkrAPI.getNewMessages(chateeID, timeStampReceived, timeStampSent);
 
             for (Message msg : messages) {
                 Common.getDB().insertMessage(msg);
@@ -121,8 +126,8 @@ public class MessageActivity extends ListActivity {
             }
 
             if (messages.size() > 0) {
-                latestTimeStamp = messages.get(messages.size() - 1).getTime();
-                Common.getPrefs().setLastMessageTimeStamp(latestTimeStamp);
+                timeStampReceived = messages.get(messages.size() - 1).getTime();
+                Common.getPrefs().setLastReceivedMessageTimeStamp(timeStampReceived, chateeID);
             }
 
             return null;

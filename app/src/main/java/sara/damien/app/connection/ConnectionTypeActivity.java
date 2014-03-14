@@ -1,10 +1,8 @@
 package sara.damien.app.connection;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,14 +26,17 @@ public class ConnectionTypeActivity extends ActionBarActivity {
         Common.getPrefs().setConnected(true);
         Common.getPrefs().setID(id);
         startActivity(i);
+        finish();
     }
 
     public void linkedInSignInBtn_Click(View view){
         startActivity( new Intent(this, LinkedInConnectionActivity.class));
+        finish();
     }
 
     public void manualSignInBtn_Click(View view){
         startActivity(new Intent(this, RegisterManuallyActivity.class));
+        finish();
     }
 
     @Override

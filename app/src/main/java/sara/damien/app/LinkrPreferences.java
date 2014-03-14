@@ -44,17 +44,28 @@ public class LinkrPreferences {
         editor.apply();
     }
 
-    public String getLastMessageTimeStamp() {
-        return prefs.getString("TimeStamp", "2014-02-28 16:27:40");
+    public String getLastReceivedMessageTimeStamp(String chateeID) {
+        return prefs.getString("timeStampReceivedWithID" + chateeID , "2014-02-28 16:27:40");
     }
 
-    public void setLastMessageTimeStamp(String latestTimeStamp) {
+    public String getLastSentMessageTimeStamp(String chateeID){
+        return prefs.getString("timeStampSentWithID" + chateeID , "2014-02-28 16:27:40");
+    }
+
+    public void setLastReceivedMessageTimeStamp(String timeStampReceived, String chateeID) {
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("TimeStamp", latestTimeStamp);
+        editor.putString("timeStampReceivedWithID" + chateeID, timeStampReceived);
         editor.apply();
     }
 
-    /* FIXME: Je pense vraiment que le blocage devrait Ãªtre fait cÃ´tÃ© serveur
+    public void setLastSentMessageTimeStamp(String timeStampSent, String chateeID) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("timeStampSentWithID" + chateeID, timeStampSent);
+        editor.apply();
+    }
+}
+
+    /* FIXME: Je pense vraiment que le blocage devrait être fait côté serveur
     public Set<String> getBlockedIDs() {
         return prefs.getStringSet("blockedIDs", new HashSet<String>());
     }

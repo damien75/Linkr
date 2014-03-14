@@ -83,7 +83,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
         cd = new ConnectionDetector(getApplicationContext());
         isInternetPresent = cd.isConnectingToInternet();
         if(isInternetPresent){
-            new ProfileIDsFinder().execute();
+            new ProfileIDsFinder().execute(); //FIXME: ProfilesDownloader shouldn't be started immediately after ProfileIDsFinder
             ProfilesDownloader profilesDownloader = new ProfilesDownloader(nextFirstPos, nbdownload);
             profilesDownloader.execute();
         }
@@ -171,7 +171,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
 
             boolean has_profile = currentpos < profiles.size() && profiles.get(currentpos).isDownloaded();
             int visibility = has_profile ? View.VISIBLE : View.GONE;
-            if (currentpos==0 && has_profile && !lastIDDownloaded){
+            if (currentpos==0 && has_profile && !lastIDDownloaded){ //FIXME: This condition looks wrong
                 previous.setEnabled(false);
             }
             else {

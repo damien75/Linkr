@@ -1,6 +1,5 @@
 package sara.damien.app;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -24,36 +23,62 @@ import java.util.Objects;
 import java.util.Set;
 
 import sara.damien.app.chat.Message;
+import sara.damien.app.chat.MessageActivity;
 import sara.damien.app.utils.JSONParser;
-import sara.damien.app.utils.Utilities;
 
 public class LinkrAPI {
     private static String API_URL = "http://www.golinkr.net"; //TODO: Check for other occurences
     private static boolean MOCK = true;
 
-    // Note: the design of async tasks makes it so that two async tasks never seem to run in parallel,
-    // which has disagreeable consequences: in particular, it introduces a delay for subsequent API
-    // calls when one call (like the initial GPS-sharing one) fails.
+    //DataBase Profile
+    public static final String TAG_ID = "ID";
+    public static final String TAG_LAST_NAME = "Last_Name";
+    public static final String TAG_FIRST_NAME = "First_Name";
+
+    //DataBase Meeting
+    public static final String TAG_MEETING_ID = "IDm";
+    public static final String TAG_ID1 = "ID1";
+    public static final String TAG_ID2 = "ID2";
+    public static final String TAG_SUBJECT = "Subject";
+    public static final String TAG_DATE_ACCEPT = "Date_Accept";
+    public static final String TAG_DATE_REQUEST = "Date_Request";
+    public static final String TAG_DATE_MEETING = "Date_Meeting";
+    public static final String TAG_STATE = "State";
+
+    //DataBase Chat
+    public static final String TAG_MSG_ID = "IDmsg";
+    public static final String TAG_FROM_ID = "ID1";
+    public static final String TAG_TO_ID = "ID2";
+
+    public static final String TAG_MYSTATUS = "MyStatus";
+
+
+
+
 
     //LATER: Implement this method as an iterator
-    public static List<Message> getNewMessages(String messageSender, String latestTimeStamp) { //LATER: Passer une date pour latestTimeStamp
+    public static List<Message> getNewMessages(String messageSender, String timeStampReceived, String timeStampSent) { //LATER: Passer une date pour latestTimeStamp
         List<Message> new_messages = new ArrayList<Message>();
 
         JSONParser jsonParser = new JSONParser();
         List<NameValuePair> params = new ArrayList<NameValuePair>();
 
-        params.add(new BasicNameValuePair("SELECT_FUNCTION", "getLastMessage")); //TODO renommer l'api getLastMessage
-        params.add(new BasicNameValuePair("ID1", messageSender));
-        params.add(new BasicNameValuePair("ID2", Common.getMyID()));
-        params.add(new BasicNameValuePair("Date", latestTimeStamp));
+        params.add(new BasicNameValuePair("SELECT_FUNCTION", "getNewMessages"));
+        params.add(new BasicNameValuePair("chateeID", messageSender));
+        params.add(new BasicNameValuePair("myID", Common.getMyID()));
+        params.add(new BasicNameValuePair("timeStampReceived", timeStampReceived));
+        params.add(new BasicNameValuePair("timeStampSent" , timeStampSent));
 
-        String json = jsonParser.plainHttpRequest(API_URL, "POST", params);
+        JSONObject json = jsonParser.makeHttpRequest(API_URL, "POST", params);
+        Log.e("new messages", json.toString());
 
         try {
-            JSONArray newMessages = new JSONArray(json);
+            MessageActivity.timeStampSent = json.getString("timeStampSent");
+            MessageActivity.timeStampReceived = json.getString("timeStampReceived");
+            JSONArray newMessages = json.getJSONArray("msg");
 
             for (int msg_id = 0; msg_id < newMessages.length(); msg_id++) {
-                Message message = Message.fromJSONMessage(messageSender, Common.getMyID(), newMessages.getJSONObject(msg_id));
+                Message message = Message.fromJSONMessage(newMessages.getJSONObject(msg_id));
                 new_messages.add(message);
             }
         }
@@ -105,12 +130,19 @@ public class LinkrAPI {
             if (isSent){
                 message.setID(json.getString("lastID"));
                 message.setSent(true);
+                String timeStamp = json.getString("timeStampSent");
+                message.setTime(timeStamp); //ATTENTION: Here we update the timestamp that allows us to show messages in the order that the server received them
                 Common.getDB().insertMessage(message);
+                MessageActivity.timeStampSent = timeStamp;
+                Common.getPrefs().setLastSentMessageTimeStamp(timeStamp,message.getRecipient());
             } else {
-                //TODO send message again
+                //Est-ce vraiment utile...?
             }
         } catch (JSONException e) {
-            e.printStackTrace(); //TODO: Gérer les exceptions
+            /*message.setID(String.valueOf(-System.currentTimeMillis()));
+            message.setSent(false);
+            Common.getDB().insertMessage(message);*/
+            //e.printStackTrace(); //TODO: Gérer les exceptions
         }
     }
 
