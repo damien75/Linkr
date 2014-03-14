@@ -5,6 +5,7 @@ import android.app.ListActivity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -13,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
@@ -47,6 +49,8 @@ public class MessageActivity extends ListActivity {
 
         Bundle bundle = getIntent().getExtras();
         meeting = bundle.getParcelable(BundleParameters.MEETING_KEY);
+        Calendar c = Calendar.getInstance();
+        Log.e("calendar",c.toString());
         this.setTitle(meeting.getOtherParticipant().getName());
         chateeID = meeting.getOtherParticipant().getID();
         timeStampReceived = Common.getPrefs().getLastReceivedMessageTimeStamp(chateeID);

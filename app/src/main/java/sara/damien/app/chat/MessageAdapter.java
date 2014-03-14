@@ -10,8 +10,10 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
+import java.text.ParseException;
 import java.util.List;
 
+import sara.damien.app.Common;
 import sara.damien.app.R;
 
 /**
@@ -54,7 +56,12 @@ public class MessageAdapter extends BaseAdapter {
         }
 
         holder.message.setText(message.getContent());
-        holder.time.setText(message.getTime());
+        try {
+            holder.time.setText(Common.setDateToLocalTimezone(message.getTime()));
+        } catch (ParseException e) {
+            //TODO: incompatible date format
+            e.printStackTrace();
+        }
 
         LayoutParams lp = (LayoutParams) holder.message.getLayoutParams();
         LayoutParams lglobal = (LayoutParams) holder.global.getLayoutParams();

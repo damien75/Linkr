@@ -1,11 +1,7 @@
 package sara.damien.app.utils;
 
-import android.content.SharedPreferences;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
-import sara.damien.app.Common;
 
 /**
  * Created by clement on 08/03/14.
