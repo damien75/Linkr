@@ -7,11 +7,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,7 +25,6 @@ import sara.damien.app.Common;
 import sara.damien.app.LinkrAPI;
 import sara.damien.app.Meeting;
 import sara.damien.app.R;
-import sara.damien.app.utils.DateTimePicker;
 
 //LATER: Get a better chat implementation
 public class MessageActivity extends ListActivity {
@@ -33,6 +32,9 @@ public class MessageActivity extends ListActivity {
     public static String timeStampReceived;
     public static String timeStampSent;
     private String chateeID;
+    public int hours;
+    public int minute;
+    Dialog dialog;
 
     Meeting meeting;
 
@@ -75,35 +77,51 @@ public class MessageActivity extends ListActivity {
         }
     }
 
-    public void button_click(View view){
-        final Dialog mDateTimeDialog = new Dialog(this);
-        final RelativeLayout mDateTimeDialogView = (RelativeLayout) getLayoutInflater().inflate(R.layout.datetimedialog, null);
-        final DateTimePicker mDateTimePicker = (DateTimePicker) mDateTimeDialogView.findViewById(R.id.DateTimePicker);
+    public void dialogDateTime(View view)
+    {
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.datetimepicker);
+        dialog.setCancelable(true);
+        dialog.setTitle("Please select a date");
+        dialog.show();
 
-        ((Button) mDateTimeDialogView.findViewById(R.id.SetDateTime)).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                ((TextView) findViewById(R.id.messageDatePicker)).setText(mDateTimePicker.getDateString());
-                mDateTimePicker.clearFocus(); //TODO: Est-ce que clearFocus est n�cessaire ?
-                mDateTimeDialog.dismiss();
+        TimePicker time_picker = (TimePicker) dialog.findViewById(R.id.timePicker);
+        time_picker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener()
+        {
+            @Override
+            public void onTimeChanged(TimePicker view, int hourOfDay, int minutes)
+            {
+                // TODO Auto-generated method stub
+                // Toast.makeText(CustomDialog.this,
+                // "hourOfDay = "+hourOfDay+"minute = "+minute , 1000).show();
+                hours = hourOfDay;
+                minute = minutes;
+                //TextView msgDatePicker = (TextView) findViewById (R.id.messageDatePicker);
+                //msgDatePicker.setText(hourOfDay+" "+minutes);
             }
         });
 
-        ((Button) mDateTimeDialogView.findViewById(R.id.CancelDialog)).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mDateTimeDialog.cancel();
-            }
-        });
+        final DatePicker date_picker = (DatePicker) dialog.findViewById(R.id.datePicker);
+        Button btn = (Button) dialog.findViewById(R.id.buttonDateTimePicker);
+        btn.setOnClickListener(new View.OnClickListener()
+                               {
 
-        ((Button) mDateTimeDialogView.findViewById(R.id.ResetDateTime)).setOnClickListener(new View.OnClickListener() {
+                                   public void onClick(View arg0)
+                                   {
+                                       // TODO Auto-generated method stub
 
-            public void onClick(View v) {
-                mDateTimePicker.reset();
-            }
-        });
+                                       TextView txt = (TextView) findViewById(R.id.messageDatePicker);
+                                       txt.setText("You selected " + date_picker.getDayOfMonth() + "/" + (date_picker.getMonth() + 1) + "/"
+                                               + date_picker.getYear());
+                                       txt.append("Time "+ hours + ":" +minute);
 
-        mDateTimeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        mDateTimeDialog.setContentView(mDateTimeDialogView);
-        mDateTimeDialog.show();
+                                       dialog.cancel();
+                                   }
+
+                               }
+
+        );
+
     }
 
     private class LocalMessagesLoader extends AsyncTask<Void, Void, Void>{

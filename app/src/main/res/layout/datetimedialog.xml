@@ -2,10 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/DateTimeDialog" android:layout_width="fill_parent"
     android:layout_height="wrap_content">
-    <sara.damien.app.utils.DateTimePicker
-        android:id="@+id/DateTimePicker"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+
     <LinearLayout android:id="@+id/ControlButtons"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
