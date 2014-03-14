@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
 
 // LATER: Keep a local copy of each parameters
 public class LinkrPreferences {
@@ -51,4 +53,10 @@ public class LinkrPreferences {
         editor.putString("TimeStamp", latestTimeStamp);
         editor.apply();
     }
+
+    /* FIXME: Je pense vraiment que le blocage devrait être fait côté serveur
+    public Set<String> getBlockedIDs() {
+        return prefs.getStringSet("blockedIDs", new HashSet<String>());
+    }
+     */
 }

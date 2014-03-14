@@ -11,6 +11,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.InputStream;
 
+import sara.damien.app.LinkrAPI;
 import sara.damien.app.Profile;
 
 /**
@@ -29,19 +30,7 @@ public class ImageDownloader extends AsyncTask<String, Void, Bitmap> {
             return null;
 
         String id = ids[0];
-        Bitmap image = null;
-
-        try {
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-            HttpGet httpGet = new HttpGet("http://golinkr.net/get_picture.php?ID=" + id);
-            HttpResponse httpResponse = httpClient.execute(httpGet);
-            HttpEntity httpEntity = httpResponse.getEntity();
-            InputStream is = httpEntity.getContent();
-            image = BitmapFactory.decodeStream(is);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return image;
+        return LinkrAPI.downloadProfilePicture();
     }
 
     protected void onPostExecute(Bitmap result) {

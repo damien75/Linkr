@@ -26,8 +26,6 @@ public class SplashScreenActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        Common.Init(getApplicationContext());
-
         if (Common.getPrefs().getConnected()) {
             new Handler().postDelayed(new Runnable() {
                 @Override

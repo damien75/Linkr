@@ -1,16 +1,27 @@
 package sara.damien.app;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.util.Log;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import sara.damien.app.chat.Message;
 import sara.damien.app.utils.JSONParser;
@@ -18,7 +29,11 @@ import sara.damien.app.utils.Utilities;
 
 public class LinkrAPI {
     private static String API_URL = "http://www.golinkr.net"; //TODO: Check for other occurences
+    private static boolean MOCK = true;
 
+    // Note: the design of async tasks makes it so that two async tasks never seem to run in parallel,
+    // which has disagreeable consequences: in particular, it introduces a delay for subsequent API
+    // calls when one call (like the initial GPS-sharing one) fails.
 
     //LATER: Implement this method as an iterator
     public static List<Message> getNewMessages(String messageSender, String latestTimeStamp) { //LATER: Passer une date pour latestTimeStamp
@@ -97,5 +112,97 @@ public class LinkrAPI {
         } catch (JSONException e) {
             e.printStackTrace(); //TODO: Gérer les exceptions
         }
+    }
+
+    public static ArrayList<Profile> findNeighbours() {
+        ArrayList<Profile> neighbours = new ArrayList<Profile>();
+
+        if (MOCK) {
+            for (int profile_id = 0; profile_id < 250; profile_id++) {
+                neighbours.add(Profile.createMockProfile());
+            }
+            return neighbours;
+        }
+
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("SELECT_FUNCTION", "getProfilesID2")); //TODO: Ce serait chouette de clarifier les noms des paramêtres de nos APIs.
+        params.add(new BasicNameValuePair("myID", Common.getMyID()));
+        params.add(new BasicNameValuePair("XU", String.valueOf(0))); //TODO: Utiliser de vraies positions (si ce sont bien des positions)
+        params.add(new BasicNameValuePair("YU", String.valueOf(0)));
+        params.add(new BasicNameValuePair("E", String.valueOf(1000))); //TODO: Je pense que le rayon de recherche devrait être laissé à l'appréciation du serveur.
+        params.add(new BasicNameValuePair("blockedIDs", new JSONArray().toString())); //TODO: Je pense que c'est vachement risqué de faire le blocage en local.
+
+        String json = new JSONParser().plainHttpRequest(API_URL, "POST", params);
+
+
+        try {
+            JSONArray neighbourIDs = new JSONArray(json);
+            for (int neighbour_id = 0; neighbour_id < neighbourIDs.length(); neighbour_id++) {
+                neighbours.add(new Profile(neighbourIDs.getString(neighbour_id)));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return neighbours;
+    }
+
+    // FIXME: Check whether AsyncTasks semantics allow for concurrent execution of multiple
+    // asynctasks.
+    public synchronized static void fillInProfiles(Iterable<Profile> toDownload) {
+        if (MOCK) {
+            return;
+        }
+
+        ArrayList<String> IDs = new ArrayList<String>();
+
+        for (Profile prof : toDownload) {
+            if (!prof.isDownloaded())
+                IDs.add(prof.getID());
+        }
+
+        Log.i("LinkrAPI", "Filling in profiles " + Utilities.join(IDs, ", "));
+
+        if (IDs.size() == 0)
+            return;
+
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("SELECT_FUNCTION", "getProfilesInRange"));
+        params.add(new BasicNameValuePair("IDs", new JSONArray(IDs).toString()));
+        JSONObject json = new JSONParser().makeHttpRequest(API_URL, "POST", params);
+
+        for (Profile prof : toDownload) {
+            try {
+                JSONObject profile_data = json.getJSONObject(prof.getID());
+                prof.setFromLinkrJSON(profile_data);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static Bitmap downloadProfilePicture(String ID) {
+        Bitmap image = null;
+
+        if (MOCK) { //FIXME
+            image = Bitmap.createBitmap(50, 50, Bitmap.Config.RGB_565);
+            Canvas p = new Canvas();
+            p.setBitmap(image);
+            p.drawARGB(255, 255, 255, 0);
+            return image;
+        }
+
+        try {
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            HttpGet httpGet = new HttpGet("http://golinkr.net/get_picture.php?ID=" + id);
+            HttpResponse httpResponse = httpClient.execute(httpGet);
+            HttpEntity httpEntity = httpResponse.getEntity();
+            InputStream is = httpEntity.getContent();
+            image = BitmapFactory.decodeStream(is);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return image;
     }
 }

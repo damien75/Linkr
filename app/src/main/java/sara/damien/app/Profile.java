@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 
 import sara.damien.app.utils.ImageDownloader;
 
@@ -29,6 +30,7 @@ public class Profile implements Parcelable {
     private String Company;
     private int Sum_Grade;
     private int Number_Grade;
+
     private String ID, linkedInID;
 
     private String headline;
@@ -95,7 +97,7 @@ public class Profile implements Parcelable {
     }
 
     public String getName() {
-        return First_Name + " " + (Common.isDebugging() ? (Last_Name + " - ") : Last_Name);
+        return First_Name + " " + (Common.isDebugging() ? (Last_Name + " - " + ID) : Last_Name);
     }
 
     public String get_Avg_Grade(){
@@ -111,6 +113,12 @@ public class Profile implements Parcelable {
     public double getLoc_Y(){return Loc_Y;}
     public int getSum_Grade(){return this.Sum_Grade;}
     public int getNumber_Grade(){return this.Number_Grade;}
+    public String getIndustry() {
+        return industry;
+    }
+    public String getHeadline() {
+        return headline;
+    }
 
     public void onImageReceived(Bitmap picture) {
         this.picture = picture;
@@ -168,6 +176,24 @@ public class Profile implements Parcelable {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        return profile;
+    }
+
+    public static Profile createMockProfile() {
+        Profile profile = new Profile();
+        Random prng = new Random();
+
+        profile.downloaded = true;
+        profile.ID = Integer.toString(prng.nextInt());
+        profile.First_Name = "first";
+        profile.Last_Name = "last";
+        profile.Company = "company";
+        profile.industry = "industry";
+        profile.yearsOfExperience = prng.nextInt();
+        profile.headline = "lorem ipsum dolor sit amet"; //TODO
+        profile.Sum_Grade = 0; //TODO
+        profile.Number_Grade = 0;
 
         return profile;
     }
@@ -236,7 +262,7 @@ public class Profile implements Parcelable {
             this.Company = json.getString("Company");
             this.Sum_Grade = json.getInt("Sum_Grade");
             this.Number_Grade = json.getInt("Number_Grade");
-            this.yearsOfExperience = json.getInt("yearsOfExperience");
+            this.yearsOfExperience = json.getInt("Exp_Years");
         } catch (JSONException e) { //FIXME
             e.printStackTrace();
         }
@@ -253,11 +279,30 @@ public class Profile implements Parcelable {
         return params;
     }
 
-    public void setState(int state) {
+    public void setState(int state) { //TODO: Implement using an Enum
         this.state = state;
     }
 
     public int getState() {
         return state;
+    }
+
+    @Override
+    public String toString() {
+        return "Profile { " + getName() +  "}";
+    }
+
+    @Override
+    public int hashCode() {
+        return (ID == null ? 0 : ID.hashCode());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (ID == null || !(o instanceof Profile))
+            return false;
+
+        Profile other = (Profile)o;
+        return ID.equals(other.ID);
     }
 }

@@ -322,16 +322,18 @@ public class WelcomeActivity extends Activity {
         Intent intent = new Intent(this, SwipeActivity.class);
         startActivity(intent);
     }
-    public void openProfile(View view){
-        Intent i = new Intent(this, DefinitiveProfileActivity.class);
+
+    public void openProfile(View view) {
+        Intent i = new Intent(this, PrettyProfileMockup.class);
         startActivity(i);
     }
-    public class shareLocation extends AsyncTask<Void,Void,Void> {
+
+    public class shareLocation extends AsyncTask<Void,Void,Void> { //TODO: APIfy
         private double loc_x;
         private double loc_y;
 
         @Override
-        protected Void doInBackground(Void... args) {
+        protected Void doInBackground(Void... args) { //TODO: Ask for consent
             try {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 String userID = prefs.getString("ID","0");
