@@ -1,6 +1,4 @@
 package sara.damien.app;
-import android.util.Log;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
@@ -57,7 +55,6 @@ public class LinkrAPI {
         params.add(new BasicNameValuePair("timeStampSent" , timeStampSent));
 
         JSONObject json = jsonParser.makeHttpRequest(API_URL, "POST", params);
-        Log.e("new messages", json.toString());
 
         try {
             MessageActivity.timeStampSent = json.getString("timeStampSent");
@@ -131,5 +128,23 @@ public class LinkrAPI {
             Common.getDB().insertMessage(message);*/
             //e.printStackTrace(); //TODO: Gérer les exceptions
         }
+    }
+
+    public static String sendMeetingDateProposition (Meeting meeting){
+        List<NameValuePair> params = meeting.serializeForLinkr();
+        params.add(new BasicNameValuePair("SELECT_FUNCTION", "createMeetingDateProposition"));
+        JSONObject json = new JSONParser().makeHttpRequest(API_URL,"POST",params);
+
+        try {
+            if (json.getString("success").equals("true")){
+                return "Your meeting was successfully suggested";
+            }
+            else {
+                return "Our server encountered a problem";
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return "No response from server";
     }
 }

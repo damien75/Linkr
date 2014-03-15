@@ -31,7 +31,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="OK"
+        android:text="Send Proposition!"
         android:id="@+id/buttonDateTimePicker"
         android:layout_below="@id/timePicker"
         android:layout_marginTop="5dp"

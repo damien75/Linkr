@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5sp"
             android:background="@drawable/send_button"
-            android:onClick="dialogDateTime"
+            android:onClick="dialogDateTimePropose"
             android:layout_alignParentRight="true"
             android:paddingBottom="5sp"
             android:paddingLeft="15sp"
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5sp"
             android:background="@drawable/send_button"
-            android:onClick="dialogDateTime"
+            android:onClick="dialogDateTimePropose"
             android:layout_alignParentRight="true"
             android:paddingBottom="5sp"
             android:paddingLeft="15sp"
@@ -58,14 +58,14 @@
             android:layout_height="wrap_content"
             android:layout_margin="5sp"
             android:background="@drawable/send_button"
-            android:onClick="dialogDateTime"
+            android:onClick=""
             android:layout_alignParentRight="true"
             android:paddingBottom="5sp"
             android:paddingLeft="15sp"
             android:paddingRight="15sp"
             android:paddingTop="5sp"
             android:text="Refuse"
-            android:textColor="#FFF" />
+            android:textColor="#FFF"/>
 
         <Button
             android:id="@+id/accept_date_button"
@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5sp"
             android:background="@drawable/send_button"
-            android:onClick="dialogDateTime"
+            android:onClick=""
             android:layout_toLeftOf="@id/refuse_date_button"
             android:paddingBottom="5sp"
             android:paddingLeft="15sp"
@@ -81,6 +81,21 @@
             android:paddingTop="5sp"
             android:text="Accept"
             android:textColor="#FFF" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/change_your_proposition_date_button"
+            android:layout_margin="5sp"
+            android:background="@drawable/send_button"
+            android:onClick="dialogDateTimePropose"
+            android:paddingBottom="5sp"
+            android:paddingLeft="15sp"
+            android:paddingRight="15sp"
+            android:paddingTop="5sp"
+            android:text="Change"
+            android:textColor="#FFF"
+            android:layout_alignParentRight="true"/>
 
     </RelativeLayout>
 
