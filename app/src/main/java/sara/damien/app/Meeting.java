@@ -26,12 +26,18 @@ public class Meeting implements Parcelable {
     }
 
     public Meeting (){
-
     }
 
-    public Profile getOtherParticipant() {
+    public Profile getOtherParticipant () {
         return otherParticipant;
     }
+    public String getMeetingID () { return this.meetingID; }
+    public String getState (){ return this.state; }
+    public String getSubject () { return this.subject; }
+    public String getMyStatus () { return this.myStatus; }
+    public String getDateAccept () { return this.dateAccept; }
+    public String getDateRequest () { return this.dateRequest; }
+    public String getDateMeeting () { return  this.dateMeeting; }
 
     @Override
     public int describeContents() { return 0; }
