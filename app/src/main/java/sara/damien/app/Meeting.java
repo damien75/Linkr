@@ -45,6 +45,7 @@ public class Meeting implements Parcelable {
     public String getDateRequest () { return this.dateRequest; }
     public String getDateMeeting () { return  this.dateMeeting; }
     public void setDateMeeting(String dateMeeting) { this.dateMeeting = dateMeeting;}
+    public void setState(String state){ this.state = state;}
 
     @Override
     public int describeContents() { return 0; }

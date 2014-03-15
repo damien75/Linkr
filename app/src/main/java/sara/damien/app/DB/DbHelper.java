@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import sara.damien.app.Meeting;
 import sara.damien.app.Profile;
 import sara.damien.app.RequestsSent;
 import sara.damien.app.chat.Message;
@@ -279,5 +280,27 @@ public class DbHelper extends SQLiteOpenHelper{
             c.moveToNext();
         }
         return messages;
+    }
+
+    public void updateDateMeeting (Meeting meeting) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        String meetingID = meeting.getMeetingID();
+        String dateMeeting = meeting.getDateMeeting();
+        if (existIDM(meetingID) && dateMeeting!=null && dateMeeting.length()>0){
+            values.put(COLUMN_NAME_DATE_MEETING,dateMeeting);
+            if (meeting.getMyStatus().equals("1")){
+                values.put(COLUMN_NAME_STATE,"3");
+            } else {
+                values.put(COLUMN_NAME_STATE,"4");
+            }
+            String selection = COLUMN_IDM+" = ?";
+            String[] selectionArgs = new String[] {meetingID};
+            db.update(TABLE_MEETING, values, selection,
+                    selectionArgs);
+        }
+        else{
+            //This meeting does not exist in the local DB
+        }
     }
 }
