@@ -1,5 +1,4 @@
 package sara.damien.app;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -18,9 +17,7 @@ import org.json.JSONObject;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.UUID;
 
 import sara.damien.app.chat.Message;
 import sara.damien.app.chat.MessageActivity;
@@ -53,9 +50,9 @@ public class LinkrAPI {
 
     public static final String TAG_MYSTATUS = "MyStatus";
 
-
-
-
+    private static String getTemporaryAPIUrl() {
+        return API_URL + "?_=" + UUID.randomUUID().toString();
+    }
 
     //LATER: Implement this method as an iterator
     public static List<Message> getNewMessages(String messageSender, String timeStampReceived, String timeStampSent) { //LATER: Passer une date pour latestTimeStamp
@@ -70,7 +67,7 @@ public class LinkrAPI {
         params.add(new BasicNameValuePair("timeStampReceived", timeStampReceived));
         params.add(new BasicNameValuePair("timeStampSent" , timeStampSent));
 
-        JSONObject json = jsonParser.makeHttpRequest(API_URL, "POST", params);
+        JSONObject json = jsonParser.makeHttpRequest(getTemporaryAPIUrl(), "POST", params);
 
         try {
             MessageActivity.timeStampSent = json.getString("timeStampSent");
@@ -103,13 +100,13 @@ public class LinkrAPI {
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("SELECT_FUNCTION","existIDL"));
         params.add(new BasicNameValuePair("IDL", linkedInID));
-        return IDFromResponse(new JSONParser().makeHttpRequest(API_URL, "POST", params));
+        return IDFromResponse(new JSONParser().makeHttpRequest(getTemporaryAPIUrl(), "POST", params));
     }
 
     public static String createProfile(Profile profile) { //TODO: Raise an excption on failure
         List<NameValuePair> params = profile.serializeForLinkr();
         params.add(new BasicNameValuePair("SELECT_FUNCTION","createProfile"));
-        return IDFromResponse(new JSONParser().makeHttpRequest(API_URL, "POST", params));
+        return IDFromResponse(new JSONParser().makeHttpRequest(getTemporaryAPIUrl(), "POST", params));
     }
 
     public static void registerProfilePicture(Profile profile) {
@@ -117,13 +114,13 @@ public class LinkrAPI {
         params.add(new BasicNameValuePair("SELECT_FUNCTION","insertProfilePicture"));
         params.add(new BasicNameValuePair("Source", profile.getProfilePictureURL()));
         params.add(new BasicNameValuePair("Target", profile.getLinkedInID()));
-        new JSONParser().plainHttpRequest(API_URL, "POST", params); //TODO: Handle failures
+        new JSONParser().plainHttpRequest(getTemporaryAPIUrl(), "POST", params); //TODO: Handle failures
     }
 
     public static void SendMessage(Message message) {
         List<NameValuePair> params = message.serializeForLinkr();
         params.add(new BasicNameValuePair("SELECT_FUNCTION", "addMessage"));
-        JSONObject json = new JSONParser().makeHttpRequest(API_URL,"POST",params);
+        JSONObject json = new JSONParser().makeHttpRequest(getTemporaryAPIUrl(),"POST",params);
 
         try {
             boolean isSent = json.getBoolean("success");
@@ -149,7 +146,7 @@ public class LinkrAPI {
     public static String sendMeetingDateProposition (Meeting meeting){
         List<NameValuePair> params = meeting.serializeForLinkr();
         params.add(new BasicNameValuePair("SELECT_FUNCTION", "createMeetingDateProposition"));
-        JSONObject json = new JSONParser().makeHttpRequest(API_URL,"POST",params);
+        JSONObject json = new JSONParser().makeHttpRequest(getTemporaryAPIUrl(),"POST",params);
 
         try {
             if (json.getString("success").equals("true")){
@@ -182,7 +179,7 @@ public class LinkrAPI {
         params.add(new BasicNameValuePair("E", String.valueOf(1000))); //TODO: Je pense que le rayon de recherche devrait être laissé à l'appréciation du serveur.
         params.add(new BasicNameValuePair("blockedIDs", new JSONArray().toString())); //TODO: Je pense que c'est vachement risqué de faire le blocage en local.
 
-        String json = new JSONParser().plainHttpRequest(API_URL, "POST", params);
+        String json = new JSONParser().plainHttpRequest(getTemporaryAPIUrl(), "POST", params);
 
 
         try {
@@ -219,7 +216,7 @@ public class LinkrAPI {
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("SELECT_FUNCTION", "getProfilesInRange"));
         params.add(new BasicNameValuePair("IDs", new JSONArray(IDs).toString()));
-        JSONObject json = new JSONParser().makeHttpRequest(API_URL, "POST", params);
+        JSONObject json = new JSONParser().makeHttpRequest(getTemporaryAPIUrl(), "POST", params);
 
         for (Profile prof : toDownload) {
             try {
@@ -242,9 +239,12 @@ public class LinkrAPI {
             return image;
         }
 
+        String url = "http://golinkr.net/get_picture.php?ID=" + ID;
+        url += "&_=" + UUID.randomUUID().toString(); //FIXME: Set content expiry headers.
+
         try {
             DefaultHttpClient httpClient = new DefaultHttpClient();
-            HttpGet httpGet = new HttpGet("http://golinkr.net/get_picture.php?ID=" + ID);
+            HttpGet httpGet = new HttpGet(url);
             HttpResponse httpResponse = httpClient.execute(httpGet);
             HttpEntity httpEntity = httpResponse.getEntity();
             InputStream is = httpEntity.getContent();
@@ -252,6 +252,9 @@ public class LinkrAPI {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        if (image == null)
+            Log.e("LinkrAPI", "Website returned invalid image");
 
         return image;
     }

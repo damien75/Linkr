@@ -17,20 +17,25 @@
             android:id="@+id/picture_view"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="0.55"
+            android:scaleType="centerCrop"
              />
+
+        <Space
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.02"/>
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:padding="5dp">
-            <TextView
+            android:layout_weight="0.43">
+            <!--<TextView
                 style="@android:style/TextAppearance.Large"
                 android:id="@+id/ratings_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="★★★☆☆" />
+                android:text="★★★☆☆" />-->
 
             <ImageView
                 android:id="@+id/name_icon"
@@ -43,7 +48,6 @@
                 android:id="@id/name_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/ratings_view"
                 android:text="Name" />
 
             <ImageView
@@ -61,17 +65,17 @@
                 android:text="Industry"/>
 
             <FrameLayout
-                style="@android:style/TextAppearance.Medium"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="fill_parent"
                 android:layout_below="@id/industry_view"
                 android:layout_above="@+id/buttonsBar">
 
                 <TextView
+                    style="@android:style/TextAppearance.Small"
                     android:id="@+id/headline_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
                     android:text="Headline"
                     android:textStyle="italic"/>
             </FrameLayout>
@@ -80,7 +84,8 @@
                 android:id="@id/buttonsBar"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true">
+                android:layout_alignParentBottom="true"
+                android:layout_margin="-4sp">
 
                 <Button
                     style="@android:style/TextAppearance.Large"
@@ -88,33 +93,22 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textStyle="bold"
-                    android:background="#73d216"
-                    android:text=": )"/>
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="0.1" />
+                    android:text="✓"/>
                 <Button
                     style="@android:style/TextAppearance.Large"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textStyle="bold"
-                    android:background="#f57900"
-                    android:text=": |"/>
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="0.1" />
+                    android:text="~"/>
                 <Button
                     style="@android:style/TextAppearance.Large"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textStyle="bold"
-                    android:background="#cc0000"
-                    android:text=": (" />
-                </LinearLayout>
+                    android:text="✗" />
+            </LinearLayout>
         </RelativeLayout>
 
     </LinearLayout>

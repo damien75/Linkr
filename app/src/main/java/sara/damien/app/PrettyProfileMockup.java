@@ -1,40 +1,24 @@
 package sara.damien.app;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Parcelable;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.os.Bundle;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
-import sara.damien.app.utils.JSONParser;
 import sara.damien.app.utils.Utilities;
 
 interface ProfileListener {
@@ -54,6 +38,7 @@ public class PrettyProfileMockup extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_pretty_profile_mockup);
         new ProfilesEnumerator().execute();
     }
@@ -93,7 +78,7 @@ public class PrettyProfileMockup extends ActionBarActivity {
 
         @Override
         public int getCount() { //TODO: add a place-holder.
-            int count = (profiles != null ? profiles.size() : 0);;
+            int count = (profiles != null ? profiles.size() : 0);
             Log.i("PrettyProfileMockup", "getCount() called on ProfilesPagerAdapter, returning " + count);
             return count;
         }
@@ -164,9 +149,9 @@ public class PrettyProfileMockup extends ActionBarActivity {
             TextView industryView = (TextView) rootView.findViewById(R.id.industry_view);
             TextView headlineView = (TextView) rootView.findViewById(R.id.headline_view);
 
-            nameView.setText(Utilities.fallback(profile.getName(), "Name"));
-            industryView.setText(Utilities.fallback(profile.getIndustry(), "Industry"));
-            headlineView.setText(Utilities.fallback(profile.getHeadline(), "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+            nameView.setText(Utilities.fallback(profile.getName(), "Sample name"));
+            industryView.setText(Utilities.fallback(profile.getIndustry(), "Sample industry"));
+            headlineView.setText(Utilities.fallback(profile.getHeadline(), "Lorem ipsum dolor sit amet, consectetur adipisicing elit, ..."));
         }
 
         @Override

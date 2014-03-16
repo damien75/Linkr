@@ -96,7 +96,10 @@ public class Profile implements Parcelable {
     }
 
     public String getName() {
-        return First_Name + " " + (Common.isDebugging() ? (Last_Name + " - " + ID) : Last_Name);
+        if (First_Name != null && Last_Name != null)
+            return First_Name + " " + (Common.isDebugging() ? (Last_Name + " - " + ID) : Last_Name);
+        else
+            return null;
     }
 
     public String get_Avg_Grade(){
@@ -292,7 +295,7 @@ public class Profile implements Parcelable {
 
     @Override
     public String toString() {
-        return "Profile { " + getName() +  "}";
+        return "Profile { " + getName() +  " }";
     }
 
     @Override

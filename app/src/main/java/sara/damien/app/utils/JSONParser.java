@@ -74,7 +74,7 @@ public class JSONParser {
 
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    is, "iso-8859-1"), 8); //FIXME: Use UTF-8
+                    is, "utf-8"), 8); //FIXME: Use UTF-8
             StringBuilder sb = new StringBuilder();
             String line = null;
             while ((line = reader.readLine()) != null) {
