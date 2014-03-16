@@ -10,7 +10,7 @@
     <application
         android:name="sara.damien.app.LinkrApplication"
         android:allowBackup="true"
-        android:icon="@drawable/logo_linkr7"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.AppCompat.Light" >
         <activity

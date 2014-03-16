@@ -26,4 +26,12 @@ public class Utilities {
 
         return sb.toString();
     }
+
+    public static int wrapIndex(int index, int size) {
+        return ((index % size) + size) % size;
+    }
+
+    public static <T> T fallback(T value, T fallbackValue) {
+        return value != null ? value : fallbackValue;
+    }
 }

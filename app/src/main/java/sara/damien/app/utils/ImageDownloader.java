@@ -30,7 +30,7 @@ public class ImageDownloader extends AsyncTask<String, Void, Bitmap> {
             return null;
 
         String id = ids[0];
-        return LinkrAPI.downloadProfilePicture();
+        return LinkrAPI.downloadProfilePicture(id);
     }
 
     protected void onPostExecute(Bitmap result) {

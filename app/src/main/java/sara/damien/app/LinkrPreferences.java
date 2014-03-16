@@ -63,9 +63,8 @@ public class LinkrPreferences {
         editor.putString("timeStampSentWithID" + chateeID, timeStampSent);
         editor.apply();
     }
-}
 
-    /* FIXME: Je pense vraiment que le blocage devrait être fait côté serveur
+    /* FIXME: Je pense vraiment que le blocage devrait Ãªtre fait cÃ´tÃ© serveur
     public Set<String> getBlockedIDs() {
         return prefs.getStringSet("blockedIDs", new HashSet<String>());
     }

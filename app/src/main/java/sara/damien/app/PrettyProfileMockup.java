@@ -25,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.apache.http.NameValuePair;
@@ -35,6 +36,11 @@ import org.json.JSONObject;
 
 import sara.damien.app.utils.JSONParser;
 import sara.damien.app.utils.Utilities;
+
+interface ProfileListener {
+    public void onPictureUpdated();
+    public void onContentsDownloaded();
+}
 
 public class PrettyProfileMockup extends ActionBarActivity {
     private final int PROFILES_BATCH = 10;
@@ -54,10 +60,10 @@ public class PrettyProfileMockup extends ActionBarActivity {
 
     private void prefetchProfilesAsync(int position) {
         int rounded_position = PROFILES_BATCH * (position / PROFILES_BATCH);
-        new ProfilesDownloader(rounded_position, 2 * PROFILES_BATCH).execute();
+        new ProfilesDownloader(rounded_position - PROFILES_BATCH, 2 * PROFILES_BATCH).execute();
 
         for (int offset = -PICTURES_BATCH; offset <= PICTURES_BATCH; offset++) {
-            int profile_id = (position + offset) % profiles.size();
+            int profile_id = Utilities.wrapIndex(position + offset, profiles.size());
             profiles.get(profile_id).downloadPicture();
         }
     }
@@ -70,29 +76,17 @@ public class PrettyProfileMockup extends ActionBarActivity {
         viewPager.setAdapter(pagerAdapter);
     }
 
-    private void onProfilesDownloaded() {
-        if (pagerAdapter.isAwaitingDownload()) {
-            Log.i("PrettyProfileMockup", "Calling notifyDataSetChanged on pagerAdapter.");
-            pagerAdapter.notifyDataSetChanged();
-        }
-        //TODO: Hide tabs setDisplayShowTitleEnabled(false);
-    }
-
     public class ProfilesPagerAdapter extends FragmentStatePagerAdapter {
         private final ArrayList<Profile> profiles;
-        private boolean awaitingDownload;
 
         public ProfilesPagerAdapter(FragmentManager fm, ArrayList<Profile> profiles) {
             super(fm);
             this.profiles = profiles;
-            this.awaitingDownload = true;
         }
 
         @Override
         public Fragment getItem(int position) {
             Profile prof = profiles.get(position);
-            awaitingDownload = !prof.isDownloaded();
-
             prefetchProfilesAsync(position);
             return ProfileFragment.fromProfile(prof);
         }
@@ -108,16 +102,13 @@ public class PrettyProfileMockup extends ActionBarActivity {
         public CharSequence getPageTitle(int position) {
             return null; //TODO: Hide title
         }
-
-        public boolean isAwaitingDownload() {
-            return awaitingDownload;
-        }
     }
 
-    public static class ProfileFragment extends Fragment {
+    public static class ProfileFragment extends Fragment implements ProfileListener {
         final static String ARGS_PROFILE = "profile";
 
         private Profile profile;
+        private View rootView;
 
         // This slightly convoluted design relying on setArguments instead of a direct constructor
         // invocation is required to properly persist data.
@@ -138,21 +129,53 @@ public class PrettyProfileMockup extends ActionBarActivity {
         public void onCreate (Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             profile = getArguments().getParcelable(ARGS_PROFILE);
+            profile.setParent(this);
+        }
+
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
+            if (profile != null)
+                profile.setParent(null);
+        }
+
+        @Override
+        public void onPictureUpdated() {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override public void run() { updatePictureView(); }
+            });
+        }
+
+        private void updatePictureView() {
+            Log.i("ProfileFragment", "Reloading picture for " + profile);
+            ImageView pictureView = (ImageView) rootView.findViewById(R.id.picture_view);
+            pictureView.setImageBitmap(profile.getPicture());
+        }
+
+        @Override
+        public void onContentsDownloaded() {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override public void run() { updateContentViews(); }
+            });
+        }
+
+        private void updateContentViews() {
+            TextView nameView = (TextView) rootView.findViewById(R.id.name_view);
+            TextView industryView = (TextView) rootView.findViewById(R.id.industry_view);
+            TextView headlineView = (TextView) rootView.findViewById(R.id.headline_view);
+
+            nameView.setText(Utilities.fallback(profile.getName(), "Name"));
+            industryView.setText(Utilities.fallback(profile.getIndustry(), "Industry"));
+            headlineView.setText(Utilities.fallback(profile.getHeadline(), "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             super.onCreateView(inflater, container, savedInstanceState);
+            rootView = inflater.inflate(R.layout.fragment_pretty_profile_mockup, container, false);
 
-            View rootView = inflater.inflate(R.layout.fragment_pretty_profile_mockup, container, false);
-
-            TextView nameView = (TextView) rootView.findViewById(R.id.name_view);
-            TextView industryView = (TextView) rootView.findViewById(R.id.industry_view);
-            TextView headlineView = (TextView) rootView.findViewById(R.id.headline_view);
-
-            nameView.setText(profile.getName());
-            industryView.setText(profile.getIndustry());
-            headlineView.setText(profile.getHeadline());
+            onContentsDownloaded();
+            onPictureUpdated();
 
             return rootView;
         }
@@ -175,7 +198,6 @@ public class PrettyProfileMockup extends ActionBarActivity {
 
     private class ProfilesDownloader extends AsyncTask<Void, Void, Void>  { //TODO: Synchronization
         int first, count;
-        int downloaded_count;
 
         public ProfilesDownloader(int first, int max_count) {
             this.first = first;
@@ -187,19 +209,17 @@ public class PrettyProfileMockup extends ActionBarActivity {
             Set<Profile> toDownload = new HashSet<Profile>(count);
 
             for (int rel_offset = 0; rel_offset <= count; rel_offset++) {
-                int abs_offset = (first + rel_offset) % profiles.size();
+                int abs_offset = Utilities.wrapIndex(first + rel_offset, profiles.size());
                 toDownload.add(profiles.get(abs_offset));
             }
 
-            Log.e("ProfilesDownloader", "Filling in " + count + " profiles from " + first);
+            Log.i("ProfilesDownloader", "Filling in " + count + " profiles from " + first);
             LinkrAPI.fillInProfiles(toDownload);
             return null;
         }
 
         @Override
         protected void onPostExecute(Void result) {
-            onProfilesDownloaded();
         }
     }
-
 }

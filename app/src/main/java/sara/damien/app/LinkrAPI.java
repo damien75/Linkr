@@ -25,10 +25,11 @@ import java.util.Set;
 import sara.damien.app.chat.Message;
 import sara.damien.app.chat.MessageActivity;
 import sara.damien.app.utils.JSONParser;
+import sara.damien.app.utils.Utilities;
 
 public class LinkrAPI {
     private static String API_URL = "http://www.golinkr.net"; //TODO: Check for other occurences
-    private static boolean MOCK = true;
+    private static boolean MOCK = false;
 
     //DataBase Profile
     public static final String TAG_ID = "ID";
@@ -226,7 +227,7 @@ public class LinkrAPI {
 
         try {
             DefaultHttpClient httpClient = new DefaultHttpClient();
-            HttpGet httpGet = new HttpGet("http://golinkr.net/get_picture.php?ID=" + id);
+            HttpGet httpGet = new HttpGet("http://golinkr.net/get_picture.php?ID=" + ID);
             HttpResponse httpResponse = httpClient.execute(httpGet);
             HttpEntity httpEntity = httpResponse.getEntity();
             InputStream is = httpEntity.getContent();

@@ -301,7 +301,7 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                 if (profileInfos.length() > 0) {
                     for (int i = 0; i < profileInfos.length(); i++) {
                         String c = profileInfos.getString(i);
-                        Profile p = new Profile(c, DefinitiveProfileActivity.this);
+                        Profile p = new Profile(c);
                         profiles.add(p);
                     }
                 } else {

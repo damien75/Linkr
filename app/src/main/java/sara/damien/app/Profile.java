@@ -35,7 +35,7 @@ public class Profile implements Parcelable {
 
     private String headline;
 
-    private DefinitiveProfileActivity parent;
+    private ProfileListener parent;
     private Bitmap picture;
     private boolean pictureDownloaded;
     private int yearsOfExperience;
@@ -53,11 +53,10 @@ public class Profile implements Parcelable {
         this.ID = ID;
     }
 
-    public Profile (String ID, DefinitiveProfileActivity parent){
+    public Profile (String ID, ProfileListener parent){ //TODO: Is this useful?
         this.ID = ID;
         this.parent = parent;
     }
-
 
     public void setID(String ID) {
         this.ID = ID;
@@ -122,7 +121,8 @@ public class Profile implements Parcelable {
 
     public void onImageReceived(Bitmap picture) {
         this.picture = picture;
-        parent.update(parent.currentpos); //TODO: Check for null
+        if (parent != null)
+            parent.onPictureUpdated();
     }
 
     public void downloadPicture() { //TODO: Sync issues
@@ -266,6 +266,9 @@ public class Profile implements Parcelable {
         } catch (JSONException e) { //FIXME
             e.printStackTrace();
         }
+
+        if (parent != null)
+            parent.onContentsDownloaded();
     }
 
     public List<NameValuePair> serializeForLinkr() { //TODO: Use JSON as well?
@@ -304,5 +307,9 @@ public class Profile implements Parcelable {
 
         Profile other = (Profile)o;
         return ID.equals(other.ID);
+    }
+
+    public void setParent(ProfileListener parent) {
+        this.parent = parent;
     }
 }
