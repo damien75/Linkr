@@ -2,8 +2,13 @@ package sara.damien.app;
 
 import android.content.Context;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
 import sara.damien.app.DB.DbHelper;
-import sara.damien.app.LinkrPreferences;
 
 /**
  * Created by clement on 08/03/14.
@@ -31,5 +36,16 @@ public class Common {
         DB = new DbHelper(appContext);
         prefs = new LinkrPreferences(appContext);
         is_debugging = android.os.Debug.isDebuggerConnected();
+    }
+
+    public static String setDateToLocalTimezone(String dateFromServer) throws ParseException {
+        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateFromServer);
+        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        TimeZone timeZone = TimeZone.getDefault();
+        int offset = timeZone.getOffset(System.currentTimeMillis());
+        calendar.setTime(date);
+        calendar.add(Calendar.MILLISECOND,offset);
+        return format.format(calendar.getTime());
     }
 }
