@@ -40,7 +40,6 @@ public class MessageActivity extends ListActivity {
 
     Meeting meeting;
     String myStatus;
-    String state;
 
     MessageAdapter adapter;
 
@@ -55,14 +54,6 @@ public class MessageActivity extends ListActivity {
         Bundle bundle = getIntent().getExtras();
         meeting = bundle.getParcelable(BundleParameters.MEETING_KEY);
         myStatus = meeting.getMyStatus();
-        state = meeting.getState();
-        if (meeting.getDateMeeting()!=null && meeting.getDateMeeting().length()>0){//TODO: scheduled or proposed...
-            if (meeting.getMyStatus().equals("1")){
-                ((TextView)findViewById(R.id.messageDatePicker)).setText("You suggested to meet on "+ meeting.getDateMeeting());
-            } else if (meeting.getMyStatus().equals("2")){
-                ((TextView)findViewById(R.id.messageDatePicker)).setText("You were asked to meet on "+ meeting.getDateMeeting());
-            }
-        }
         dateTimePickerShowBtn();
         this.setTitle(meeting.getOtherParticipant().getName());
         chateeID = meeting.getOtherParticipant().getID();
@@ -72,7 +63,7 @@ public class MessageActivity extends ListActivity {
         adapter = new MessageAdapter(this, messages);
         setListAdapter(adapter);
 
-        new LocalMeetingInformationLoader().execute();
+        new LocalMessagesLoader().execute();
         scheduleNewUpdateChecking();
     }
     public void sendMessage(View v) {
@@ -125,6 +116,54 @@ public class MessageActivity extends ListActivity {
 
     }
 
+    public void refuseDateMeeting(View view){
+        new dateMeetingRefusal().execute();
+    }
+
+    private class dateMeetingRefusal extends AsyncTask<Void, Void, Void>{
+        boolean successfullyRefused;
+        @Override
+        protected Void doInBackground(Void... voids) {
+            successfullyRefused = LinkrAPI.refuseDateMeeting(meeting);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            if (successfullyRefused){
+                meeting.setState("1");
+                Common.getDB().updateStateMeeting(meeting);
+                dateTimePickerShowBtn();
+            }
+            Toast.makeText(getApplicationContext(), successfullyRefused ? "You rejected this proposition" :
+                    "We couldn't send your refuse to "+meeting.getOtherParticipant().getName(),Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void acceptProposition(View view){
+        new dateMeetingAccepting().execute();
+    }
+
+    private class dateMeetingAccepting extends AsyncTask<Void, Void, Void>{
+        boolean successfullyAccepted;
+        @Override
+        protected Void doInBackground(Void... voids) {
+            successfullyAccepted = LinkrAPI.acceptDateMeeting(meeting);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            if (successfullyAccepted){
+                meeting.setState("2");
+                Common.getDB().updateStateMeeting(meeting);
+                dateTimePickerShowBtn();
+            }
+            Toast.makeText(getApplicationContext(), successfullyAccepted ? "You accepted this proposition" :
+                    "We couldn't send your accept to "+meeting.getOtherParticipant().getName(),Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private class MeetingDateProposition extends AsyncTask<Void, Void, Void>{
         boolean response;
         String message = "no connexion to server";
@@ -145,10 +184,13 @@ public class MessageActivity extends ListActivity {
         @Override
         protected void onPostExecute(Void result){
             Toast.makeText(getApplicationContext(),message,Toast.LENGTH_SHORT).show();
+            if (response) {
+                ((TextView) findViewById(R.id.messageDatePicker)).setText("You suggested to meet on " + meeting.getDateMeeting());
+            }
         }
     }
 
-    private class LocalMeetingInformationLoader extends AsyncTask<Void, Void, Void>{
+    private class LocalMessagesLoader extends AsyncTask<Void, Void, Void>{
         @Override
         protected Void doInBackground(Void... args) {
             messages.addAll(Common.getDB().readAllLocalMessage(chateeID));
@@ -194,16 +236,14 @@ public class MessageActivity extends ListActivity {
         public void onProgressUpdate(Message... newMessages) {
             for (Message msg : newMessages)
                 addNewMessage(msg);
+        }
 
+        @Override
+        protected void onPostExecute(Void aVoid) {
             if (!(dateMeeting.equals(meeting.getDateMeeting()) && state.equals(meeting.getState()))){
                 meeting.setDateMeeting(dateMeeting);
                 meeting.setState(state);
                 Common.getDB().updateDateMeeting(meeting);
-                if (meeting.getMyStatus().equals("1")){
-                    ((TextView)findViewById(R.id.messageDatePicker)).setText("You suggested to meet on "+ meeting.getDateMeeting());
-                } else if (meeting.getMyStatus().equals("2")){
-                    ((TextView)findViewById(R.id.messageDatePicker)).setText("You were asked to meet on "+ meeting.getDateMeeting());
-                }
                 dateTimePickerShowBtn();
             }
         }
@@ -249,18 +289,23 @@ public class MessageActivity extends ListActivity {
         change.setVisibility(View.GONE);
         refuse.setVisibility(View.GONE);
         changeYourProposition.setVisibility(View.GONE);
+        String state = meeting.getState();
         if (state.equals("1")){
             choose.setVisibility(View.VISIBLE);
+            ((TextView)findViewById(R.id.messageDatePicker)).setText("Pick a date!");
         }
         else if (state.equals("2")){
             change.setVisibility(View.VISIBLE);
+            ((TextView)findViewById(R.id.messageDatePicker)).setText("Your meeting is scheduled on "+ meeting.getDateMeeting());
         }
         else if ((state.equals("3") && myStatus.equals("1")) || (state.equals("4") && myStatus.equals("2"))){
             changeYourProposition.setVisibility(View.VISIBLE);
+            ((TextView)findViewById(R.id.messageDatePicker)).setText("You suggested to meet on "+ meeting.getDateMeeting());
         }
         else if ((state.equals("3") && myStatus.equals("2")) || (state.equals("4") && myStatus.equals("1"))){
             accept.setVisibility(View.VISIBLE);
             refuse.setVisibility(View.VISIBLE);
+            ((TextView)findViewById(R.id.messageDatePicker)).setText("You were asked to meet on "+ meeting.getDateMeeting());
         }
     }
 }

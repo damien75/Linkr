@@ -152,6 +152,46 @@ public class DbHelper extends SQLiteOpenHelper{
         db.insert(TABLE_PROFILE, null, values);
     }
 
+    public Profile findProfileByID (String userID){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                COLUMN_ID,
+        COLUMN_NAME_LAST_NAME,
+        COLUMN_NAME_FIRST_NAME,
+        COLUMN_NAME_LAST_SUBJECT,
+        COLUMN_NAME_LOC_X,
+        COLUMN_NAME_LOC_Y,
+        COLUMN_NAME_COMPANY,
+        COLUMN_NAME_EXP_YEARS,
+        COLUMN_NAME_SUM_GRADE,
+        COLUMN_NAME_NUMBER_GRADE,
+        COLUMN_NAME_PICTURE,
+        };
+        String sortOrder = COLUMN_NAME_DATE ;
+        String selection = COLUMN_NAME_ID2+" = ? OR " + COLUMN_NAME_ID1+" = ?";
+        String[] selectionArgs = new String[] {};
+
+        Cursor c = db.query(
+                TABLE_CHAT,  // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                              // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                sortOrder                                 // The sort order
+        );
+        c.moveToFirst();
+        Log.d("countcursor",String.valueOf(c.getColumnCount()));
+        while (!c.isAfterLast()){
+            boolean isSent = c.getString(c.getColumnIndex(COLUMN_NAME_IS_SENT)).equals("1");
+            Message msg = new Message(c.getString(c.getColumnIndex(COLUMN_IDMSG)), c.getString(c.getColumnIndex(COLUMN_NAME_MESSAGE)), c.getString(c.getColumnIndex(COLUMN_NAME_ID1)), c.getString(c.getColumnIndex(COLUMN_NAME_ID2)), c.getString(c.getColumnIndex(COLUMN_NAME_DATE)), isSent);
+
+            c.moveToNext();
+        }
+        return null;
+    }
+
     public boolean existIDM (String IDm){
         SQLiteDatabase db = this.getReadableDatabase();
         String selectQuery = "SELECT IDm FROM meeting WHERE IDm=?";
@@ -294,6 +334,23 @@ public class DbHelper extends SQLiteOpenHelper{
             } else {
                 values.put(COLUMN_NAME_STATE,"4");
             }
+            String selection = COLUMN_IDM+" = ?";
+            String[] selectionArgs = new String[] {meetingID};
+            db.update(TABLE_MEETING, values, selection,
+                    selectionArgs);
+        }
+        else{
+            //This meeting does not exist in the local DB
+        }
+    }
+
+    public void updateStateMeeting (Meeting meeting) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        String meetingID = meeting.getMeetingID();
+        String state = meeting.getState();
+        if (existIDM(meetingID)){
+            values.put(COLUMN_NAME_STATE,state);
             String selection = COLUMN_IDM+" = ?";
             String[] selectionArgs = new String[] {meetingID};
             db.update(TABLE_MEETING, values, selection,

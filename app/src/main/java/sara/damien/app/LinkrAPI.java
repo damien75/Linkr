@@ -1,4 +1,5 @@
 package sara.damien.app;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -100,13 +101,13 @@ public class LinkrAPI {
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("SELECT_FUNCTION","existIDL"));
         params.add(new BasicNameValuePair("IDL", linkedInID));
-        return IDFromResponse(new JSONParser().makeHttpRequest(getTemporaryAPIUrl(), "POST", params));
+        return IDFromResponse(new JSONParser().makeHttpRequest(API_URL, "POST", params));
     }
 
     public static String createProfile(Profile profile) { //TODO: Raise an excption on failure
         List<NameValuePair> params = profile.serializeForLinkr();
         params.add(new BasicNameValuePair("SELECT_FUNCTION","createProfile"));
-        return IDFromResponse(new JSONParser().makeHttpRequest(getTemporaryAPIUrl(), "POST", params));
+        return IDFromResponse(new JSONParser().makeHttpRequest(API_URL, "POST", params));
     }
 
     public static void registerProfilePicture(Profile profile) {
@@ -114,13 +115,13 @@ public class LinkrAPI {
         params.add(new BasicNameValuePair("SELECT_FUNCTION","insertProfilePicture"));
         params.add(new BasicNameValuePair("Source", profile.getProfilePictureURL()));
         params.add(new BasicNameValuePair("Target", profile.getLinkedInID()));
-        new JSONParser().plainHttpRequest(getTemporaryAPIUrl(), "POST", params); //TODO: Handle failures
+        new JSONParser().plainHttpRequest(API_URL, "POST", params); //TODO: Handle failures
     }
 
     public static void SendMessage(Message message) {
         List<NameValuePair> params = message.serializeForLinkr();
         params.add(new BasicNameValuePair("SELECT_FUNCTION", "addMessage"));
-        JSONObject json = new JSONParser().makeHttpRequest(getTemporaryAPIUrl(),"POST",params);
+        JSONObject json = new JSONParser().makeHttpRequest(API_URL,"POST",params);
 
         try {
             boolean isSent = json.getBoolean("success");
@@ -146,7 +147,7 @@ public class LinkrAPI {
     public static boolean sendMeetingDateProposition (Meeting meeting){
         List<NameValuePair> params = meeting.serializeForLinkr();
         params.add(new BasicNameValuePair("SELECT_FUNCTION", "createMeetingDateProposition"));
-        JSONObject json = new JSONParser().makeHttpRequest(getTemporaryAPIUrl(),"POST",params);
+        JSONObject json = new JSONParser().makeHttpRequest(API_URL,"POST",params);
 
         try {
             if (json.getString("success").equals("true")){
@@ -166,6 +167,28 @@ public class LinkrAPI {
         params.add(new BasicNameValuePair("meetingID", meeting.getMeetingID()));
         params.add(new BasicNameValuePair("SELECT_FUNCTION","getStateAndDateMeeting"));
         return new JSONParser().makeHttpRequest(API_URL, "POST", params);
+    }
+
+    public static boolean acceptDateMeeting (Meeting meeting){
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("SELECT_FUNCTION","acceptDateMeeting"));
+        params.add(new BasicNameValuePair("meetingID", meeting.getMeetingID()));
+        try {
+            return new JSONParser().makeHttpRequest(API_URL, "POST", params).getBoolean("success");
+        } catch (JSONException e) {
+            return false;
+        }
+    }
+
+    public static boolean refuseDateMeeting (Meeting meeting){
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("SELECT_FUNCTION","refuseDateMeeting"));
+        params.add(new BasicNameValuePair("meetingID", meeting.getMeetingID()));
+        try {
+            return new JSONParser().makeHttpRequest(API_URL, "POST", params).getBoolean("success");
+        } catch (JSONException e) {
+            return false;
+        }
     }
 
     public static ArrayList<Profile> findNeighbours() {
