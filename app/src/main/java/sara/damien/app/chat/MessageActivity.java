@@ -5,7 +5,6 @@ import android.app.ListActivity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -13,6 +12,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,7 +43,6 @@ public class MessageActivity extends ListActivity {
     String state;
 
     MessageAdapter adapter;
-    EditText text;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,20 +56,27 @@ public class MessageActivity extends ListActivity {
         meeting = bundle.getParcelable(BundleParameters.MEETING_KEY);
         myStatus = meeting.getMyStatus();
         state = meeting.getState();
+        if (meeting.getDateMeeting()!=null && meeting.getDateMeeting().length()>0){//TODO: scheduled or proposed...
+            if (meeting.getMyStatus().equals("1")){
+                ((TextView)findViewById(R.id.messageDatePicker)).setText("You suggested to meet on "+ meeting.getDateMeeting());
+            } else if (meeting.getMyStatus().equals("2")){
+                ((TextView)findViewById(R.id.messageDatePicker)).setText("You were asked to meet on "+ meeting.getDateMeeting());
+            }
+        }
         dateTimePickerShowBtn();
         this.setTitle(meeting.getOtherParticipant().getName());
         chateeID = meeting.getOtherParticipant().getID();
         timeStampReceived = Common.getPrefs().getLastReceivedMessageTimeStamp(chateeID);
         timeStampSent = Common.getPrefs().getLastSentMessageTimeStamp(chateeID);
 
-        text = (EditText) this.findViewById(R.id.messageEditor);
         adapter = new MessageAdapter(this, messages);
         setListAdapter(adapter);
 
-        new LocalMessagesLoader().execute();
-        scheduleNewMessageChecking();
+        new LocalMeetingInformationLoader().execute();
+        scheduleNewUpdateChecking();
     }
     public void sendMessage(View v) {
+        EditText text = (EditText) this.findViewById(R.id.messageEditor);
         String message_text = text.getText().toString().trim(); //TODO: Disable send button unless getText() != ""
 
         if (!message_text.isEmpty()){
@@ -107,7 +115,6 @@ public class MessageActivity extends ListActivity {
                                                time_picker.getCurrentHour(), time_picker.getCurrentMinute());
                                        SimpleDateFormat formatter =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                        meeting.setDateMeeting(formatter.format(calendar.getTime()));
-                                       Log.d("meeting date",meeting.getDateMeeting());
                                        new MeetingDateProposition().execute();
 
                                        dialog.cancel();
@@ -119,21 +126,29 @@ public class MessageActivity extends ListActivity {
     }
 
     private class MeetingDateProposition extends AsyncTask<Void, Void, Void>{
-        String response;
+        boolean response;
+        String message = "no connexion to server";
 
         @Override
         protected Void doInBackground(Void... voids) {
             response = LinkrAPI.sendMeetingDateProposition(meeting);
+            if (response){
+                Common.getDB().updateDateMeeting(meeting);
+                message = "Meeting date successfully added locally and on server";
+            }
+            else {
+                message = "Problem with concurrency on server";
+            }
             return null;
         }
 
         @Override
         protected void onPostExecute(Void result){
-            Toast.makeText(getApplicationContext(),response,Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),message,Toast.LENGTH_SHORT).show();
         }
     }
 
-    private class LocalMessagesLoader extends AsyncTask<Void, Void, Void>{
+    private class LocalMeetingInformationLoader extends AsyncTask<Void, Void, Void>{
         @Override
         protected Void doInBackground(Void... args) {
             messages.addAll(Common.getDB().readAllLocalMessage(chateeID));
@@ -146,9 +161,12 @@ public class MessageActivity extends ListActivity {
         }
     }
 
-    private class checkNewMessage extends AsyncTask<Void, Message, Void>{
+    private class checkNewUpdates extends AsyncTask<Void, Message, Void>{
+        String dateMeeting="";
+        String state="";
         @Override
         protected Void doInBackground(Void... voids) {
+            //Messages Check
             List<Message> messages = LinkrAPI.getNewMessages(chateeID, timeStampReceived, timeStampSent);
 
             for (Message msg : messages) {
@@ -161,6 +179,14 @@ public class MessageActivity extends ListActivity {
                 Common.getPrefs().setLastReceivedMessageTimeStamp(timeStampReceived, chateeID);
             }
 
+            //Meeting information check
+            JSONObject jsonMeeting = LinkrAPI.fetchDateMeetingUpdate(meeting);
+            try {
+                dateMeeting = jsonMeeting.getString("Date_Meeting");
+                state = jsonMeeting.getString("State");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             return null;
         }
 
@@ -168,10 +194,22 @@ public class MessageActivity extends ListActivity {
         public void onProgressUpdate(Message... newMessages) {
             for (Message msg : newMessages)
                 addNewMessage(msg);
+
+            if (!(dateMeeting.equals(meeting.getDateMeeting()) && state.equals(meeting.getState()))){
+                meeting.setDateMeeting(dateMeeting);
+                meeting.setState(state);
+                Common.getDB().updateDateMeeting(meeting);
+                if (meeting.getMyStatus().equals("1")){
+                    ((TextView)findViewById(R.id.messageDatePicker)).setText("You suggested to meet on "+ meeting.getDateMeeting());
+                } else if (meeting.getMyStatus().equals("2")){
+                    ((TextView)findViewById(R.id.messageDatePicker)).setText("You were asked to meet on "+ meeting.getDateMeeting());
+                }
+                dateTimePickerShowBtn();
+            }
         }
     }
 
-    public void scheduleNewMessageChecking(){
+    public void scheduleNewUpdateChecking(){
         final Handler handler = new Handler();
         Timer timer = new Timer();
 
@@ -181,7 +219,7 @@ public class MessageActivity extends ListActivity {
                 handler.post(new Runnable() {
                     public void run() {
                         try {
-                            new checkNewMessage().execute();
+                            new checkNewUpdates().execute();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

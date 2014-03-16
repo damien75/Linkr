@@ -143,22 +143,29 @@ public class LinkrAPI {
         }
     }
 
-    public static String sendMeetingDateProposition (Meeting meeting){
+    public static boolean sendMeetingDateProposition (Meeting meeting){
         List<NameValuePair> params = meeting.serializeForLinkr();
         params.add(new BasicNameValuePair("SELECT_FUNCTION", "createMeetingDateProposition"));
         JSONObject json = new JSONParser().makeHttpRequest(getTemporaryAPIUrl(),"POST",params);
 
         try {
             if (json.getString("success").equals("true")){
-                return "Your meeting was successfully suggested";
+                return true;
             }
             else {
-                return "Our server encountered a problem";
+                return false;
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return "No response from server";
+        return false;
+    }
+
+    public static JSONObject fetchDateMeetingUpdate (Meeting meeting){
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("meetingID", meeting.getMeetingID()));
+        params.add(new BasicNameValuePair("SELECT_FUNCTION","getStateAndDateMeeting"));
+        return new JSONParser().makeHttpRequest(API_URL, "POST", params);
     }
 
     public static ArrayList<Profile> findNeighbours() {
