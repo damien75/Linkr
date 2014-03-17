@@ -14,7 +14,7 @@ public class SwipeActivity extends FragmentActivity implements ActionBar.TabList
     private TabsPagerAdapter mAdapter;
     private ActionBar actionBar;
     // Tab titles
-    private String[] tabs = { "Received", "Scheduled", "Chat", "Sent" };
+    private String[] tabs = { "Received", "Chat", "Sent" };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

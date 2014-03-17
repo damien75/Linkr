@@ -46,7 +46,7 @@ public class RequestsSentFragment extends ListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_requests_sent, container, false);
 
@@ -169,8 +169,8 @@ public class RequestsSentFragment extends ListFragment {
                         else{
                             mDbHelper.deleteSentRequest(IDm);
                         }
-                }
-            }}
+                    }
+                }}
             catch (JSONException e){
                 e.printStackTrace();
             }
