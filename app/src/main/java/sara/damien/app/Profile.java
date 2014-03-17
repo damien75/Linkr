@@ -58,6 +58,12 @@ public class Profile implements Parcelable {
         this.parent = parent;
     }
 
+    public Profile(String ID, String First_Name, String Last_Name){
+        this.ID = ID;
+        this.First_Name = First_Name;
+        this.Last_Name = Last_Name;
+    }
+
     public void setID(String ID) {
         this.ID = ID;
     }

@@ -13,7 +13,6 @@ import java.util.Calendar;
 
 import sara.damien.app.Meeting;
 import sara.damien.app.Profile;
-import sara.damien.app.RequestsSent;
 import sara.damien.app.chat.Message;
 
 /**
@@ -217,8 +216,8 @@ public class DbHelper extends SQLiteOpenHelper{
         }
     }
 
-    public ArrayList<RequestsSent> getRequestSentMeeting(String myID){
-        ArrayList<RequestsSent> request = new ArrayList<RequestsSent>();
+    public ArrayList<Meeting> getRequestSentMeeting(String myID){
+        ArrayList<Meeting> request = new ArrayList<Meeting>();
 
         SQLiteDatabase db = this.getReadableDatabase();
         String selectQuery = "SELECT Date_Request,IDm,ID2,Subject,Message,First_Name,Last_Name FROM meeting,profile WHERE ID1=? AND State=? AND ID2=ID ORDER BY Date_Request DESC";
@@ -227,7 +226,7 @@ public class DbHelper extends SQLiteOpenHelper{
         c.moveToFirst();
         while (!c.isAfterLast()){
             Log.d("rowread", String.valueOf(c.getString(0)));
-            request.add(new RequestsSent(c.getString(0), c.getString(1),c.getString(2),c.getString(3),c.getString(4),c.getString(5),c.getString(6)));
+            request.add(new Meeting(c.getString(0), c.getString(1),c.getString(2),c.getString(3),c.getString(4),c.getString(5),c.getString(6)));
             c.moveToNext();
         }
         return request;

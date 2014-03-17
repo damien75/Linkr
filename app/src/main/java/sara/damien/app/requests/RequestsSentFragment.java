@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -25,24 +24,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sara.damien.app.DB.DbHelper;
+import sara.damien.app.Meeting;
 import sara.damien.app.R;
-import sara.damien.app.RequestsSent;
-import sara.damien.app.RequestsSentAdapter;
+import sara.damien.app.adapter.RequestsSentAdapter;
 import sara.damien.app.utils.ConnectionDetector;
 import sara.damien.app.utils.JSONParser;
 
 public class RequestsSentFragment extends ListFragment {
 
-    ArrayList<RequestsSent> requests;
+    ArrayList<Meeting> requests;
     JSONArray meetings;
     RequestsSentAdapter adapter;
-    EditText text;
-    String IDm;
-    String Date_Accept;
     String myID;
-    String First_Name;
-    String Last_Name;
-    String Subject;
     JSONParser jsonParser;
     private static String url ="http://www.golinkr.net";
     String latestTimeStampSentRequests;
@@ -66,7 +59,7 @@ public class RequestsSentFragment extends ListFragment {
         cd = new ConnectionDetector(getActivity().getApplicationContext());
         isInternetPresent = cd.isConnectingToInternet();
 
-        requests = new ArrayList<RequestsSent>();
+        requests = new ArrayList<Meeting>();
         if (isInternetPresent){
             jsonParser = new JSONParser();
             new GetRequestsSent().execute();
@@ -122,9 +115,9 @@ public class RequestsSentFragment extends ListFragment {
                         String idm = c.getString("IDm");
                         String message = c.getString("Message");
 
-                        RequestsSent request = new RequestsSent(date_request,idm,idu,subject,message,first_name,last_name);
+                        Meeting request = new Meeting (date_request,idm,idu,subject,message,first_name,last_name);
                         requests.add(request);
-                        Log.d("prénom requete",requests.get(i).getFirst_Name());
+                        Log.d("prénom requete",requests.get(i).getOtherParticipant().getFirst_Name());
                         mDbHelper.insertLocalRequestSentMeeting(idm, myID, idu, subject, "0", message);
                     }
                 }

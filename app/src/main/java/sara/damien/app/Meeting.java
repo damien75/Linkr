@@ -19,8 +19,9 @@ public class Meeting implements Parcelable {
     private String dateAccept;
     private String dateRequest;
     private String dateMeeting;
+    private String message;
 
-    public Meeting (Profile otherParticipant, String meetingID, String subject, String state, String myStatus, String dateAccept, String dateRequest, String dateMeeting){
+    public Meeting (Profile otherParticipant, String meetingID, String subject, String state, String myStatus, String dateAccept, String dateRequest, String dateMeeting,String message){
         this.otherParticipant = otherParticipant;
         this.meetingID = meetingID;
         this.subject = subject;
@@ -29,6 +30,17 @@ public class Meeting implements Parcelable {
         this.dateAccept = dateAccept;
         this.dateRequest = dateRequest;
         this.dateMeeting = dateMeeting;
+        this.message = message;
+    }
+
+    //Constructor for requests_sent
+    public Meeting (String Date_Request,String meetingID, String ID2, String Subject, String Message, String First_Name, String Last_Name){
+        this.dateRequest = Date_Request;
+        this.meetingID = meetingID;
+        this.otherParticipant =  new Profile(ID2,First_Name,Last_Name);
+        this.subject = Subject;
+        this.message = Message;
+
     }
 
     public Meeting (){
@@ -60,6 +72,7 @@ public class Meeting implements Parcelable {
         parcel.writeString(dateAccept);
         parcel.writeString(dateRequest);
         parcel.writeString(dateMeeting);
+        parcel.writeString(message);
     }
 
     public static Meeting readFromParcel(Parcel parcel) {
@@ -72,6 +85,7 @@ public class Meeting implements Parcelable {
         meeting.dateAccept = parcel.readString();
         meeting.dateRequest = parcel.readString();
         meeting.dateMeeting = parcel.readString();
+        meeting.message = parcel.readString();
         return meeting;
     }
 

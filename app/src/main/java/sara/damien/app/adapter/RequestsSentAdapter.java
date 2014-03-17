@@ -1,4 +1,4 @@
-package sara.damien.app;
+package sara.damien.app.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,14 +9,17 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import sara.damien.app.Meeting;
+import sara.damien.app.R;
+
 /**
  * Created by Sara-Fleur on 3/3/14.
  */
 public class RequestsSentAdapter extends BaseAdapter{
     private Context mContext;
-    private ArrayList<RequestsSent> mRequests;
+    private ArrayList<Meeting> mRequests;
 
-    public RequestsSentAdapter(Context context, ArrayList<RequestsSent> mRequests) {
+    public RequestsSentAdapter(Context context, ArrayList<Meeting> mRequests) {
         super();
         this.mContext = context;
         this.mRequests = mRequests;
@@ -31,7 +34,7 @@ public class RequestsSentAdapter extends BaseAdapter{
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        RequestsSent request = (RequestsSent) this.getItem(position);
+        Meeting request = (Meeting) this.getItem(position);
 
         ViewHolder holder;
         if(convertView == null)
@@ -46,9 +49,9 @@ public class RequestsSentAdapter extends BaseAdapter{
         else
             holder = (ViewHolder) convertView.getTag();
 
-        holder.name.setText(request.getFirst_Name()+" "+request.getLast_Name());
+        holder.name.setText(request.getOtherParticipant().getFirst_Name()+" "+request.getOtherParticipant().getLast_Name());
         holder.subject.setText(request.getSubject());
-        holder.date.setText(request.getDate_Request());
+        holder.date.setText(request.getDateRequest());
 
         return convertView;
     }

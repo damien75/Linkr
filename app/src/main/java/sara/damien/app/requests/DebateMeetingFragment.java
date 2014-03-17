@@ -65,7 +65,7 @@ public class DebateMeetingFragment extends ListFragment {
 //TODO : revoir le read parcelable, ameliorer la classe meeting pour ne pas avoir les put string
         Bundle b = new Bundle();
         Profile otherParticipant = new Profile(true,Last_Name,First_Name,"essai",10,0,0,"Thlassa",IDu,1,1);
-        Meeting m = new Meeting(otherParticipant, MeetingID, subject,State, MyStatus, null, null, Date_Meeting);
+        Meeting m = new Meeting(otherParticipant, MeetingID, subject,State, MyStatus, null, null, Date_Meeting,null);
         b.putParcelable(BundleParameters.MEETING_KEY,m);
         i.putExtras(b);
         startActivity(i);

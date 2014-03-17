@@ -37,7 +37,6 @@ public class MessageActivity extends ListActivity {
     public static String timeStampSent;
     private String chateeID;
     Dialog dialog;
-
     Meeting meeting;
     String myStatus;
 
