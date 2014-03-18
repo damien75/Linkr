@@ -178,6 +178,23 @@ public class DbHelper extends SQLiteOpenHelper{
         }
     }
 
+    public void insertLocalDebateMeeting (String IDm,String ID1, String ID2, String subject,String state,String message){
+        if (!existIDM(IDm)){
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_IDM, IDm);
+            values.put(COLUMN_NAME_ID1, ID1);
+            values.put(COLUMN_NAME_ID2, ID2);
+            values.put(COLUMN_NAME_SUBJECT, subject);
+            values.put(COLUMN_NAME_STATE, state);
+            values.put(COLUMN_NAME_MESSAGE, message);
+            String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+            values.put(COLUMN_NAME_DATE_REQUEST, time);
+            values.put(COLUMN_NAME_TIME, time);
+            db.insert(TABLE_MEETING,null,values);
+        }
+    }
+
     public ArrayList<Meeting> getRequestSentMeeting(String myID){
         ArrayList<Meeting> request = new ArrayList<Meeting>();
 

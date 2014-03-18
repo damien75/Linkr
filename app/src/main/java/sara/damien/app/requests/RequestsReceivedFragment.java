@@ -49,7 +49,6 @@ public class RequestsReceivedFragment extends ListFragment {
     private static final String TAG_IDm = "IDm";
     private static String currentID;
 
-
     JSONArray meetings = null;
     ArrayList<HashMap<String,String>> MeetingList;
 

@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import sara.damien.app.requests.DebateMeetingFragment;
 import sara.damien.app.requests.RequestsReceivedFragment;
-import sara.damien.app.requests.RequestsScheduledFragment;
 import sara.damien.app.requests.RequestsSentFragment;
 
 public class TabsPagerAdapter extends FragmentPagerAdapter {
@@ -26,10 +25,8 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return new RequestsReceivedFragment();
             case 1:
-                return new RequestsScheduledFragment();
-            case 2:
                 return new DebateMeetingFragment();
-            case 3:
+            case 2:
                 return new RequestsSentFragment();
         }
 
@@ -39,7 +36,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         // get item count - equal to number of tabs
-        return 4;
+        return 3;
     }
 
 }

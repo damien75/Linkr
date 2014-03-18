@@ -17,20 +17,20 @@ import sara.damien.app.R;
  */
 public class DebateMeetingListAdapter extends BaseAdapter {
     private Context mContext;
-    private ArrayList<Meeting> mRequests;
+    private ArrayList<Meeting> mMeetings;
 
-    public DebateMeetingListAdapter(Context context, ArrayList<Meeting> mRequests) {
+    public DebateMeetingListAdapter(Context context, ArrayList<Meeting> mMeetings) {
         super();
         this.mContext = context;
-        this.mRequests = mRequests;
+        this.mMeetings = mMeetings;
     }
     @Override
     public int getCount() {
-        return mRequests.size();
+        return mMeetings.size();
     }
     @Override
     public Object getItem(int position) {
-        return mRequests.get(position);
+        return mMeetings.get(position);
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
