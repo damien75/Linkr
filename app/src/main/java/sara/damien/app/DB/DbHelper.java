@@ -54,6 +54,7 @@ public class DbHelper extends SQLiteOpenHelper{
     public static final String COLUMN_NAME_DATE_MEETING = "Date_Meeting";
     public static final String COLUMN_NAME_TIME = "Time";
     public static final String COLUMN_NAME_VISIBILITY = "Visibility";
+    public static final String COLUMN_NAME_CALENDAR_EVENTID = "Calendar_EventID";
 
     //Chat Table - column names
     public static final String COLUMN_IDMSG = "IDmsg";
@@ -98,7 +99,8 @@ public class DbHelper extends SQLiteOpenHelper{
             COLUMN_NAME_DATE_ACCEPT + TEXT_TYPE + COMMA_SEP  +
             COLUMN_NAME_DATE_MEETING + TEXT_TYPE + COMMA_SEP  +
             COLUMN_NAME_TIME + TEXT_TYPE + COMMA_SEP  +
-            COLUMN_NAME_VISIBILITY + TEXT_TYPE +
+            COLUMN_NAME_VISIBILITY + TEXT_TYPE + COMMA_SEP +
+            COLUMN_NAME_CALENDAR_EVENTID + TEXT_TYPE +
             " )";
 
     public static final String CREATE_TABLE_CHAT =
@@ -151,46 +153,6 @@ public class DbHelper extends SQLiteOpenHelper{
         db.insert(TABLE_PROFILE, null, values);
     }
 
-    public Profile findProfileByID (String userID){
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        String[] projection = {
-                COLUMN_ID,
-        COLUMN_NAME_LAST_NAME,
-        COLUMN_NAME_FIRST_NAME,
-        COLUMN_NAME_LAST_SUBJECT,
-        COLUMN_NAME_LOC_X,
-        COLUMN_NAME_LOC_Y,
-        COLUMN_NAME_COMPANY,
-        COLUMN_NAME_EXP_YEARS,
-        COLUMN_NAME_SUM_GRADE,
-        COLUMN_NAME_NUMBER_GRADE,
-        COLUMN_NAME_PICTURE,
-        };
-        String sortOrder = COLUMN_NAME_DATE ;
-        String selection = COLUMN_NAME_ID2+" = ? OR " + COLUMN_NAME_ID1+" = ?";
-        String[] selectionArgs = new String[] {};
-
-        Cursor c = db.query(
-                TABLE_CHAT,  // The table to query
-                projection,                               // The columns to return
-                selection,                                // The columns for the WHERE clause
-                selectionArgs,                              // The values for the WHERE clause
-                null,                                     // don't group the rows
-                null,                                     // don't filter by row groups
-                sortOrder                                 // The sort order
-        );
-        c.moveToFirst();
-        Log.d("countcursor",String.valueOf(c.getColumnCount()));
-        while (!c.isAfterLast()){
-            boolean isSent = c.getString(c.getColumnIndex(COLUMN_NAME_IS_SENT)).equals("1");
-            Message msg = new Message(c.getString(c.getColumnIndex(COLUMN_IDMSG)), c.getString(c.getColumnIndex(COLUMN_NAME_MESSAGE)), c.getString(c.getColumnIndex(COLUMN_NAME_ID1)), c.getString(c.getColumnIndex(COLUMN_NAME_ID2)), c.getString(c.getColumnIndex(COLUMN_NAME_DATE)), isSent);
-
-            c.moveToNext();
-        }
-        return null;
-    }
-
     public boolean existIDM (String IDm){
         SQLiteDatabase db = this.getReadableDatabase();
         String selectQuery = "SELECT IDm FROM meeting WHERE IDm=?";
@@ -232,7 +194,7 @@ public class DbHelper extends SQLiteOpenHelper{
         return request;
     }
 
-    public void updateSentRequest (String Date_Accept,String IDm,String myID,String ID2,String Subject,String Date_Request,String message){
+    public void updateSentRequest (String Date_Accept,String IDm,String myID,String ID2,String Subject,String Date_Request,String message){//TODO : add calendar event id
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         if (existIDM(IDm)){
@@ -267,6 +229,70 @@ public class DbHelper extends SQLiteOpenHelper{
 
         db.delete(TABLE_MEETING,selection,selectionArgs);
     }
+
+
+    public void updateDateMeeting (Meeting meeting) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        String meetingID = meeting.getMeetingID();
+        String dateMeeting = meeting.getDateMeeting();
+        if (existIDM(meetingID) && dateMeeting!=null && dateMeeting.length()>0){
+            values.put(COLUMN_NAME_DATE_MEETING,dateMeeting);
+            if (meeting.getMyStatus().equals("1")){
+                values.put(COLUMN_NAME_STATE,"3");
+            } else {
+                values.put(COLUMN_NAME_STATE,"4");
+            }
+            String selection = COLUMN_IDM+" = ?";
+            String[] selectionArgs = new String[] {meetingID};
+            db.update(TABLE_MEETING, values, selection,
+                    selectionArgs);
+        }
+        else{
+            //This meeting does not exist in the local DB
+        }
+    }
+
+    public void updateStateMeeting (Meeting meeting) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        String meetingID = meeting.getMeetingID();
+        String state = meeting.getState();
+        if (existIDM(meetingID)){
+            values.put(COLUMN_NAME_STATE,state);
+            String selection = COLUMN_IDM+" = ?";
+            String[] selectionArgs = new String[] {meetingID};
+            db.update(TABLE_MEETING, values, selection,
+                    selectionArgs);
+        }
+        else{
+            //This meeting does not exist in the local DB
+        }
+    }
+
+    public void updateMeeting (Meeting meeting){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        String meetingID = meeting.getMeetingID();
+        if (existIDM(meetingID)){
+            values.put(COLUMN_NAME_STATE,meeting.getState());
+            values.put(COLUMN_NAME_SUBJECT, meeting.getSubject());
+                    values.put(COLUMN_NAME_STATE, meeting.getState());
+                    values.put(COLUMN_NAME_MESSAGE, meeting.getMessage());
+                    values.put(COLUMN_NAME_DATE_REQUEST, meeting.getDateRequest());
+                    values.put(COLUMN_NAME_DATE_ACCEPT, meeting.getDateAccept());
+                    values.put(COLUMN_NAME_DATE_MEETING, meeting.getDateMeeting());
+                    values.put(COLUMN_NAME_CALENDAR_EVENTID, meeting.getCalendarEventID());
+                    String selection = COLUMN_IDM+" = ?";
+            String[] selectionArgs = new String[] {meetingID};
+            db.update(TABLE_MEETING, values, selection,
+                    selectionArgs);
+        }
+        else{
+            //This meeting does not exist in the local DB
+        }
+    }
+
 
     public void insertMessage (Message message) { //TODO: Shouldn't DB calls be synchronized?
         SQLiteDatabase db = this.getWritableDatabase();
@@ -319,44 +345,5 @@ public class DbHelper extends SQLiteOpenHelper{
             c.moveToNext();
         }
         return messages;
-    }
-
-    public void updateDateMeeting (Meeting meeting) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        String meetingID = meeting.getMeetingID();
-        String dateMeeting = meeting.getDateMeeting();
-        if (existIDM(meetingID) && dateMeeting!=null && dateMeeting.length()>0){
-            values.put(COLUMN_NAME_DATE_MEETING,dateMeeting);
-            if (meeting.getMyStatus().equals("1")){
-                values.put(COLUMN_NAME_STATE,"3");
-            } else {
-                values.put(COLUMN_NAME_STATE,"4");
-            }
-            String selection = COLUMN_IDM+" = ?";
-            String[] selectionArgs = new String[] {meetingID};
-            db.update(TABLE_MEETING, values, selection,
-                    selectionArgs);
-        }
-        else{
-            //This meeting does not exist in the local DB
-        }
-    }
-
-    public void updateStateMeeting (Meeting meeting) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        String meetingID = meeting.getMeetingID();
-        String state = meeting.getState();
-        if (existIDM(meetingID)){
-            values.put(COLUMN_NAME_STATE,state);
-            String selection = COLUMN_IDM+" = ?";
-            String[] selectionArgs = new String[] {meetingID};
-            db.update(TABLE_MEETING, values, selection,
-                    selectionArgs);
-        }
-        else{
-            //This meeting does not exist in the local DB
-        }
     }
 }

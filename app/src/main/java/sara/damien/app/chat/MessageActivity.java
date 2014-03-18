@@ -145,9 +145,11 @@ public class MessageActivity extends ListActivity {
 
     private class dateMeetingAccepting extends AsyncTask<Void, Void, Void>{
         boolean successfullyAccepted;
+        boolean successfullyAddedToCalendar;
         @Override
         protected Void doInBackground(Void... voids) {
             successfullyAccepted = LinkrAPI.acceptDateMeeting(meeting);
+            successfullyAddedToCalendar = LinkrAPI.updateCalendarEventID(meeting);
             return null;
         }
 
@@ -155,11 +157,13 @@ public class MessageActivity extends ListActivity {
         protected void onPostExecute(Void aVoid) {
             if (successfullyAccepted){
                 meeting.setState("2");
-                Common.getDB().updateStateMeeting(meeting);
+                Common.getCalendar().insertMeetingToCalendar(meeting, getContentResolver());
+                Common.getDB().updateStateMeeting(meeting);//CHECKME : on update le meeting avant d'avoir recu l'eventID!
                 dateTimePickerShowBtn();
             }
-            Toast.makeText(getApplicationContext(), successfullyAccepted ? "You accepted this proposition" :
-                    "We couldn't send your accept to "+meeting.getOtherParticipant().getName(),Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), (successfullyAccepted ? "You accepted this proposition" :
+                    "We couldn't send your accept to "+meeting.getOtherParticipant().getName()) +
+                    (successfullyAddedToCalendar ? " Added to calendar" : "not added to calendar"),Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -205,6 +209,7 @@ public class MessageActivity extends ListActivity {
     private class checkNewUpdates extends AsyncTask<Void, Message, Void>{
         String dateMeeting="";
         String state="";
+        long eventID = 0;
         @Override
         protected Void doInBackground(Void... voids) {
             //Messages Check
@@ -215,16 +220,12 @@ public class MessageActivity extends ListActivity {
                 publishProgress(msg);
             }
 
-            if (messages.size() > 0) {
-                timeStampReceived = messages.get(messages.size() - 1).getTime();
-                Common.getPrefs().setLastReceivedMessageTimeStamp(timeStampReceived, chateeID);
-            }
-
             //Meeting information check
             JSONObject jsonMeeting = LinkrAPI.fetchDateMeetingUpdate(meeting);
             try {
                 dateMeeting = jsonMeeting.getString("Date_Meeting");
                 state = jsonMeeting.getString("State");
+                eventID = Long.valueOf(jsonMeeting.getString("calendarEventID"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -242,6 +243,9 @@ public class MessageActivity extends ListActivity {
             if (!(dateMeeting.equals(meeting.getDateMeeting()) && state.equals(meeting.getState()))){
                 meeting.setDateMeeting(dateMeeting);
                 meeting.setState(state);
+                if (state.equals("2") && eventID>0 && eventID!=meeting.getCalendarEventID()){
+                    meeting.setCalendarEventID(eventID);
+                }
                 Common.getDB().updateDateMeeting(meeting);
                 dateTimePickerShowBtn();
             }

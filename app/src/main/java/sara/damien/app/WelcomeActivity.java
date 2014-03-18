@@ -202,7 +202,9 @@ public class WelcomeActivity extends Activity {
                 editor.putBoolean("Connected", false);
                 editor.commit();
                 boolean b1 = deleteDatabase(DbHelper.DATABASE_NAME);
-                Log.e("Disconnection",(b1 ? "DB delete ok " : "DB delete no " ));
+                Common.getPrefs().setConnected(false);
+                boolean b = deleteDatabase(Common.getDB().DATABASE_NAME);
+                Log.e("Disconnection",(b ? "DB delete ok " : "DB delete no " ));
                 Intent i5 = new Intent(this,SplashScreenActivity.class);
                 startActivity(i5);
                 break;

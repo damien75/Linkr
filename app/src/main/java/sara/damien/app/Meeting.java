@@ -20,6 +20,7 @@ public class Meeting implements Parcelable {
     private String dateRequest;
     private String dateMeeting;
     private String message;
+    private long calendarEventID;
 
     public Meeting (Profile otherParticipant, String meetingID, String subject, String state, String myStatus, String dateAccept, String dateRequest, String dateMeeting,String message){
         this.otherParticipant = otherParticipant;
@@ -56,8 +57,11 @@ public class Meeting implements Parcelable {
     public String getDateAccept () { return this.dateAccept; }
     public String getDateRequest () { return this.dateRequest; }
     public String getDateMeeting () { return  this.dateMeeting; }
+    public long getCalendarEventID(){return this.calendarEventID;}
+    public String getMessage(){return this.message;}
     public void setDateMeeting(String dateMeeting) { this.dateMeeting = dateMeeting;}
     public void setState(String state){ this.state = state;}
+    public void setCalendarEventID (long eventID){this.calendarEventID = eventID;}
 
     @Override
     public int describeContents() { return 0; }

@@ -73,6 +73,8 @@ public class LinkrAPI {
         try {
             MessageActivity.timeStampSent = json.getString("timeStampSent");
             MessageActivity.timeStampReceived = json.getString("timeStampReceived");
+            Common.getPrefs().setLastReceivedMessageTimeStamp(timeStampReceived, messageSender);
+            Common.getPrefs().setLastSentMessageTimeStamp(timeStampSent, messageSender);
             JSONArray newMessages = json.getJSONArray("msg");
 
             for (int msg_id = 0; msg_id < newMessages.length(); msg_id++) {
@@ -167,6 +169,18 @@ public class LinkrAPI {
         params.add(new BasicNameValuePair("meetingID", meeting.getMeetingID()));
         params.add(new BasicNameValuePair("SELECT_FUNCTION","getStateAndDateMeeting"));
         return new JSONParser().makeHttpRequest(API_URL, "POST", params);
+    }
+
+    public static boolean updateCalendarEventID (Meeting meeting){
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("SELECT_FUNCTION","updateCalendarEventID"));
+        params.add(new BasicNameValuePair("meetingID", meeting.getMeetingID()));
+        params.add(new BasicNameValuePair("calendarEventID", String.valueOf(meeting.getCalendarEventID())));
+        try {
+            return new JSONParser().makeHttpRequest(API_URL, "POST", params).getBoolean("success");
+        } catch (JSONException e) {
+            return false;
+        }
     }
 
     public static boolean acceptDateMeeting (Meeting meeting){

@@ -14,5 +14,6 @@ public class LinkrApplication extends Application {
     public void onCreate () {
         super.onCreate();
         Common.Init(this);
+
     }
 }
