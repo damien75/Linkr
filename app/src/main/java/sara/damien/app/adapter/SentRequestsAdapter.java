@@ -4,10 +4,10 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import sara.damien.app.Meeting;
 import sara.damien.app.R;
@@ -15,39 +15,26 @@ import sara.damien.app.R;
 /**
  * Created by Sara-Fleur on 3/3/14.
  */
-public class RequestsSentAdapter extends BaseAdapter{
-    private Context mContext;
-    private ArrayList<Meeting> mRequests;
+public class SentRequestsAdapter extends ArrayAdapter<Meeting> {
+    public SentRequestsAdapter(Context context, int resource, List<Meeting> objects) {
+        super(context, resource, objects);
+    }
 
-    public RequestsSentAdapter(Context context, ArrayList<Meeting> mRequests) {
-        super();
-        this.mContext = context;
-        this.mRequests = mRequests;
-    }
-    @Override
-    public int getCount() {
-        return mRequests.size();
-    }
-    @Override
-    public Object getItem(int position) {
-        return mRequests.get(position);
-    }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Meeting request = (Meeting) this.getItem(position);
+        Meeting request = super.getItem(position);
 
         ViewHolder holder;
-        if(convertView == null)
-        {
+        if(convertView == null) {
             holder = new ViewHolder();
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.requests_sent_row, parent, false);
+            convertView = LayoutInflater.from(super.getContext()).inflate(R.layout.requests_sent_row, parent, false);
             holder.name = (TextView) convertView.findViewById(R.id.name);
             holder.subject = (TextView) convertView.findViewById(R.id.subject);
             holder.date = (TextView) convertView.findViewById (R.id.sent_date);
             convertView.setTag(holder);
-        }
-        else
+        } else {
             holder = (ViewHolder) convertView.getTag();
+        }
 
         holder.name.setText(request.getOtherParticipant().getFirst_Name()+" "+request.getOtherParticipant().getLast_Name());
         holder.subject.setText(request.getSubject());
@@ -55,19 +42,11 @@ public class RequestsSentAdapter extends BaseAdapter{
 
         return convertView;
     }
-    private static class ViewHolder
-    {
+
+    private static class ViewHolder {
         TextView name;
         TextView subject;
         TextView date;
     }
-
-    @Override
-    public long getItemId(int position) {
-        //Unimplemented, because we aren't using Sqlite.
-        return position;
-    }
-
-
 }
 

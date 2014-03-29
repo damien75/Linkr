@@ -13,14 +13,12 @@ import sara.damien.app.requests.RequestsReceivedFragment;
 import sara.damien.app.requests.RequestsSentFragment;
 
 public class TabsPagerAdapter extends FragmentPagerAdapter {
-
     public TabsPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
     @Override
     public Fragment getItem(int index) {
-
         switch (index) {
             case 0:
                 return new RequestsReceivedFragment();
@@ -34,9 +32,5 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
     }
 
     @Override
-    public int getCount() {
-        // get item count - equal to number of tabs
-        return 3;
-    }
-
+    public int getCount() { return 3; }
 }
