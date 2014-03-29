@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.UUID;
 
 import sara.damien.app.chat.Message;
-import sara.damien.app.chat.MessageActivity;
 import sara.damien.app.utils.JSONParser;
 import sara.damien.app.utils.Utilities;
 
@@ -56,33 +55,30 @@ public class LinkrAPI {
     }
 
     //LATER: Implement this method as an iterator
-    public static List<Message> getNewMessages(String messageSender, String timeStampReceived, String timeStampSent) { //LATER: Passer une date pour latestTimeStamp
+    public static List<Message> getNewMessages(String otherParty) { //LATER: Passer une date pour latestTimeStamp
         List<Message> new_messages = new ArrayList<Message>();
 
         JSONParser jsonParser = new JSONParser();
         List<NameValuePair> params = new ArrayList<NameValuePair>();
 
         params.add(new BasicNameValuePair("SELECT_FUNCTION", "getNewMessages"));
-        params.add(new BasicNameValuePair("chateeID", messageSender));
+        params.add(new BasicNameValuePair("chateeID", otherParty));
         params.add(new BasicNameValuePair("myID", Common.getMyID()));
-        params.add(new BasicNameValuePair("timeStampReceived", timeStampReceived));
-        params.add(new BasicNameValuePair("timeStampSent" , timeStampSent));
+        params.add(new BasicNameValuePair("timeStampReceived", Common.getPrefs().getLastReceivedMessageTimeStamp(otherParty)));
+        params.add(new BasicNameValuePair("timeStampSent", Common.getPrefs().getLastSentMessageTimeStamp(otherParty)));
 
         JSONObject json = jsonParser.makeHttpRequest(getTemporaryAPIUrl(), "POST", params);
 
-        try {
-            MessageActivity.timeStampSent = json.getString("timeStampSent");
-            MessageActivity.timeStampReceived = json.getString("timeStampReceived");
-            Common.getPrefs().setLastReceivedMessageTimeStamp(timeStampReceived, messageSender);
-            Common.getPrefs().setLastSentMessageTimeStamp(timeStampSent, messageSender);
+        try { //FIXME: Check the whole timeStamps thing
+            Common.getPrefs().setLastReceivedMessageTimeStamp(json.getString("timeStampReceived"), otherParty);
+            Common.getPrefs().setLastSentMessageTimeStamp(json.getString("timeStampSent"), otherParty);
             JSONArray newMessages = json.getJSONArray("msg");
 
             for (int msg_id = 0; msg_id < newMessages.length(); msg_id++) {
-                Message message = Message.fromJSONMessage(newMessages.getJSONObject(msg_id));
+                Message message = Message.deserializeFromLinkr(newMessages.getJSONObject(msg_id));
                 new_messages.add(message);
             }
-        }
-        catch (JSONException e){
+        } catch (JSONException e){
             e.printStackTrace();
         }
 
@@ -131,10 +127,9 @@ public class LinkrAPI {
                 message.setID(json.getString("lastID"));
                 message.setSent(true);
                 String timeStamp = json.getString("timeStampSent");
-                message.setTime(timeStamp); //ATTENTION: Here we update the timestamp that allows us to show messages in the order that the server received them
+                message.setTime(timeStamp); //WARNING: Here we update the timestamp that allows us to show messages in the order that the server received them
                 Common.getDB().insertMessage(message);
-                MessageActivity.timeStampSent = timeStamp;
-                Common.getPrefs().setLastSentMessageTimeStamp(timeStamp,message.getRecipient());
+                Common.getPrefs().setLastSentMessageTimeStamp(timeStamp, message.getRecipient());
             } else {
                 //Est-ce vraiment utile...?
             }
@@ -194,7 +189,7 @@ public class LinkrAPI {
         }
     }
 
-    public static boolean refuseDateMeeting (Meeting meeting){
+    public static boolean refuseMeetingDate (Meeting meeting){
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("SELECT_FUNCTION","refuseDateMeeting"));
         params.add(new BasicNameValuePair("meetingID", meeting.getMeetingID()));
