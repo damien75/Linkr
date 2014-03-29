@@ -12,23 +12,21 @@ import sara.damien.app.requests.DebateMeetingFragment;
 import sara.damien.app.requests.RequestsReceivedFragment;
 import sara.damien.app.requests.RequestsSentFragment;
 
-public class TabsPagerAdapter extends FragmentPagerAdapter {
-    public TabsPagerAdapter(FragmentManager fm) {
+public class RequestsPagerAdapter extends FragmentPagerAdapter {
+    Fragment[] fragments;
+
+    public RequestsPagerAdapter(FragmentManager fm) {
         super(fm);
+        fragments = new Fragment[] {
+            new RequestsReceivedFragment(),
+            new DebateMeetingFragment(),
+            new RequestsSentFragment()
+        };
     }
 
     @Override
     public Fragment getItem(int index) {
-        switch (index) {
-            case 0:
-                return new RequestsReceivedFragment();
-            case 1:
-                return new DebateMeetingFragment();
-            case 2:
-                return new RequestsSentFragment();
-        }
-
-        return null;
+        return (index < fragments.length ? fragments[index] : null);
     }
 
     @Override
