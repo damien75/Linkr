@@ -16,8 +16,8 @@ import sara.damien.app.R;
  * Created by Sara-Fleur on 3/3/14.
  */
 public class SentRequestsAdapter extends ArrayAdapter<Meeting> {
-    public SentRequestsAdapter(Context context, int resource, List<Meeting> objects) {
-        super(context, resource, objects);
+    public SentRequestsAdapter(Context context, List<Meeting> objects) {
+        super(context, -1, objects);
     }
 
     @Override

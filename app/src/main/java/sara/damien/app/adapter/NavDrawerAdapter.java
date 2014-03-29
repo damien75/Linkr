@@ -18,8 +18,8 @@ import sara.damien.app.model.NavDrawerItem;
  * Adapter for slide-in menu items
  */
 public class NavDrawerAdapter extends ArrayAdapter<NavDrawerItem> {
-    public NavDrawerAdapter(Context context, int resource, int textViewResourceId, List<NavDrawerItem> objects) {
-        super(context, resource, textViewResourceId, objects);
+    public NavDrawerAdapter(Context context, List<NavDrawerItem> objects) {
+        super(context, -1, objects);
     }
 
     @Override
