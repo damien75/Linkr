@@ -1,5 +1,6 @@
 package sara.damien.app;
 
+import android.content.ContentValues;
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -15,6 +16,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
+import sara.damien.app.DB.DbHelper;
 import sara.damien.app.utils.ImageDownloader;
 
 /**
@@ -49,16 +51,16 @@ public class Profile implements Parcelable {
     }
 
     //TODO: Does this comment make sense? "ONLY FOR SINGLE PROFILE ACTIVITIES"
-    public Profile (String ID){
+    public Profile(String ID) {
         this.ID = ID;
     }
 
-    public Profile (String ID, ProfileListener parent){ //TODO: Is this useful?
+    public Profile(String ID, ProfileListener parent) { //TODO: Is this useful?
         this.ID = ID;
         this.parent = parent;
     }
 
-    public Profile(String ID, String First_Name, String Last_Name){
+    public Profile(String ID, String First_Name, String Last_Name) {
         this.ID = ID;
         this.First_Name = First_Name;
         this.Last_Name = Last_Name;
@@ -75,29 +77,30 @@ public class Profile implements Parcelable {
     public String getProfilePictureURL() {
         return pictureURL;
     }
-    public Profile (boolean downloaded,String last_Name,String first_name,String last_subject, int yearsOfExperience, double loc_X, double loc_Y, String company, String ID, int sum_Grade, int number_Grade){
-        this.downloaded=downloaded;
-        this.Last_Name=last_Name;
-        this.Company=company;
-        this.First_Name=first_name;
-        this.Last_Subject=last_subject;
-        this.yearsOfExperience=yearsOfExperience;
-        this.Loc_X=loc_X;
-        this.Loc_Y=loc_Y;
-        this.Sum_Grade=sum_Grade;
-        this.ID=ID;
-        this.Number_Grade=number_Grade;
+
+    public Profile(boolean downloaded, String last_Name, String first_name, String last_subject, int yearsOfExperience, double loc_X, double loc_Y, String company, String ID, int sum_Grade, int number_Grade) {
+        this.downloaded = downloaded;
+        this.Last_Name = last_Name;
+        this.Company = company;
+        this.First_Name = first_name;
+        this.Last_Subject = last_subject;
+        this.yearsOfExperience = yearsOfExperience;
+        this.Loc_X = loc_X;
+        this.Loc_Y = loc_Y;
+        this.Sum_Grade = sum_Grade;
+        this.ID = ID;
+        this.Number_Grade = number_Grade;
     }
 
-    public boolean isDownloaded (){
+    public boolean isDownloaded() {
         return this.downloaded;
     }
 
-    public String getFirst_Name(){
+    public String getFirst_Name() {
         return this.First_Name;
     }
 
-    public String getLast_Name(){
+    public String getLast_Name() {
         return this.Last_Name;
     }
 
@@ -108,8 +111,8 @@ public class Profile implements Parcelable {
             return null;
     }
 
-    public String get_Avg_Grade(){
-        double avg = (double)this.Sum_Grade/((double)this.Number_Grade);
+    public String get_Avg_Grade() {
+        double avg = (double) this.Sum_Grade / ((double) this.Number_Grade);
         return String.valueOf(avg);
     }
     public String getCompany (){return this.Company;}
@@ -231,7 +234,7 @@ public class Profile implements Parcelable {
     public static Profile readFromParcel(Parcel parcel) {
         Profile profile = new Profile();
 
-        profile.downloaded = parcel.readByte() !=0;
+        profile.downloaded = parcel.readByte() != 0;
         profile.Last_Name = parcel.readString();
         profile.First_Name = parcel.readString();
         profile.Loc_X = parcel.readDouble();
@@ -255,8 +258,13 @@ public class Profile implements Parcelable {
     }
 
     public static final Parcelable.Creator<Profile> CREATOR = new Parcelable.Creator<Profile>() {
-        public Profile createFromParcel(Parcel in) { return Profile.readFromParcel(in); }
-        public Profile[] newArray(int size) { return new Profile[size]; }
+        public Profile createFromParcel(Parcel in) {
+            return Profile.readFromParcel(in);
+        }
+
+        public Profile[] newArray(int size) {
+            return new Profile[size];
+        }
     };
 
     public void setFromLinkrJSON(JSONObject json) {
@@ -301,7 +309,7 @@ public class Profile implements Parcelable {
 
     @Override
     public String toString() {
-        return "Profile { " + getName() +  " }";
+        return "Profile { " + getName() + " }";
     }
 
     @Override
@@ -314,11 +322,62 @@ public class Profile implements Parcelable {
         if (ID == null || !(o instanceof Profile))
             return false;
 
-        Profile other = (Profile)o;
+        Profile other = (Profile) o;
         return ID.equals(other.ID);
     }
 
     public void setParent(ProfileListener parent) {
         this.parent = parent;
+    }
+
+    public static interface DB {
+        public static interface COLUMNS {
+            String ID = "ID";
+            String LAST_NAME = "Last_Name";
+            String FIRST_NAME = "First_Name";
+            String LAST_SUBJECT = "Last_Subject";
+            String LOC_X = "Loc_X";
+            String LOC_Y = "Loc_Y";
+            String COMPANY = "Company";
+            String EXP_YEARS = "Exp_Years";
+            String SUM_GRADE = "Sum_Grade";
+            String NUMBER_GRADE = "Number_Grade";
+            String PICTURE = "Picture";
+
+            String[] PROJECTION = {ID, LAST_NAME, FIRST_NAME, LAST_SUBJECT, LOC_X, LOC_Y, COMPANY, EXP_YEARS, SUM_GRADE, NUMBER_GRADE, PICTURE};
+        }
+
+        String NAME = "profile";
+
+        String CREATE_QUERY =
+                "CREATE TABLE " + NAME + " (" +
+                        COLUMNS.ID + " INTEGER PRIMARY KEY," +
+                        COLUMNS.FIRST_NAME + DbHelper.TEXT_TYPE + "," +
+                        COLUMNS.LAST_NAME + DbHelper.TEXT_TYPE + "," +
+                        COLUMNS.LAST_SUBJECT + DbHelper.TEXT_TYPE + "," +
+                        COLUMNS.LOC_X + DbHelper.TEXT_TYPE + "," +
+                        COLUMNS.LOC_Y + DbHelper.TEXT_TYPE + "," +
+                        COLUMNS.COMPANY + DbHelper.TEXT_TYPE + "," +
+                        COLUMNS.EXP_YEARS + DbHelper.TEXT_TYPE + "," +
+                        COLUMNS.SUM_GRADE + DbHelper.TEXT_TYPE + "," +
+                        COLUMNS.NUMBER_GRADE + DbHelper.TEXT_TYPE + "," +
+                        COLUMNS.PICTURE + DbHelper.TEXT_TYPE +
+                        " )";
+    }
+
+
+    public ContentValues serializeForLocalDB() {
+        ContentValues values = new ContentValues();
+        values.put(DB.COLUMNS.ID, ID);
+        values.put(DB.COLUMNS.FIRST_NAME, First_Name);
+        values.put(DB.COLUMNS.LAST_NAME, Last_Name);
+        values.put(DB.COLUMNS.LAST_SUBJECT, Last_Subject);
+        values.put(DB.COLUMNS.LOC_X, Loc_X);
+        values.put(DB.COLUMNS.LOC_Y, Loc_Y);
+        values.put(DB.COLUMNS.COMPANY, Company);
+        values.put(DB.COLUMNS.EXP_YEARS, yearsOfExperience);
+        values.put(DB.COLUMNS.SUM_GRADE, Sum_Grade);
+        values.put(DB.COLUMNS.NUMBER_GRADE, Number_Grade);
+        return values;
     }
 }

@@ -7,10 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
+import sara.damien.app.Common;
 import sara.damien.app.Meeting;
 import sara.damien.app.Profile;
 import sara.damien.app.chat.Message;
@@ -18,101 +17,12 @@ import sara.damien.app.chat.Message;
 /**
  * Created by Sara-Fleur on 3/4/14.
  */
-public class DbHelper extends SQLiteOpenHelper{
-    // Logcat tag
+public class DbHelper extends SQLiteOpenHelper {
     private static final String LOG = "DatabaseHelper";
-    // Database Version
     private static final int DATABASE_VERSION = 1;
-    // Database Name
     public static final String DATABASE_NAME = "localDB";
-    // Table Names
-    private static final String TABLE_PROFILE = "profile";
-    private static final String TABLE_MEETING = "meeting";
-    private static final String TABLE_CHAT = "chat";
-    // Profile column names
-    public static final String COLUMN_ID = "ID";
-    public static final String COLUMN_NAME_LAST_NAME = "Last_Name";
-    public static final String COLUMN_NAME_FIRST_NAME = "First_Name";
-    public static final String COLUMN_NAME_LAST_SUBJECT = "Last_Subject";
-    public static final String COLUMN_NAME_LOC_X = "Loc_X";
-    public static final String COLUMN_NAME_LOC_Y = "Loc_Y";
-    public static final String COLUMN_NAME_COMPANY = "Company";
-    public static final String COLUMN_NAME_EXP_YEARS = "Exp_Years";
-    public static final String COLUMN_NAME_SUM_GRADE = "Sum_Grade";
-    public static final String COLUMN_NAME_NUMBER_GRADE = "Number_Grade";
-    public static final String COLUMN_NAME_PICTURE = "Picture";
 
-    // Meeting Table - column names
-    public static final String COLUMN_IDM = "IDm";
-    public static final String COLUMN_NAME_ID1 = "ID1";
-    public static final String COLUMN_NAME_ID2 = "ID2";
-    public static final String COLUMN_NAME_SUBJECT = "Subject";
-    public static final String COLUMN_NAME_STATE = "State";
-    public static final String COLUMN_NAME_MESSAGE = "Message";
-    public static final String COLUMN_NAME_DATE_REQUEST = "Date_Request";
-    public static final String COLUMN_NAME_DATE_ACCEPT = "Date_Accept";
-    public static final String COLUMN_NAME_DATE_MEETING = "Date_Meeting";
-    public static final String COLUMN_NAME_TIME = "Time";
-    public static final String COLUMN_NAME_VISIBILITY = "Visibility";
-    public static final String COLUMN_NAME_CALENDAR_EVENTID = "Calendar_EventID";
-
-    //Chat Table - column names
-    public static final String COLUMN_IDMSG = "IDmsg";
-    //public static final String COLUMN_NAME_ID1 = "ID1";
-    //public static final String COLUMN_NAME_ID2 = "ID2";
-    public static final String COLUMN_NAME_DATE = "Date";
-    //public static final String COLUMN_NAME_MESSAGE = "Message";
-    //public static final String COLUMN_NAME_VISIBILITY = "Visibility";
-    public static final String COLUMN_NAME_IS_SENT = "isSent";
-
-    private static final String TEXT_TYPE = " TEXT";
-    private static final String BIT_TYPE = "BIT";
-    private static final String COMMA_SEP = ",";
-
-    // Table Create Statements
-    // Profile table create statement
-    private static final String CREATE_TABLE_PROFILE =
-            "CREATE TABLE " + TABLE_PROFILE + " (" +
-                    COLUMN_ID + " INTEGER PRIMARY KEY," +
-                    COLUMN_NAME_FIRST_NAME + TEXT_TYPE + COMMA_SEP +
-                    COLUMN_NAME_LAST_NAME + TEXT_TYPE + COMMA_SEP +
-                    COLUMN_NAME_LAST_SUBJECT + TEXT_TYPE + COMMA_SEP  +
-                    COLUMN_NAME_LOC_X + TEXT_TYPE + COMMA_SEP +
-                    COLUMN_NAME_LOC_Y + TEXT_TYPE + COMMA_SEP  +
-                    COLUMN_NAME_COMPANY + TEXT_TYPE + COMMA_SEP  +
-                    COLUMN_NAME_EXP_YEARS + TEXT_TYPE + COMMA_SEP  +
-                    COLUMN_NAME_SUM_GRADE + TEXT_TYPE + COMMA_SEP  +
-                    COLUMN_NAME_NUMBER_GRADE + TEXT_TYPE + COMMA_SEP  +
-                    COLUMN_NAME_PICTURE + TEXT_TYPE +
-                    " )";
-
-    // Meeting table create statement
-    private static final String CREATE_TABLE_MEETING =
-            "CREATE TABLE " + TABLE_MEETING + " (" +
-            COLUMN_IDM + " INTEGER PRIMARY KEY," +
-            COLUMN_NAME_ID1 + TEXT_TYPE + COMMA_SEP +
-            COLUMN_NAME_ID2 + TEXT_TYPE + COMMA_SEP +
-            COLUMN_NAME_SUBJECT + TEXT_TYPE + COMMA_SEP  +
-            COLUMN_NAME_STATE + TEXT_TYPE + COMMA_SEP +
-            COLUMN_NAME_MESSAGE + TEXT_TYPE + COMMA_SEP  +
-            COLUMN_NAME_DATE_REQUEST + TEXT_TYPE + COMMA_SEP  +
-            COLUMN_NAME_DATE_ACCEPT + TEXT_TYPE + COMMA_SEP  +
-            COLUMN_NAME_DATE_MEETING + TEXT_TYPE + COMMA_SEP  +
-            COLUMN_NAME_TIME + TEXT_TYPE + COMMA_SEP  +
-            COLUMN_NAME_VISIBILITY + TEXT_TYPE + COMMA_SEP +
-            COLUMN_NAME_CALENDAR_EVENTID + TEXT_TYPE +
-            " )";
-
-    public static final String CREATE_TABLE_CHAT =
-            "CREATE TABLE " + TABLE_CHAT + " (" +
-                    COLUMN_IDMSG + " INTEGER PRIMARY KEY," +
-                    COLUMN_NAME_ID1 + TEXT_TYPE + COMMA_SEP +
-                    COLUMN_NAME_ID2 + TEXT_TYPE + COMMA_SEP +
-                    COLUMN_NAME_DATE + TEXT_TYPE + COMMA_SEP +
-                    COLUMN_NAME_MESSAGE + TEXT_TYPE + COMMA_SEP  +
-                    COLUMN_NAME_VISIBILITY + TEXT_TYPE + COMMA_SEP +
-                    COLUMN_NAME_IS_SENT + TEXT_TYPE +
-                    " )";
+    public static final String TEXT_TYPE = " TEXT";
 
     public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -120,247 +30,143 @@ public class DbHelper extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // creating required tables
-        db.execSQL(CREATE_TABLE_PROFILE);
-        db.execSQL(CREATE_TABLE_MEETING);
-        db.execSQL(CREATE_TABLE_CHAT);
+        db.execSQL(Profile.DB.CREATE_QUERY);
+        db.execSQL(Meeting.DB.CREATE_QUERY);
+        db.execSQL(Message.DB.CREATE_QUERY);
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // on upgrade drop older tables
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEETING);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROFILE);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHAT);
-        // create new tables
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) { //FIXME: Should we really drop the tables?
+        db.execSQL("DROP TABLE IF EXISTS " + Meeting.DB.NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + Profile.DB.NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + Message.DB.NAME);
         onCreate(db);
     }
 
-    public void insertLocalProfile (Profile profile){ //TODO: Why not store profiles as blobs?
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_ID,profile.getID());
-        values.put(COLUMN_NAME_FIRST_NAME, profile.getFirst_Name());
-        values.put(COLUMN_NAME_LAST_NAME, profile.getLast_Name());
-        values.put(COLUMN_NAME_LAST_SUBJECT, profile.getLast_Subject());
-        values.put(COLUMN_NAME_LOC_X, profile.getLoc_X());
-        values.put(COLUMN_NAME_LOC_Y, profile.getLoc_Y());
-        values.put(COLUMN_NAME_COMPANY, profile.getCompany());
-        values.put(COLUMN_NAME_EXP_YEARS, profile.getYearsOfExperience());
-        values.put(COLUMN_NAME_SUM_GRADE, profile.getSum_Grade());
-        values.put(COLUMN_NAME_NUMBER_GRADE, profile.getNumber_Grade());
-
-        db.insert(TABLE_PROFILE, null, values);
+    public void insertLocalProfile (Profile profile){ //TODO: Why not store profiles as blobs, indexed by ID? It seems that all queries on profiles select only on the profile ID. This could make future evolutions simpler as well.
+        getWritableDatabase().insert(Profile.DB.NAME, null, profile.serializeForLocalDB());
     }
 
-    public boolean existIDM (String IDm){
-        SQLiteDatabase db = this.getReadableDatabase();
-        String selectQuery = "SELECT IDm FROM meeting WHERE IDm=?";
-        String[] tabargs = {IDm};
-        Cursor c = db.rawQuery(selectQuery, tabargs);
-        return (c.getCount()>0);
+    public boolean existIDM(String IDm){
+        final String QUERY = "SELECT 1 FROM " + Meeting.DB.NAME + " WHERE " + Meeting.DB.COLUMNS.IDM + " = ?";
+
+        return this.getReadableDatabase().rawQuery(
+                QUERY,
+                new String[] { IDm }
+        ).getCount() > 0;
     }
 
-    public void insertLocalRequestSentMeeting (String IDm,String ID1, String ID2, String subject,String state,String message){
-        if (!existIDM(IDm)){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_IDM, IDm);
-        values.put(COLUMN_NAME_ID1, ID1);
-        values.put(COLUMN_NAME_ID2, ID2);
-        values.put(COLUMN_NAME_SUBJECT, subject);
-        values.put(COLUMN_NAME_STATE, state);
-        values.put(COLUMN_NAME_MESSAGE, message);
-        String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
-        values.put(COLUMN_NAME_DATE_REQUEST, time);
-        values.put(COLUMN_NAME_TIME, time);
-        db.insert(TABLE_MEETING,null,values);
+    public boolean insertLocalRequestSentMeeting (Meeting request){
+        boolean insertion_needed = !existIDM(request.getMeetingID());
+        if (insertion_needed) {
+            this.getWritableDatabase().insert(Meeting.DB.NAME, null, request.serializeForLocalDB());
         }
+        return insertion_needed;
     }
 
-    public void insertLocalDebateMeeting (String IDm,String ID1, String ID2, String subject,String state,String message){
-        if (!existIDM(IDm)){
-            SQLiteDatabase db = this.getWritableDatabase();
-            ContentValues values = new ContentValues();
-            values.put(COLUMN_IDM, IDm);
-            values.put(COLUMN_NAME_ID1, ID1);
-            values.put(COLUMN_NAME_ID2, ID2);
-            values.put(COLUMN_NAME_SUBJECT, subject);
-            values.put(COLUMN_NAME_STATE, state);
-            values.put(COLUMN_NAME_MESSAGE, message);
-            String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
-            values.put(COLUMN_NAME_DATE_REQUEST, time);
-            values.put(COLUMN_NAME_TIME, time);
-            db.insert(TABLE_MEETING,null,values);
+    public void insertLocalDebateMeeting(Meeting meeting){ //FIXME: Duplicate of insertLocalRequestSentMeeting, unless the ID1 and ID2 were not the same
+        if (!existIDM(meeting.getMeetingID())) {
+            this.getWritableDatabase().insert(Meeting.DB.NAME, null, meeting.serializeForLocalDB());
         }
     }
 
     public ArrayList<Meeting> getRequestSentMeeting(String myID){
-        ArrayList<Meeting> request = new ArrayList<Meeting>();
+        final String QUERY =
+            "SELECT " + Meeting.DB.COLUMNS.DATE_REQUEST + ","
+                      + Meeting.DB.COLUMNS.IDM + ","
+                      + Meeting.DB.COLUMNS.ID2 + ","
+                      + Meeting.DB.COLUMNS.MESSAGE + ","
+                      + Profile.DB.COLUMNS.FIRST_NAME + ","
+                      + Profile.DB.COLUMNS.LAST_NAME + " " +
+            "FROM "   + Meeting.DB.NAME + "," + Profile.DB.NAME + " " +
+            "WHERE "  + Meeting.DB.COLUMNS.ID1 + "=? "
+                      + "AND " + Meeting.DB.COLUMNS.STATE + "=? "
+                      + "AND " + Meeting.DB.COLUMNS.ID2 + "=" + Profile.DB.COLUMNS.ID + " " +
+            "ORDER BY " + Meeting.DB.COLUMNS.DATE_REQUEST + " DESC";
 
-        SQLiteDatabase db = this.getReadableDatabase();
-        String selectQuery = "SELECT Date_Request,IDm,ID2,Subject,Message,First_Name,Last_Name FROM meeting,profile WHERE ID1=? AND State=? AND ID2=ID ORDER BY Date_Request DESC";
-        String[] tabargs = {myID,"0"};
-        Cursor c = db.rawQuery(selectQuery, tabargs);
+        Cursor c = this.getReadableDatabase().rawQuery(QUERY, new String[] {Common.getMyID(), "0"});
         c.moveToFirst();
+
+        ArrayList<Meeting> requests = new ArrayList<Meeting>();
+
         while (!c.isAfterLast()){
             Log.d("rowread", String.valueOf(c.getString(0)));
-            request.add(new Meeting(c.getString(0), c.getString(1),c.getString(2),c.getString(3),c.getString(4),c.getString(5),c.getString(6)));
+            requests.add(Meeting.deserializeRequestFromLocalDB(c));
             c.moveToNext();
         }
-        return request;
+
+        return requests;
     }
 
-    public void updateSentRequest (String Date_Accept,String IDm,String myID,String ID2,String Subject,String Date_Request,String message){//TODO : add calendar event id
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        if (existIDM(IDm)){
-        values.put(COLUMN_NAME_DATE_ACCEPT,Date_Accept);
-        values.put(COLUMN_NAME_STATE,"1");
-
-        String selection = COLUMN_IDM+" = ?";
-        String[] selectionArgs = new String[] {IDm};
-        // updating row
-        db.update(TABLE_MEETING, values, selection,
-               selectionArgs);
-        }
-        else{
-            values.put(COLUMN_IDM, IDm);
-            values.put(COLUMN_NAME_ID1, myID);
-            values.put(COLUMN_NAME_ID2, ID2);
-            values.put(COLUMN_NAME_SUBJECT, Subject);
-            values.put(COLUMN_NAME_STATE, "1");
-            values.put(COLUMN_NAME_MESSAGE, message);
-            String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
-            values.put(COLUMN_NAME_DATE_REQUEST, Date_Request);
-            values.put(COLUMN_NAME_TIME, time);
-            values.put(COLUMN_NAME_DATE_ACCEPT,Date_Accept);
-            db.insert(TABLE_MEETING,null,values);
+    private void updateSingleMeeting(Meeting meeting, ContentValues values) {
+        //TODO: Is the existIDM check really necessary? Wouldn't the update just fail cleanly?
+        if (existIDM(meeting.getMeetingID())) {
+            this.getWritableDatabase().update(
+                    Meeting.DB.NAME,
+                    values,
+                    Meeting.DB.COLUMNS.IDM + "=?",
+                    new String[]{meeting.getMeetingID()}
+            );
         }
     }
 
-    public void deleteSentRequest (String IDm){
-        SQLiteDatabase db = this.getWritableDatabase();
-        String selection = COLUMN_IDM+" = ?";
-        String[] selectionArgs = new String[] {IDm};
-
-        db.delete(TABLE_MEETING,selection,selectionArgs);
+    public void updateSentRequest(Meeting request) {
+        // If the request doesn't exist in the DB, it will be inserted; if it does, an update is performed.
+        if (!insertLocalRequestSentMeeting(request))
+            updateSingleMeeting(request, request.serializeRequestUpdateForLocalDB());
     }
 
+    public void deleteSentRequest(String IDm) {
+        this.getWritableDatabase().delete(Meeting.DB.NAME, Meeting.DB.COLUMNS.IDM, new String[]{IDm});
+    }
 
     public void updateDateMeeting (Meeting meeting) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        String meetingID = meeting.getMeetingID();
-        String dateMeeting = meeting.getDateMeeting();
-        if (existIDM(meetingID) && dateMeeting!=null && dateMeeting.length()>0){
-            values.put(COLUMN_NAME_DATE_MEETING,dateMeeting);
-            if (meeting.getMyStatus().equals("1")){
-                values.put(COLUMN_NAME_STATE,"3");
-            } else {
-                values.put(COLUMN_NAME_STATE,"4");
-            }
-            String selection = COLUMN_IDM+" = ?";
-            String[] selectionArgs = new String[] {meetingID};
-            db.update(TABLE_MEETING, values, selection,
-                    selectionArgs);
-        }
-        else{
-            //This meeting does not exist in the local DB
-        }
+        ContentValues values = meeting.serializeMeetingDateUpdateForLocalDB();
+
+        //FIXME: Fails if the meeting is already scheduled; what do we do in that case?
+        if (values != null)
+            updateSingleMeeting(meeting, values);
     }
 
-    public void updateStateMeeting (Meeting meeting) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        String meetingID = meeting.getMeetingID();
-        String state = meeting.getState();
-        if (existIDM(meetingID)){
-            values.put(COLUMN_NAME_STATE,state);
-            String selection = COLUMN_IDM+" = ?";
-            String[] selectionArgs = new String[] {meetingID};
-            db.update(TABLE_MEETING, values, selection,
-                    selectionArgs);
-        }
-        else{
-            //This meeting does not exist in the local DB
-        }
+    public void updateStateMeeting(Meeting meeting) {
+        updateSingleMeeting(meeting, meeting.serializeStateForLocalDB());
     }
 
-    public void updateMeeting (Meeting meeting){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        String meetingID = meeting.getMeetingID();
-        if (existIDM(meetingID)){
-            values.put(COLUMN_NAME_STATE,meeting.getState());
-            values.put(COLUMN_NAME_SUBJECT, meeting.getSubject());
-                    values.put(COLUMN_NAME_STATE, meeting.getState());
-                    values.put(COLUMN_NAME_MESSAGE, meeting.getMessage());
-                    values.put(COLUMN_NAME_DATE_REQUEST, meeting.getDateRequest());
-                    values.put(COLUMN_NAME_DATE_ACCEPT, meeting.getDateAccept());
-                    values.put(COLUMN_NAME_DATE_MEETING, meeting.getDateMeeting());
-                    values.put(COLUMN_NAME_CALENDAR_EVENTID, meeting.getCalendarEventID());
-                    String selection = COLUMN_IDM+" = ?";
-            String[] selectionArgs = new String[] {meetingID};
-            db.update(TABLE_MEETING, values, selection,
-                    selectionArgs);
-        }
-        else{
-            //This meeting does not exist in the local DB
-        }
+    public void updateMeeting(Meeting meeting) {
+        updateSingleMeeting(meeting, meeting.serializeUpdateForLocalDB());
     }
 
 
-    public void insertMessage (Message message) { //TODO: Shouldn't DB calls be synchronized?
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_IDMSG, message.getID());
-        values.put(COLUMN_NAME_DATE, message.getTime());
-        values.put(COLUMN_NAME_ID1, message.getSender());
-        values.put(COLUMN_NAME_ID2, message.getRecipient());
-        values.put(COLUMN_NAME_MESSAGE, message.getContent());
-        values.put(COLUMN_NAME_VISIBILITY, "1");
-        values.put(COLUMN_NAME_IS_SENT,message.isSent());
-        db.insert(
-                TABLE_CHAT,
-                null,
-                values);
+    public void insertMessage(Message message) { //TODO: Shouldn't DB calls be synchronized?
+        this.getWritableDatabase().insert(
+            Message.DB.NAME,
+            null,
+            message.serializeForLocalDB());
     }
 
-    public ArrayList<Message> readAllLocalMessage (String chateeID){
+    public ArrayList<Message> readAllLocalMessage(String chateeID){
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<Message> messages = new ArrayList<Message>();
-// Define a projection that specifies which columns from the database
-// you will actually use after this query.
-        String[] projection = {
-                COLUMN_IDMSG,
-                COLUMN_NAME_MESSAGE,
-                COLUMN_NAME_ID1,
-                COLUMN_NAME_ID2,
-                COLUMN_NAME_DATE,
-                COLUMN_NAME_IS_SENT
-        };
-        String sortOrder = COLUMN_NAME_DATE ;
-        String selection = COLUMN_NAME_ID2+" = ? OR " + COLUMN_NAME_ID1+" = ?";
-        String[] selectionArgs = new String[] {chateeID,chateeID};
 
         Cursor c = db.query(
-                TABLE_CHAT,  // The table to query
-                projection,                               // The columns to return
-                selection,                                // The columns for the WHERE clause
-                selectionArgs,                              // The values for the WHERE clause
-                null,                                     // don't group the rows
-                null,                                     // don't filter by row groups
-                sortOrder                                 // The sort order
+            Message.DB.NAME,
+            Message.DB.COLUMNS.PROJECTION,
+            Message.DB.COLUMNS.SENDER + " = ? OR " + Message.DB.COLUMNS.RECIPIENT +" = ?",
+            new String[] {chateeID , chateeID},
+            null, // no row grouping
+            null, // no filtering by group
+            Message.DB.COLUMNS.DATE // sort column
         );
+
         c.moveToFirst();
         Log.d("countcursor",String.valueOf(c.getColumnCount()));
+
         while (!c.isAfterLast()){
-            boolean isSent = c.getString(c.getColumnIndex(COLUMN_NAME_IS_SENT)).equals("1");
-            Message msg = new Message(c.getString(c.getColumnIndex(COLUMN_IDMSG)), c.getString(c.getColumnIndex(COLUMN_NAME_MESSAGE)), c.getString(c.getColumnIndex(COLUMN_NAME_ID1)), c.getString(c.getColumnIndex(COLUMN_NAME_ID2)), c.getString(c.getColumnIndex(COLUMN_NAME_DATE)), isSent);
+            Message msg = Message.deserializeFromLocalDB(c);
             messages.add(msg);
             c.moveToNext();
         }
+
         return messages;
     }
 }
