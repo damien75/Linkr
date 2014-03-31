@@ -250,7 +250,8 @@ public class DefinitiveProfileActivity extends ActionBarActivity {
                     IDm = json2.getString("ID");
                     Profile profile = profiles.get(currentpos);
                     mDbHelper.insertLocalProfile(profile);
-                    mDbHelper.insertLocalRequestSentMeeting(IDm,ID1,ID2,subject,"0","no message");
+                    //FIXME: Use the new variant using a Meeting object.
+                    // mDbHelper.insertLocalRequestSentMeeting(IDm, ID1, ID2, subject,"0","no message");
                     mDbHelper.getRequestSentMeeting(myID);
                     return true;
                 }

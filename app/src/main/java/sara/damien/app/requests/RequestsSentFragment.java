@@ -118,7 +118,8 @@ public class RequestsSentFragment extends ListFragment {
                         Meeting request = new Meeting (date_request,idm,idu,subject,message,first_name,last_name);
                         requests.add(request);
                         Log.d("prénom requete",requests.get(i).getOtherParticipant().getFirst_Name());
-                        mDbHelper.insertLocalRequestSentMeeting(idm, myID, idu, subject, "0", message);
+                        //FIXME: Use the new variant.
+                        //mDbHelper.insertLocalRequestSentMeeting(idm, myID, idu, subject, "0", message);
                     }
                 }
             }
@@ -164,7 +165,8 @@ public class RequestsSentFragment extends ListFragment {
                         String Message = request.getString("Message");
 
                         if (State.equals("1")){
-                            mDbHelper.updateSentRequest(Date_Accept, IDm,myID,ID2,Subject,Date_Request,Message);
+                            //FIXME: Use the new variant
+                            //mDbHelper.updateSentRequest(Date_Accept, IDm,myID,ID2,Subject,Date_Request,Message);
                         }
                         else{
                             mDbHelper.deleteSentRequest(IDm);

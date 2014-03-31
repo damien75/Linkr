@@ -170,9 +170,7 @@ public class Meeting implements Parcelable {
 
     //FIXME: The name implies that the whole thing is serialized, while it's only the initial values
     public ContentValues serializeForLocalDB() {
-        // FIXME: That's fishy; why isn't the timeStamp already
-        // stored in dateRequest and time?
-
+        // FIXME: That's fishy; why isn't the timeStamp already stored in dateRequest and time?
         String timeStamp = Utilities.getTimestamp();
 
         ContentValues values = new ContentValues();
