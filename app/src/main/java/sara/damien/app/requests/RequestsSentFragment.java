@@ -26,7 +26,7 @@ import java.util.List;
 import sara.damien.app.DB.DbHelper;
 import sara.damien.app.Meeting;
 import sara.damien.app.R;
-import sara.damien.app.adapter.RequestsSentAdapter;
+import sara.damien.app.adapter.SentRequestsAdapter;
 import sara.damien.app.utils.ConnectionDetector;
 import sara.damien.app.utils.JSONParser;
 
@@ -34,7 +34,7 @@ public class RequestsSentFragment extends ListFragment {
 
     ArrayList<Meeting> requests;
     JSONArray meetings;
-    RequestsSentAdapter adapter;
+    SentRequestsAdapter adapter;
     String myID;
     JSONParser jsonParser;
     private static String url ="http://www.golinkr.net";
@@ -68,7 +68,7 @@ public class RequestsSentFragment extends ListFragment {
         else{
             new LocalRequestsCall().execute();
         }
-        adapter = new RequestsSentAdapter(getActivity(), requests);
+        adapter = new SentRequestsAdapter(getActivity(), requests);
         setListAdapter(adapter);
         return rootView;
     }

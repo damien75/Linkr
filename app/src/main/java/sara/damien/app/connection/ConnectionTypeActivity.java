@@ -20,17 +20,16 @@ public class ConnectionTypeActivity extends ActionBarActivity {
     }
 
     public void adminSignInBtn_Click(View view) {
-        Intent i = new Intent(this, WelcomeActivity.class);
-
         String id = ((EditText)findViewById(R.id.editID)).getText().toString();
         Common.getPrefs().setConnected(true);
         Common.getPrefs().setID(id);
-        startActivity(i);
+
+        startActivity(new Intent(this, WelcomeActivity.class));
         finish();
     }
 
     public void linkedInSignInBtn_Click(View view){
-        startActivity( new Intent(this, LinkedInConnectionActivity.class));
+        startActivity(new Intent(this, LinkedInConnectionActivity.class));
         finish();
     }
 
@@ -41,14 +40,12 @@ public class ConnectionTypeActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.connection_type, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) { //FIXME: Document this function
         return (item.getItemId() == R.id.action_settings)  || super.onOptionsItemSelected(item);
     }
-
 }

@@ -26,6 +26,8 @@ import sara.damien.app.R;
 import sara.damien.app.WelcomeActivity;
 import sara.damien.app.utils.JSONParser;
 
+//FIXME: Do we really want manual registration?
+
 public class RegisterManuallyActivity extends ActionBarActivity {
     EditText txtFirst_Name, txtLast_Name, txtCompany, txtExp_Years;
     // Register button

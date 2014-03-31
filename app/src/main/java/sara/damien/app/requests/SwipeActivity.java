@@ -7,11 +7,11 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 
 import sara.damien.app.R;
-import sara.damien.app.adapter.TabsPagerAdapter;
+import sara.damien.app.adapter.RequestsPagerAdapter;
 
 public class SwipeActivity extends FragmentActivity implements ActionBar.TabListener {
     private ViewPager viewPager;
-    private TabsPagerAdapter mAdapter;
+    private RequestsPagerAdapter mAdapter;
     private ActionBar actionBar;
     // Tab titles
     private String[] tabs = { "Received", "Chat", "Sent" };
@@ -24,7 +24,7 @@ public class SwipeActivity extends FragmentActivity implements ActionBar.TabList
         // Initilization
         viewPager = (ViewPager) findViewById(R.id.pager);
         actionBar = getActionBar();
-        mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
+        mAdapter = new RequestsPagerAdapter(getSupportFragmentManager());
 
         viewPager.setAdapter(mAdapter);
         actionBar.setHomeButtonEnabled(false);

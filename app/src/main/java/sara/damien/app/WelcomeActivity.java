@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sara.damien.app.DB.DbHelper;
-import sara.damien.app.adapter.NavDrawerListAdapter;
+import sara.damien.app.adapter.NavDrawerAdapter;
 import sara.damien.app.drawer.HomeFragment;
 import sara.damien.app.model.NavDrawerItem;
 import sara.damien.app.requests.SwipeActivity;
@@ -55,7 +55,7 @@ public class WelcomeActivity extends Activity {
     private TypedArray navMenuIcons;
 
     private ArrayList<NavDrawerItem> navDrawerItems;
-    private NavDrawerListAdapter adapter;
+    private NavDrawerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,8 +127,7 @@ public class WelcomeActivity extends Activity {
         mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
 
         // setting the nav drawer list adapter
-        adapter = new NavDrawerListAdapter(getApplicationContext(),
-                navDrawerItems);
+        adapter = new NavDrawerAdapter(getApplicationContext(), navDrawerItems);
         mDrawerList.setAdapter(adapter);
 
         // enabling action bar app icon and behaving it as toggle button

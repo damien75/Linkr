@@ -27,7 +27,7 @@ import sara.damien.app.Profile;
 import sara.damien.app.R;
 import sara.damien.app.WelcomeActivity;
 
-class LinkedInAuth {
+class LinkedInAuth { //FIXME: All these local variables should be persisted in settings to allow proper resuming
     OAuthService service;
     Token requestToken;
     String authUrl;
