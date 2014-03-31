@@ -112,13 +112,13 @@ public class WelcomeActivity extends Activity {
         // Find People
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1)));
         // Photos
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1),true,"50+"));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], "50+", navMenuIcons.getResourceId(2, -1)));
         // Communities, Will add a counter here
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1), true, "22"));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], "22", navMenuIcons.getResourceId(3, -1)));
         // Pages
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1)));
         // What's hot, We  will add a counter here
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1), true, "Bye bye..."));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], "Bye bye...", navMenuIcons.getResourceId(5, -1)));
 
 
         // Recycle the typed array

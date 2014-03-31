@@ -31,18 +31,13 @@ public class NavDrawerAdapter extends ArrayAdapter<NavDrawerItem> {
 
         ImageView imgIcon = (ImageView) convertView.findViewById(R.id.icon);
         TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
-        TextView txtCount = (TextView) convertView.findViewById(R.id.counter);
+        TextView txtSubtitle = (TextView) convertView.findViewById(R.id.counter);
 
         NavDrawerItem item = super.getItem(position);
         imgIcon.setImageResource(item.getIcon());
         txtTitle.setText(item.getTitle());
-
-        if(item.getCounterVisibility()) {
-            txtCount.setText(item.getCount());
-            txtCount.setVisibility(View.VISIBLE);
-        } else {
-            txtCount.setVisibility(View.GONE);
-        }
+        txtSubtitle.setText(item.getSubtitle());
+        txtSubtitle.setVisibility(item.isSubtitleVisible() ? View.VISIBLE : View.GONE);
 
         return convertView;
     }

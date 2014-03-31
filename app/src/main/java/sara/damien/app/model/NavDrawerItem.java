@@ -6,53 +6,51 @@ package sara.damien.app.model;
 public class NavDrawerItem {
     private String title;
     private int icon;
-    private String count = "0";
-    // boolean to set visiblity of the counter
-    private boolean isCounterVisible = false;
+    private String subtitle = "0";
+    private boolean subtitleVisible = false;
 
-    public NavDrawerItem(){}
-
-    public NavDrawerItem(String title, int icon){
+    public NavDrawerItem(String title, int icon) {
         this.title = title;
+        this.subtitleVisible = false;
         this.icon = icon;
     }
 
-    public NavDrawerItem(String title, int icon, boolean isCounterVisible, String count){
+    public NavDrawerItem(String title, String subtitle, int icon) {
         this.title = title;
+        this.subtitle = subtitle;
+        this.subtitleVisible = true;
         this.icon = icon;
-        this.isCounterVisible = isCounterVisible;
-        this.count = count;
     }
 
-    public String getTitle(){
+    public String getTitle() {
         return this.title;
     }
 
-    public int getIcon(){
+    public int getIcon() {
         return this.icon;
     }
 
-    public String getCount(){
-        return this.count;
+    public String getSubtitle() {
+        return subtitleVisible ? this.subtitle : null;
     }
 
-    public boolean getCounterVisibility(){
-        return this.isCounterVisible;
+    public boolean isSubtitleVisible() {
+        return this.subtitleVisible;
     }
 
-    public void setTitle(String title){
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public void setIcon(int icon){
+    public void setIcon(int icon) {
         this.icon = icon;
     }
 
-    public void setCount(String count){
-        this.count = count;
+    public void setSubtitle(String subtitle) {
+        this.subtitle = subtitle;
     }
 
-    public void setCounterVisibility(boolean isCounterVisible){
-        this.isCounterVisible = isCounterVisible;
+    public void setSubtitleVisible(boolean subtitleVisible) {
+        this.subtitleVisible = subtitleVisible;
     }
 }
