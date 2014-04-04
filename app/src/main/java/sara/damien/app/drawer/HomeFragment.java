@@ -12,15 +12,8 @@ import android.view.ViewGroup;
 import sara.damien.app.R;
 
 public class HomeFragment extends Fragment {
-
-    public HomeFragment(){}
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        View rootView = inflater.inflate(R.layout.fragment_welcome, container, false);
-
-        return rootView;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_welcome, container, false);
     }
 }
