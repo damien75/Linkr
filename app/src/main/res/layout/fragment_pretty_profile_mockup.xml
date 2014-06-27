@@ -89,6 +89,7 @@
 
                 <Button
                     style="@android:style/TextAppearance.Large"
+                    android:id="@+id/likeProfile"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -96,6 +97,7 @@
                     android:text="✓"/>
                 <Button
                     style="@android:style/TextAppearance.Large"
+                    android:id="@+id/notNow"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -103,6 +105,7 @@
                     android:text="~"/>
                 <Button
                     style="@android:style/TextAppearance.Large"
+                    android:id="@+id/neverEver"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

@@ -1,7 +1,9 @@
 package sara.damien.app;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -12,13 +14,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import sara.damien.app.DB.DbHelper;
+import sara.damien.app.utils.JSONParser;
 import sara.damien.app.utils.Utilities;
 
 interface ProfileListener {
@@ -34,6 +46,11 @@ public class PrettyProfileMockup extends ActionBarActivity {
     ViewPager viewPager;
 
     ArrayList<Profile> profiles;
+    SharedPreferences prefs;
+    private String myID;
+    private static final String url = "http://www.golinkr.net";
+    DbHelper mDbHelper;
+    JSONParser jsonParser = new JSONParser();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +58,77 @@ public class PrettyProfileMockup extends ActionBarActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_pretty_profile_mockup);
         new ProfilesEnumerator().execute();
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        myID = prefs.getString("ID","0");
+        mDbHelper = new DbHelper(getApplicationContext());
+    }
+
+    private void declineTemporarily(){
+        profiles.remove(viewPager.getCurrentItem());
+        pagerAdapter.notifyDataSetChanged();
+    }
+
+    private void likeProfile(){
+        CreateMeeting CR = new CreateMeeting();
+        Profile currentProfile = profiles.get(viewPager.getCurrentItem());
+        CR.ID1 = myID;
+        CR.targetProfile = currentProfile;
+        CR.execute();
+    }
+
+    private class CreateMeeting extends AsyncTask<Void, Void, Boolean>  {
+        String ID1;
+        Profile targetProfile;
+        String IDm;
+
+        @Override
+        protected Boolean doInBackground(Void... args) {
+            try {
+                List<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(new BasicNameValuePair("SELECT_FUNCTION", "createMeeting"));
+                params.add(new BasicNameValuePair("ID1", ID1));
+                params.add(new BasicNameValuePair("ID2", targetProfile.getID()));
+                params.add(new BasicNameValuePair("Subject", targetProfile.getLast_Subject()));
+                params.add(new BasicNameValuePair("Message", ""));
+                JSONObject json = jsonParser.makeHttpRequest(url, "POST", params);
+                if (json.getString("success").equals("1")){
+                    IDm = json.getString("ID");
+                    mDbHelper.insertLocalProfile(targetProfile);
+                    //FIXME: Use the new variant using a Meeting object.
+                    // mDbHelper.insertLocalRequestSentMeeting(IDm, ID1, ID2, subject,"0","no message");
+                    mDbHelper.getRequestSentMeeting(myID);
+                    return true;
+                }
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (result){
+                profiles.remove(viewPager.getCurrentItem());
+                pagerAdapter.notifyDataSetChanged();
+            }
+            else {
+                Toast.makeText(getApplicationContext(),"Bad connection, try again later...", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void declinePermanently(){
+        int currentProfile = viewPager.getCurrentItem();
+        SharedPreferences.Editor editor = prefs.edit();
+        Set<String> blockedIDs = prefs.getStringSet("blockedIDs", new HashSet<String>());
+        blockedIDs.add(profiles.get(currentProfile).getID());
+        Log.e("BlockedIDs", blockedIDs.toString());
+        editor.putStringSet("blockedIDs", blockedIDs);
+        editor.commit();
+        profiles.remove(currentProfile);
+        pagerAdapter.notifyDataSetChanged();
     }
 
     private void prefetchProfilesAsync(int position) {
@@ -74,6 +162,11 @@ public class PrettyProfileMockup extends ActionBarActivity {
             Profile prof = profiles.get(position);
             prefetchProfilesAsync(position);
             return ProfileFragment.fromProfile(prof);
+        }
+
+        @Override
+        public int getItemPosition(Object object){
+            return POSITION_NONE;
         }
 
         @Override
@@ -151,7 +244,7 @@ public class PrettyProfileMockup extends ActionBarActivity {
 
             nameView.setText(Utilities.fallback(profile.getName(), "Sample name"));
             industryView.setText(Utilities.fallback(profile.getIndustry(), "Sample industry"));
-            headlineView.setText(Utilities.fallback(profile.getHeadline(), "Lorem ipsum dolor sit amet, consectetur adipisicing elit, ..."));
+            headlineView.setText(Utilities.fallback(profile.getLast_Subject(), "Lorem ipsum dolor sit amet, consectetur adipisicing elit, ..."));
         }
 
         @Override
@@ -161,6 +254,31 @@ public class PrettyProfileMockup extends ActionBarActivity {
 
             onContentsDownloaded();
             onPictureUpdated();
+
+            Button notNowButton = (Button) rootView.findViewById(R.id.notNow);
+            notNowButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getActivity().getApplicationContext() , "You won't view this profile until refresh" , Toast.LENGTH_SHORT).show();
+                    ((PrettyProfileMockup)getActivity()).declineTemporarily();
+                }
+            });
+            Button likeProfileButton = (Button) rootView.findViewById(R.id.likeProfile);
+            likeProfileButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getActivity().getApplicationContext() , "You liked this profile and he will receive a notification" , Toast.LENGTH_SHORT).show();
+                    ((PrettyProfileMockup)getActivity()).likeProfile();
+                }
+            });
+            Button neverEverButton = (Button) rootView.findViewById(R.id.neverEver);
+            neverEverButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getActivity().getApplicationContext() , "You won't view this profile ever again" , Toast.LENGTH_SHORT).show();
+                    ((PrettyProfileMockup)getActivity()).declinePermanently();
+                }
+            });
 
             return rootView;
         }
@@ -172,6 +290,13 @@ public class PrettyProfileMockup extends ActionBarActivity {
         @Override
         protected Void doInBackground(Void... none) {
             profiles = LinkrAPI.findNeighbours();
+            Set<String> blockedIDs = prefs.getStringSet("blockedIDs", new HashSet<String>());
+            for (int indexProfile = 0 ; indexProfile < profiles.size() ; indexProfile ++){
+                if (blockedIDs.contains(profiles.get(indexProfile).getID())){
+                    profiles.remove(indexProfile);
+                }
+            }
+
             return null;
         }
 
